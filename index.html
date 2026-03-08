@@ -2,649 +2,599 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="manifest" href="/novogarden-app/manifest.json">
 <meta name="theme-color" content="#7DB532">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Novogarden">
-<title>Novogarden ÃÂ¢ÃÂÃÂ RÃÂÃÂ©servation</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+<title>Novogarden &ndash; R&eacute;servation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --green: #7DB532;
-    --green-dark: #5a8e1e;
-    --green-light: #a8d45a;
-    --cream: #FAF9F5;
-    --dark: #14140F;
-    --grey: #808080;
-    --grey-light: #E8E6E6;
-    --white: #ffffff;
-    --radius: 18px;
-    --radius-sm: 10px;
-    --shadow: 0 8px 32px rgba(125,181,50,0.15);
-    --shadow-card: 0 4px 24px rgba(20,20,15,0.10);
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --green: #7DB532;
+  --dark-green: #5a8e1e;
+  --cream: #FAF9F5;
+  --dark: #14140F;
+  --grey: #808080;
+  --grey-light: #E8E6E6;
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(125,181,50,0.15);
+}
 
-  body {
-    font-family: 'Montserrat', 'Noto Color Emoji', 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
-    font-weight: 600;
-    background: #c8d8a0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 20px 10px;
-  }
+html, body {
+  width: 100%; height: 100%;
+  background: var(--cream);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: var(--dark);
+  overflow: hidden;
+}
 
-  .phone {
-    width: 375px;
-    min-height: 812px;
-    background: var(--cream);
-    border-radius: 44px;
-    overflow: hidden;
-    box-shadow: 0 30px 90px rgba(0,0,0,0.3), 0 0 0 10px #1a1a1a, 0 0 0 12px #333;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
+/* -- SCREENS -- */
+.screen { display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+.screen.active { display: flex; }
 
-  .status-bar {
-    background: var(--green);
-    padding: 12px 28px 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    font-size: 12px;
-    font-weight: 700;
-    position: relative;
-    z-index: 10;
-    flex-shrink: 0;
-  }
-  .notch {
-    width: 120px; height: 26px; background: #1a1a1a;
-    border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  }
-  .status-icons { display: flex; gap: 5px; align-items: center; }
+/* -- SPLASH -- */
+#splash {
+  background: linear-gradient(160deg, #8dc83a 0%, var(--green) 45%, var(--dark-green) 100%);
+  align-items: center; justify-content: center; text-align: center;
+  padding: 40px 32px;
+  position: relative; overflow: hidden;
+}
+#splash::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 260px; height: 260px; border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+.splash-logo-box {
+  width: 88px; height: 88px; background: white; border-radius: 24px;
+  margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.splash-logo-box svg { width: 52px; height: 52px; }
+#splash h1 { color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+#splash .sub { color: rgba(255,255,255,0.75); font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+.splash-tagline { color: white; font-size: 14px; font-weight: 500; line-height: 1.7; margin-top: 28px; }
+.splash-zone { color: rgba(255,255,255,0.7); font-size: 11px; margin-top: 10px; font-weight: 600; }
+.splash-btn {
+  margin-top: 36px; background: white; color: var(--dark-green);
+  border: none; border-radius: 50px; padding: 16px 48px;
+  font-size: 16px; font-weight: 800; font-family: 'Montserrat', sans-serif;
+  cursor: pointer; box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+  transition: transform 0.15s;
+}
+.splash-btn:active { transform: scale(0.96); }
+.grass {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
+  background: linear-gradient(to top, rgba(30,70,5,0.7) 0%, transparent 100%);
+  clip-path: polygon(0 60%,5% 40%,10% 58%,15% 35%,20% 52%,25% 30%,30% 50%,35% 28%,40% 48%,45% 26%,50% 46%,55% 32%,60% 50%,65% 36%,70% 54%,75% 38%,80% 56%,85% 42%,90% 60%,95% 44%,100% 62%,100% 100%,0 100%);
+}
 
-  .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
-  .screen.active { display: flex; }
+/* -- HOME -- */
+#home { overflow: hidden; }
+.home-header {
+  background: linear-gradient(135deg, #8dc83a 0%, var(--dark-green) 100%);
+  padding: 52px 20px 32px; color: white; position: relative; flex-shrink: 0;
+}
+.home-header::after {
+  content: ''; position: absolute; bottom: -18px; left: 0; right: 0; height: 36px;
+  background: var(--cream); border-radius: 22px 22px 0 0;
+}
+.home-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.logo-row { display: flex; align-items: center; gap: 10px; }
+.logo-row svg { width: 28px; height: 28px; }
+.logo-name { font-size: 19px; font-weight: 800; }
+.notif-btn {
+  width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.notif-btn svg { width: 20px; height: 20px; fill: white; }
+.greeting { font-size: 13px; opacity: 0.8; margin-bottom: 2px; }
+.home-title { font-size: 22px; font-weight: 800; line-height: 1.3; }
 
-  /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SPLASH ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-  #splash {
-    background: linear-gradient(160deg, #8dc83a 0%, var(--green) 40%, var(--green-dark) 80%, #2e5a08 100%);
-    align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  #splash::before {
-    content:''; position:absolute; top:-60px; right:-60px;
-    width:220px; height:220px; border-radius:50%;
-    background: rgba(255,255,255,0.06);
-  }
-  .splash-grass {
-    position:absolute; bottom:0; left:0; right:0; height:120px;
-    background: linear-gradient(to top, rgba(40,80,5,0.8) 0%, transparent 100%);
-    clip-path: polygon(0 65%,4% 45%,8% 62%,14% 38%,20% 56%,26% 34%,32% 52%,38% 30%,44% 50%,50% 28%,56% 48%,62% 33%,68% 52%,74% 36%,80% 54%,86% 40%,92% 58%,96% 42%,100% 60%,100% 100%,0 100%);
-  }
-  .splash-logo { text-align:center; z-index:1; animation: fadeUp 0.7s ease both; }
-  .splash-logo .logo-box {
-    width:88px; height:88px; background:white; border-radius:24px;
-    margin:0 auto 20px; display:flex; align-items:center; justify-content:center;
-    font-size:42px; box-shadow:0 10px 40px rgba(0,0,0,0.2);
-  }
-  .splash-logo h1 { color:white; font-size:34px; font-weight:800; letter-spacing:-1px; }
-  .splash-logo p { color:rgba(255,255,255,0.75); font-size:11px; font-weight:600; margin-top:5px; letter-spacing:1.5px; text-transform:uppercase; }
-  .splash-tagline {
-    color:white; font-size:14px; font-weight:500; text-align:center; z-index:1;
-    margin-top:24px; line-height:1.7; padding:0 32px;
-    animation: fadeUp 0.7s 0.15s ease both; opacity:0;
-  }
-  .splash-zone {
-    color:rgba(255,255,255,0.7); font-size:11px; font-weight:600; z-index:1;
-    margin-top:10px; text-align:center; letter-spacing:0.5px;
-    animation: fadeUp 0.7s 0.2s ease both; opacity:0;
-  }
-  .splash-btn {
-    z-index:1; margin-top:32px;
-    background:white; color:var(--green-dark);
-    border:none; border-radius:var(--radius); padding:16px 44px;
-    font-size:16px; font-weight:800; font-family:'Montserrat',sans-serif;
-    cursor:pointer; box-shadow:0 8px 28px rgba(0,0,0,0.18);
-    animation: fadeUp 0.7s 0.3s ease both; opacity:0;
-    transition:transform 0.15s, box-shadow 0.15s;
-  }
-  .splash-btn:active { transform:scale(0.96); }
+.home-body { padding: 28px 18px 16px; overflow-y: auto; flex: 1; }
 
-  /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ HOME ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-  #home { overflow-y:auto; }
-  .home-header {
-    background: linear-gradient(135deg, #8dc83a 0%, var(--green-dark) 100%);
-    padding:20px 22px 36px; color:white; position:relative; overflow:hidden; flex-shrink:0;
-  }
-  .home-header::after {
-    content:''; position:absolute; bottom:-16px; left:0; right:0; height:32px;
-    background:var(--cream); border-radius:22px 22px 0 0;
-  }
-  .home-header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
-  .home-logo { display:flex; align-items:center; gap:10px; }
-  .home-logo span:first-child { font-size:26px; }
-  .home-logo span:last-child { font-size:19px; font-weight:800; }
-  .notif-btn { width:38px; height:38px; background:rgba(255,255,255,0.2); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; }
-  .home-greeting { font-size:13px; opacity:0.8; margin-bottom:3px; }
-  .home-title { font-size:21px; font-weight:800; line-height:1.3; }
+.promo {
+  background: linear-gradient(110deg, #1a5c00, var(--green));
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px;
+  color: white; display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow);
+}
+.promo-icon {
+  width: 44px; height: 44px; background: rgba(255,255,255,0.15); border-radius: 12px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+}
+.promo-icon svg { width: 24px; height: 24px; fill: white; }
+.promo p:first-child { font-size: 10px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.8px; }
+.promo p:last-child { font-size: 13px; font-weight: 700; margin-top: 2px; line-height: 1.4; }
 
-  .home-body { padding:16px 18px 24px; }
+.sect { font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
 
-  .promo-band {
-    background:linear-gradient(110deg,#1a5c00,var(--green));
-    border-radius:var(--radius); padding:14px 16px; margin-bottom:18px;
-    color:white; display:flex; align-items:center; gap:12px;
-    box-shadow:var(--shadow);
-  }
-  .promo-band .em { font-size:28px; flex-shrink:0; }
-  .promo-band p:first-child { font-size:10px; opacity:0.75; text-transform:uppercase; letter-spacing:0.8px; }
-  .promo-band p:last-child { font-size:12px; font-weight:700; margin-top:2px; line-height:1.4; }
+.cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.card {
+  background: white; border-radius: var(--radius); padding: 16px;
+  box-shadow: 0 4px 20px rgba(20,20,15,0.08); cursor: pointer;
+  position: relative; overflow: hidden; transition: transform 0.15s;
+  border: 2px solid transparent;
+}
+.card:active { transform: scale(0.98); }
+.card-corner {
+  position: absolute; top: 0; right: 0; width: 68px; height: 68px;
+  border-radius: 0 var(--radius) 0 68px;
+}
+.c1 .card-corner { background: linear-gradient(135deg, #dff0b8, #b8e060); }
+.c2 .card-corner { background: linear-gradient(135deg, #c8e0ff, #80b8f0); }
+.c3 .card-corner { background: linear-gradient(135deg, #ffe0c0, #f0a870); }
+.card-icon {
+  position: absolute; top: 11px; right: 11px;
+  width: 28px; height: 28px;
+}
+.card-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 3px; }
+.card-name { font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
+.card-desc { font-size: 11px; color: var(--grey); font-weight: 500; line-height: 1.5; margin-bottom: 8px; max-width: 75%; }
+.card-price { font-size: 18px; font-weight: 800; color: var(--dark-green); }
+.card-price small { font-size: 11px; font-weight: 600; color: var(--grey); }
+.card-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.tag { background: var(--grey-light); color: var(--dark); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+.tag.g { background: #e0f0c0; color: var(--dark-green); }
 
-  .sect { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:12px; }
+/* TARIFS */
+.tarif-wrap { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px rgba(20,20,15,0.08); margin-bottom: 20px; }
+.tarif-head { background: var(--green); color: white; display: grid; grid-template-columns: 1.3fr 1fr 1.1fr 1.2fr; padding: 9px 10px; font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.tarif-row { display: grid; grid-template-columns: 1.3fr 1fr 1.1fr 1.2fr; padding: 8px 10px; border-bottom: 1px solid var(--grey-light); font-size: 9.5px; }
+.tarif-row:last-child { border-bottom: none; }
+.tarif-row:nth-child(odd) { background: #fafdf6; }
+.tp { color: var(--dark-green); font-weight: 800; }
+.tva { font-size: 10px; color: var(--grey); font-weight: 500; text-align: center; margin-top: 6px; padding-bottom: 4px; }
 
-  .cards-col { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; }
-  .scard {
-    background:white; border-radius:var(--radius); padding:16px;
-    box-shadow:var(--shadow-card); cursor:pointer; position:relative; overflow:hidden;
-    transition:transform 0.15s; border:2px solid transparent;
-  }
-  .scard:active { transform:scale(0.98); }
-  .scard .corner {
-    position:absolute; top:0; right:0; width:72px; height:72px;
-    border-radius:0 var(--radius) 0 72px;
-  }
-  .scard .corner.c1 { background:linear-gradient(135deg,#dff0b8,#b8e060); }
-  .scard .corner.c2 { background:linear-gradient(135deg,#c8e0ff,#80b8f0); }
-  .scard .corner.c3 { background:linear-gradient(135deg,#ffe0c0,#f0a870); }
-  .scard .cem { position:absolute; top:12px; right:12px; font-size:24px; }
-  .scard .clabel { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--grey); margin-bottom:3px; }
-  .scard .cname { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:5px; }
-  .scard .cdesc { font-size:11px; color:var(--grey); font-weight:500; line-height:1.5; margin-bottom:8px; }
-  .scard .cprice { font-size:18px; font-weight:800; color:var(--green-dark); }
-  .scard .cprice small { font-size:11px; font-weight:600; color:var(--grey); }
-  .scard .ctags { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
-  .tag { background:var(--grey-light); color:var(--dark); font-size:9px; font-weight:700; padding:3px 8px; border-radius:6px; }
-  .tag.g { background:#e0f0c0; color:var(--green-dark); }
+/* BOTTOM NAV */
+.bottom-nav {
+  background: white; border-top: 1px solid var(--grey-light);
+  display: flex; padding: 8px 0 20px; flex-shrink: 0;
+}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px; }
+.nav-item svg { width: 22px; height: 22px; fill: var(--grey); }
+.nav-item.active svg { fill: var(--green); }
+.nav-label { font-size: 9px; font-weight: 700; color: var(--grey); text-transform: uppercase; letter-spacing: 0.5px; }
+.nav-item.active .nav-label { color: var(--green); }
 
-  /* TARIFS TABLE - corrigÃÂÃÂ©e selon flyer */
-  .tarif-wrap { background:white; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-card); margin-bottom:24px; }
-  .tarif-head { background:var(--green); color:white; display:grid; grid-template-columns:1.3fr 1fr 1.1fr 1.2fr; padding:9px 10px; font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
-  .tarif-row { display:grid; grid-template-columns:1.3fr 1fr 1.1fr 1.2fr; padding:8px 10px; border-bottom:1px solid var(--grey-light); font-size:9.5px; }
-  .tarif-row:last-child { border-bottom:none; }
-  .tarif-row:nth-child(odd) { background:#FAFDF6; }
-  .tc { font-weight:600; color:var(--dark); }
-  .tc.p { color:var(--green-dark); font-weight:800; }
+/* -- BOOKING -- */
+#booking { overflow: hidden; }
+.bheader {
+  background: var(--green); padding: 52px 20px 22px; color: white; flex-shrink: 0; position: relative;
+}
+.back-btn {
+  position: absolute; top: 14px; left: 14px; width: 36px; height: 36px;
+  background: rgba(255,255,255,0.2); border-radius: 12px; border: none;
+  color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+}
+.bheader h2 { font-size: 22px; font-weight: 800; }
+.bheader p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+.progress { display: flex; gap: 5px; margin-top: 14px; }
+.ps { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; transition: background 0.3s; }
+.ps.done { background: white; }
 
-  .bottom-nav {
-    background:white; border-top:1px solid var(--grey-light);
-    display:flex; padding:10px 0 14px; flex-shrink:0;
-  }
-  .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px; }
-  .nav-icon { font-size:21px; }
-  .nav-label { font-size:9px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; }
-  .nav-item.active .nav-label { color:var(--green); }
+.bcontent { padding: 18px; overflow-y: auto; flex: 1; }
+.step { display: none; }
+.step.active { display: block; }
+.st { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.ss { font-size: 12px; color: var(--grey); font-weight: 500; margin-bottom: 18px; }
 
-  /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ BOOKING ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-  #booking { overflow-y:auto; }
-  .bheader {
-    background:var(--green); padding:48px 22px 24px; color:white; position:relative; flex-shrink:0;
-  }
-  .back-btn {
-    position:absolute; top:14px; left:14px; width:36px; height:36px;
-    background:rgba(255,255,255,0.2); border-radius:12px; border:none;
-    color:white; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    font-family:'Montserrat',sans-serif; font-weight:700;
-  }
-  .bheader h2 { font-size:22px; font-weight:800; }
-  .bheader p { font-size:12px; opacity:0.8; margin-top:3px; }
-  .prog { margin-top:16px; display:flex; gap:5px; }
-  .ps { flex:1; height:4px; background:rgba(255,255,255,0.3); border-radius:+px; transition:background 0.3s; }
-  .ps.done { background:white; }
+.opts { display: flex; flex-direction: column; gap: 9px; }
+.opt {
+  background: white; border: 2px solid var(--grey-light); border-radius: var(--radius);
+  padding: 13px 14px; cursor: pointer; display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s;
+}
+.opt.sel { border-color: var(--green); background: #f2fce5; }
+.opt-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.opt-icon svg { width: 22px; height: 22px; }
+.g1 { background: #e0f0c0; }
+.g2 { background: #c8e0ff; }
+.g3 { background: #ffe0c0; }
+.opt-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+.opt-price { font-size: 11px; color: var(--dark-green); font-weight: 700; margin-top: 2px; }
+.opt-check {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--grey-light);
+  margin-left: auto; flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.opt.sel .opt-check { background: var(--green); border-color: var(--green); }
+.opt.sel .opt-check::after { content: ''; width: 6px; height: 10px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-2px); display: block; }
 
-  .bcontent { padding:18px; overflow-y:auto; flex:1; }
+.slabel { font-size: 11px; font-weight: 700; color: var(--dark); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px; }
+.sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 18px; }
+.chip {
+  background: white; border: 2px solid var(--grey-light); border-radius: 12px;
+  padding: 11px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 700;
+  color: var(--dark); transition: all 0.2s;
+}
+.chip.sel { border-color: var(--green); background: #f2fce5; color: var(--dark-green); }
+.chip small { display: block; font-size: 9px; font-weight: 500; color: var(--grey); margin-top: 2px; }
+.chip.sel small { color: var(--dark-green); }
 
-  .step { display:none; }
-  .step.active { display:block; }
+.flabel { font-size: 10px; font-weight: 700; color: var(--dark); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.finput {
+  width: 100%; padding: 13px 14px; border: 2px solid var(--grey-light); border-radius: 12px;
+  font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--dark); background: white; outline: none; transition: border-color 0.2s; margin-bottom: 12px;
+}
+.finput:focus { border-color: var(--green); }
 
-  .st { font-size:17px; font-weight:800; color:var(--dark); margin-bottom:4px; }
-  .ss { font-size:12px; color:var(--grey); font-weight:500; margin-bottom:18px; }
+/* CALENDRIER */
+.cal { background: white; border-radius: var(--radius); padding: 14px; box-shadow: 0 4px 20px rgba(20,20,15,0.08); margin-bottom: 14px; }
+.cal-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cal-title { font-size: 14px; font-weight: 800; }
+.cal-dows { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 9px; font-weight: 800; color: var(--grey); margin-bottom: 5px; text-transform: uppercase; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cday { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border-radius: 9px; cursor: pointer; transition: all 0.15s; }
+.cday:not(.dis):not(.emp):hover { background: #e0f0c0; }
+.cday.sel { background: var(--green); color: white; }
+.cday.dis { color: var(--grey-light); cursor: not-allowed; }
 
-  .sopts { display:flex; flex-direction:column; gap:9px; }
-  .sopt {
-    background:white; border:2px solid var(--grey-light); border-radius:var(--radius-sm);
-    padding:13px 14px; cursor:pointer; display:flex; align-items:center; gap:12px;
-    transition:all 0.2s;
-  }
-  .sopt.sel { border-color:var(--green); background:#f2fce5; }
-  .sopt-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-  .g1 { background:#e0f0c0; }
-  .g2 { background:#c8e0ff; }
-  .g3 { background:#ffe0c0; }
-  .sopt-info { flex:1; }
-  .sopt-name { font-size:13px; font-weight:700; color:var(--dark); }
-  .sopt-price { font-size:11px; color:var(--green-dark); font-weight:700; margin-top:2px; }
-  .sopt-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--grey-light); transition:all 0.2s; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .sopt.sel .sopt-check { background:var(--green); border-color:var(--green); color:white; font-size:11px; }
-  .sopt.sel .sopt-check::after { content:'ÃÂ¢ÃÂÃÂ'; }
+.tslots { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-bottom: 14px; }
+.tslot {
+  background: white; border: 2px solid var(--grey-light); border-radius: 12px;
+  padding: 9px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 700;
+  transition: all 0.2s; color: var(--dark);
+}
+.tslot.sel { background: var(--green); border-color: var(--green); color: white; }
+.tslot.na { color: var(--grey-light); cursor: not-allowed; background: #f5f5f5; }
 
-  .slabel { font-size:11px; font-weight:700; color:var(--dark); margin-bottom:7px; text-transform:uppercase; letter-spacing:0.5px; }
-  .sgrid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:18px; }
-  .chip {
-    background:white; border:2px solid var(--grey-light); border-radius:var(--radius-sm);
-    padding:11px; text-align:center; cursor:pointer; font-size:11px; font-weight:700;
-    color:var(--dark); transition:all 0.2s;
-  }
-  .chip.sel { border-color:var(--green); background:#f2fce5; color:var(--green-dark); }
-  .chip small { display:block; font-size:9px; font-weight:500; color:var(--grey); margin-top:2px; }
+/* RECAP */
+.recap-card { background: white; border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 20px rgba(20,20,15,0.08); margin-bottom: 14px; }
+.rrow { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--grey-light); }
+.rrow:last-child { border-bottom: none; padding-bottom: 0; }
+.rk { font-size: 11px; color: var(--grey); font-weight: 600; }
+.rv { font-size: 12px; font-weight: 700; color: var(--dark); }
+.rv.big { font-size: 20px; font-weight: 800; color: var(--dark-green); }
+.snote { font-size: 10px; color: var(--grey); text-align: center; margin-bottom: 14px; line-height: 1.6; }
 
-  .flabel { font-size:10px; font-weight:700; color:var(--dark); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
-  .finput {
-    width:100%; padding:13px 14px; border:2px solid var(--grey-light); border-radius:var(--radius-sm);
-    font-family:'Montserrat',sans-serif; font-size:13px; font-weight:600;
-    color:var(--dark); background:white; outline:none; transition:border-color 0.2s;
-    margin-bottom:12px;
-  }
-  .finput:focus { border-color:var(--green); }
-  .finput::placeholder { color:var(--grey); font-weight:500; }
+/* BOUTONS */
+.btn-p {
+  width: 100%; background: var(--green); color: white; border: none;
+  border-radius: var(--radius); padding: 16px; font-size: 15px; font-weight: 800;
+  font-family: 'Montserrat', sans-serif; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(125,181,50,0.35); transition: all 0.15s; margin-top: 8px;
+}
+.btn-p:active { transform: scale(0.98); box-shadow: none; }
+.btn-s {
+  width: 100%; background: white; color: var(--dark); border: 2px solid var(--grey-light);
+  border-radius: var(--radius); padding: 14px; font-size: 13px; font-weight: 700;
+  font-family: 'Montserrat', sans-serif; cursor: pointer; transition: all 0.15s; margin-top: 8px;
+}
 
-  .clist { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
-  .citem {
-    background:white; border:2px solid var(--grey-light); border-radius:var(--radius-sm);
-    padding:11px 13px; cursor:pointer; display:flex; align-items:center; gap:11px;
-    transition:all 0.2s;
-  }
-  .citem.on { border-color:#b0d870; background:#fafff5; }
-  .cbox { width:18px; height:18px; border-radius:5px; border:2px solid var(--grey-light); flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
-  .citem.on .cbox { background:var(--green); border-color:var(--green); color:white; font-size:10px; }
-  .citem.on .cbox::after { content:'ÃÂ¢ÃÂÃÂ'; }
-  .ctext { font-size:11px; font-weight:600; color:var(--dark); flex:1; }
-  .cbadge { font-size:9px; font-weight:800; padding:2px 7px; border-radius:5px; white-space:nowrap; }
-  .cbadge.red { color:#c05000; background:#ffeed0; }
-  .cbadge.ok { color:var(--green-dark); background:#dff0c0; }
+/* -- SUCCESS -- */
+#success {
+  background: var(--cream); align-items: center; justify-content: center;
+  padding: 28px; text-align: center; overflow-y: auto;
+}
+.suc-circle {
+  width: 96px; height: 96px; background: linear-gradient(135deg, var(--green), var(--dark-green));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 22px; box-shadow: var(--shadow);
+}
+.suc-circle svg { width: 48px; height: 48px; fill: white; }
+.suc-title { font-size: 24px; font-weight: 800; margin-bottom: 7px; }
+.suc-sub { font-size: 13px; color: var(--grey); font-weight: 500; line-height: 1.6; margin-bottom: 26px; }
+.suc-card { background: white; border-radius: var(--radius); padding: 18px; box-shadow: 0 4px 20px rgba(20,20,15,0.08); width: 100%; margin-bottom: 22px; text-align: left; }
+.ref-label { font-size: 10px; color: var(--grey); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.ref-num { font-size: 22px; font-weight: 800; color: var(--dark-green); letter-spacing: 2px; margin-bottom: 14px; }
+.contact-note { font-size: 10px; color: var(--grey); text-align: center; margin-bottom: 16px; }
 
-  .cal { background:white; border-radius:var(--radius); padding:14px; box-shadow:var(--shadow-card); margin-bottom:14px; }
-  .cal-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  .cal-title { font-size:14px; font-weight:800; }
-  .cal-nav-btn { width:30px; height:30px; border-radius:9px; background:var(--grey-light); border:none; cursor:pointer; font-size:15px; }
-  .cal-dow { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:9px; font-weight:800; color:var(--grey); margin-bottom:5px; text-transform:uppercase; }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-  .cday { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; border-radius:9px; cursor:pointer; transition:all 0.15s; }
-  .cday:hover:not(.dis):not(.emp) { background:#e0f0c0; }
-  .cday.sel { background:var(--green); color:white; }
-  .cday.dis { color:var(--grey-light); cursor:not-allowed; }
-  .cday.emp { cursor:default; }
-
-  .tslots { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
-  .tslot {
-    background:white; border:2px solid var(--grey-light); border-radius:var(--radius-sm);
-    padding:9px; text-align:center; cursor:pointer; font-size:12px; font-weight:700;
-    transition:all 0.2s; color:var(--dark);
-  }
-  .tslot.sel { background:var(--green); border-color:var(--green); color:white; }
-  .tslot.na { color:var(--grey-light); cursor:not-allowed; background:#f5f5f5; }
-
-  .scard2 { background:white; border-radius:var(--radius); padding:16px; box-shadow:var(--shadow-card); margin-bottom:14px; }
-  .sr { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--grey-light); }
-  .sr:last-child { border-bottom:none; padding-bottom:0; }
-  .sk { font-size:11px; color:var(--grey); font-weight:600; }
-  .sv { font-size:12px; font-weight:700; color:var(--dark); }
-  .sv.big { font-size:20px; font-weight:800; color:var(--green-dark); }
-  .snote { font-size:10px; color:var(--grey); text-align:center; margin-bottom:14px; line-height:1.6; }
-
-  .tva-note { font-size:10px; color:var(--grey); font-weight:500; text-align:center; margin-top:6px; }
-
-  .btn-p {
-    width:100%; background:var(--green); color:white; border:none;
-    border-radius:var(--radius); padding:16px; font-size:15px; font-weight:800;
-    font-family:'Montserrat',sans-serif; cursor:pointer;
-    box-shadow:0 6px 20px rgba(125,181,50,0.35); transition:all 0.15s;
-    margin-top:8px;
-  }
-  .btn-p:active { transform:scale(0.98); box-shadow:none; }
-  .btn-s {
-    width:100%; background:white; color:var(--dark); border:2px solid var(--grey-light);
-    border-radius:var(--radius); padding:14px; font-size:13px; font-weight:700;
-    font-family:'Montserrat',sans-serif; cursor:pointer; transition:all 0.15s; margin-top:8px;
-  }
-
-  /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SUCCESS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-  #success { background:var(--cream); align-items:center; justify-content:center; padding:28px; text-align:center; overflow-y:auto; }
-  .suc-anim { width:96px; height:96px; background:linear-gradient(135deg,var(--green),var(--green-dark)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:44px; margin:0 auto 22px; box-shadow:var(--shadow); animation:pop 0.5s ease; color:white; }
-  .suc-title { font-size:24px; font-weight:800; color:var(--dark); margin-bottom:7px; }
-  .suc-sub { font-size:13px; color:var(--grey); font-weight:500; line-height:1.6; margin-bottom:26px; }
-  .suc-card { background:white; border-radius:var(--radius); padding:18px; box-shadow:var(--shadow-card); width:100%; margin-bottom:22px; }
-  .suc-ref-label { font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
-  .suc-ref-num { font-size:22px; font-weight:800; color:var(--green-dark); letter-spacing:2px; margin-bottom:14px; }
-
-  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes pop { 0%{transform:scale(0.4);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pop { 0%{transform:scale(0.4);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+#splash .splash-logo-box { animation: fadeUp 0.7s ease both; }
+#splash h1 { animation: fadeUp 0.7s 0.1s ease both; opacity: 0; }
+#splash .splash-tagline { animation: fadeUp 0.7s 0.2s ease both; opacity: 0; }
+#splash .splash-btn { animation: fadeUp 0.7s 0.3s ease both; opacity: 0; }
+.suc-circle { animation: pop 0.5s ease both; }
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="status-bar">
-    <div class="notch"></div>
-    <span>9:41</span>
-    <div class="status-icons"><span>ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ</span><span> WiFi</span><span> ÃÂ°ÃÂÃÂÃÂ</span></div>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <div class="splash-logo-box">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26 8C18 8 10 16 10 26c0 4 2 8 4 10 2-6 6-10 12-12-4 4-6 8-6 14h12c0-6-2-10-6-14 6 2 10 6 12 12 2-2 4-6 4-10 0-10-8-18-16-18z" fill="#7DB532"/>
+      <path d="M20 44h12v-4H20v4z" fill="#5a8e1e"/>
+    </svg>
+  </div>
+  <h1>Novogarden</h1>
+  <p class="sub">Tonte &agrave; la demande</p>
+  <p class="splash-tagline">Votre pelouse tondue &agrave; petit prix,<br>sans bouger le petit doigt !</p>
+  <p class="splash-zone">Orne (61) &middot; Mayenne (53) &middot; Cher (18)</p>
+  <button class="splash-btn" onclick="goTo('home')">Commencer</button>
+  <div class="grass"></div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div class="home-header">
+    <div class="home-header-top">
+      <div class="logo-row">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M14 4C9 4 5 8 5 14c0 2 1 4 2 5 1-3 3-5 7-6-2 2-3 4-3 7h6c0-3-1-5-3-7 4 1 6 3 7 6 1-1 2-3 2-5 0-6-4-10-9-10z" fill="white"/></svg>
+        <span class="logo-name">Novogarden</span>
+      </div>
+      <div class="notif-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      </div>
+    </div>
+    <div class="greeting">Bonjour !</div>
+    <div class="home-title">Quel service<br>souhaitez-vous ?</div>
   </div>
 
-  <!-- SPLASH -->
-  <div class="screen active" id="splash">
-    <div class="splash-logo">
-      <div class="logo-box">ÃÂ°ÃÂÃÂÃÂ¿</div>
-      <h1>Novogarden</h1>
-      <p>Tonte ÃÂÃÂ  la demande</p>
+  <div class="home-body">
+    <div class="promo">
+      <div class="promo-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      </div>
+      <div>
+        <p>Beta-test mars 2026</p>
+        <p>Reservez maintenant &mdash; tonte des avril !</p>
+      </div>
     </div>
-    <p class="splash-tagline">Votre pelouse tondue ÃÂÃÂ  petit prix,<br>sans que vous bougiez le petit doigt !</p>
-    <p class="splash-zone">ÃÂ°ÃÂÃÂÃÂºÃÂ¯ÃÂ¸ÃÂ Orne (61) ÃÂÃÂ· Mayenne (53) ÃÂÃÂ· Cher (18)</p>
-    <button class="splash-btn" onclick="goTo('home')">Commencer ÃÂ¢ÃÂÃÂ</button>
-    <div class="splash-grass"></div>
+
+    <div class="sect">Nos formules</div>
+    <div class="cards">
+      <div class="card c1" onclick="startBooking(1)">
+        <div class="card-corner"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="#7DB532"><path d="M17 8C8 8 3 14.5 3 19c2-2 4-3 6-3-2 1-3 3-3 5h12c0-2-1-4-3-5 2 0 4 1 6 3 0-4.5-5-11-4-11z"/></svg>
+        </div>
+        <div class="card-label">Pack Solo</div>
+        <div class="card-name">1 Tonte de pelouse</div>
+        <div class="card-desc">Une tonte ponctuelle, sans engagement. Ideal pour un entretien occasionnel.</div>
+        <div class="card-price">A partir de 29,90&euro; <small>/passage</small></div>
+        <div class="card-tags"><span class="tag g">Sans abonnement</span><span class="tag">Jusqu'a 67&euro; / 7000m&sup2;</span></div>
+      </div>
+      <div class="card c2" onclick="startBooking(2)">
+        <div class="card-corner"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="#5a8e1e"><path d="M12 3C6.48 3 2 7.48 2 13c0 2.76 1.12 5.26 2.93 7.07l1.41-1.41C4.88 17.2 4 15.21 4 13c0-4.42 3.58-8 8-8s8 3.58 8 8c0 2.21-.88 4.2-2.34 5.66l1.41 1.41C20.88 18.26 22 15.76 22 13c0-5.52-4.48-10-10-10z"/><path d="M12 7c-3.31 0-6 2.69-6 6 0 1.66.67 3.16 1.76 4.24l1.42-1.42C8.43 15.09 8 14.1 8 13c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.1-.43 2.09-1.17 2.83l1.42 1.42C17.33 16.16 18 14.66 18 13c0-3.31-2.69-6-6-6z"/><circle cx="12" cy="13" r="2"/></svg>
+        </div>
+        <div class="card-label">Pack Essentiel</div>
+        <div class="card-name">5 Tontes de pelouse</div>
+        <div class="card-desc">5 passages planifies pour une pelouse impeccable tout au long de la saison.</div>
+        <div class="card-price">A partir de 130&euro; <small>&mdash; 5 passages</small></div>
+        <div class="card-tags"><span class="tag g">5 passages</span><span class="tag">Jusqu'a 265&euro; / 7000m&sup2;</span></div>
+      </div>
+      <div class="card c3" onclick="startBooking(3)">
+        <div class="card-corner"></div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="#f0a030"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        </div>
+        <div class="card-label">Pack Serenite</div>
+        <div class="card-name">10 Tontes de pelouse</div>
+        <div class="card-desc">La formule complete pour une pelouse parfaite toute l'annee. Meilleur tarif garanti.</div>
+        <div class="card-price">A partir de 232&euro; <small>&mdash; 10 passages</small></div>
+        <div class="card-tags"><span class="tag g">10 passages</span><span class="tag">Jusqu'a 472&euro; / 7000m&sup2;</span></div>
+      </div>
+    </div>
+
+    <div class="sect">Tarifs TTC par surface</div>
+    <div class="tarif-wrap">
+      <div class="tarif-head"><div>Surface</div><div>Solo</div><div>Essentiel</div><div>Serenite</div></div>
+      <div class="tarif-row"><div>0 &ndash; 500 m&sup2;</div><div class="tp">29,90&euro;</div><div class="tp">130&euro;</div><div class="tp">232&euro;</div></div>
+      <div class="tarif-row"><div>500 &ndash; 1500 m&sup2;</div><div class="tp">39&euro;</div><div class="tp">175&euro;</div><div class="tp">312&euro;</div></div>
+      <div class="tarif-row"><div>1500 &ndash; 3000 m&sup2;</div><div class="tp">49&euro;</div><div class="tp">220&euro;</div><div class="tp">392&euro;</div></div>
+      <div class="tarif-row"><div>3000 &ndash; 7000 m&sup2;</div><div class="tp">67&euro;</div><div class="tp">265&euro;</div><div class="tp">472&euro;</div></div>
+      <div class="tarif-row"><div>+ de 7000 m&sup2;</div><div class="tp">Devis</div><div class="tp">Devis</div><div class="tp">Devis</div></div>
+    </div>
+    <p class="tva">TVA non applicable &middot; Reservation sur novogardenhub.com</p>
   </div>
 
-  <!-- HOME -->
-  <div class="screen" id="home">
-    <div class="home-header">
-      <div class="home-header-top">
-        <div class="home-logo"><span>ÃÂ°ÃÂÃÂÃÂ¿</span><span>Novogarden</span></div>
-        <div class="notif-btn">ÃÂ°ÃÂÃÂÃÂ</div>
-      </div>
-      <div class="home-greeting">Bonjour ÃÂ°ÃÂÃÂÃÂ</div>
-      <div class="home-title">Quel service<br>souhaitez-vous ?</div>
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span class="nav-label">Accueil</span>
     </div>
-    <div class="home-body">
-      <div class="promo-band">
-        <div class="em">ÃÂ°ÃÂÃÂÃÂ±</div>
-        <div>
-          <p>BÃÂÃÂªta-test mars 2026</p>
-          <p>RÃÂÃÂ©servez maintenant ÃÂ¢ÃÂÃÂ tonte dÃÂÃÂ¨s avril !</p>
-        </div>
-      </div>
-
-      <div class="sect">Nos formules</div>
-      <div class="cards-col">
-        <div class="scard" onclick="startBooking(1)">
-          <div class="corner c1"></div><div class="cem">ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ</div>
-          <div class="clabel">Pack Solo</div>
-          <div class="cname">1 Tonte de pelouse</div>
-          <div class="cdesc">Une tonte ponctuelle, sans engagement. IdÃÂÃÂ©al pour un entretien occasionnel.</div>
-          <div class="cprice">ÃÂÃÂ partir de 29,90ÃÂ¢ÃÂÃÂ¬ <small>/passage</small></div>
-          <div class="ctags"><span class="tag g">Sans abonnement</span><span class="tag">Jusqu'ÃÂÃÂ  67ÃÂ¢ÃÂÃÂ¬ / 7000mÃÂÃÂ²</span></div>
-        </div>
-        <div class="scard" onclick="startBooking(2)">
-          <div class="corner c2"></div><div class="cem">ÃÂ°ÃÂÃÂÃÂ¿</div>
-          <div class="clabel">Pack Essentiel</div>
-          <div class="cname">5 Tontes de pelouse</div>
-          <div class="cdesc">5 passages planifiÃÂÃÂ©s pour une pelouse impeccable tout au long de la saison.</div>
-          <div class="cprice">ÃÂÃÂ partir de 130ÃÂ¢ÃÂÃÂ¬ <small>ÃÂ¢ÃÂÃÂ 5 passages</small></div>
-          <div class="ctags"><span class="tag g">5 passages</span><span class="tag">Jusqu'ÃÂÃÂ  265ÃÂ¢ÃÂÃÂ¬ / 7000mÃÂÃÂ²</span></div>
-        </div>
-        <div class="scard" onclick="startBooking(3)">
-          <div class="corner c3"></div><div class="cem">ÃÂ°ÃÂÃÂÃÂ</div>
-          <div class="clabel">Pack SÃÂÃÂ©rÃÂÃÂ©nitÃÂÃÂ©</div>
-          <div class="cname">10 Tontes de pelouse</div>
-          <div class="cdesc">La formule complÃÂÃÂ¨te pour une pelouse parfaite toute l'annÃÂÃÂ©e. Meilleur tarif garanti.</div>
-          <div class="cprice">ÃÂÃÂ partir de 232ÃÂ¢ÃÂÃÂ¬ <small>ÃÂ¢ÃÂÃÂ 10 passages</small></div>
-          <div class="ctags"><span class="tag g">10 passages</span><span class="tag">Jusqu'ÃÂÃÂ  472ÃÂ¢ÃÂÃÂ¬ / 7000mÃÂÃÂ²</span></div>
-        </div>
-      </div>
-
-      <div class="sect">Tarifs TTC par surface</div>
-      <div class="tarif-wrap">
-        <div class="tarif-head">
-          <div>Surface</div>
-          <div>Pack Solo</div>
-          <div>Pack Essentiel</div>
-          <div>Pack SÃÂÃÂ©rÃÂÃÂ©nitÃÂÃÂ©</div>
-        </div>
-        <div class="tarif-row">
-          <div class="tc">0 ÃÂ¢ÃÂÃÂ 500 mÃÂÃÂ²</div>
-          <div class="tc p">29,90ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">130ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">232ÃÂ¢ÃÂÃÂ¬</div>
-        </div>
-        <div class="tarif-row">
-          <div class="tc">500 ÃÂ¢ÃÂÃÂ 1500 mÃÂÃÂ²</div>
-          <div class="tc p">39ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">175ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">312ÃÂ¢ÃÂÃÂ¬</div>
-        </div>
-        <div class="tarif-row">
-          <div class="tc">1500 ÃÂ¢ÃÂÃÂ 3000 mÃÂÃÂ²</div>
-          <div class="tc p">49ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">220ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">392ÃÂ¢ÃÂÃÂ¬</div>
-        </div>
-        <div class="tarif-row">
-          <div class="tc">3000 ÃÂ¢ÃÂÃÂ 7000 mÃÂÃÂ²</div>
-          <div class="tc p">67ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">265ÃÂ¢ÃÂÃÂ¬</div>
-          <div class="tc p">472ÃÂ¢ÃÂÃÂ¬</div>
-        </div>
-        <div class="tarif-row">
-          <div class="tc">+ de 7000 mÃÂÃÂ²</div>
-          <div class="tc p">Devis</div>
-          <div class="tc p">Devis</div>
-          <div class="tc p">Devis</div>
-        </div>
-      </div>
-      <p class="tva-note">TVA non applicable ÃÂÃÂ· RÃÂÃÂ©servation sur novogardenhub.com</p>
+    <div class="nav-item" onclick="startBooking(1)">
+      <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      <span class="nav-label">Reserver</span>
     </div>
-    <div class="bottom-nav">
-      <div class="nav-item active"><div class="nav-icon">ÃÂ°ÃÂÃÂÃÂ </div><div class="nav-label">Accueil</div></div>
-      <div class="nav-item" onclick="startBooking(1)"><div class="nav-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="nav-label">RÃÂÃÂ©server</div></div>
-      <div class="nav-item"><div class="nav-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="nav-label">Mes tontes</div></div>
-      <div class="nav-item"><div class="nav-icon">ÃÂ°ÃÂÃÂÃÂ¤</div><div class="nav-label">Profil</div></div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+      <span class="nav-label">Mes tontes</span>
     </div>
-  </div>
-
-  <!-- BOOKING -->
-  <div class="screen" id="booking">
-    <div class="bheader">
-      <button class="back-btn" onclick="goTo('home')">ÃÂ¢ÃÂÃÂ</button>
-      <h2>RÃÂÃÂ©servation</h2>
-      <p id="bsub">Choisissez votre formule</p>
-      <div class="prog">
-        <div class="ps done" id="ps1"></div>
-        <div class="ps" id="ps2"></div>
-        <div class="ps" id="ps3"></div>
-        <div class="ps" id="ps4"></div>
-      </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span class="nav-label">Profil</span>
     </div>
-    <div class="bcontent">
-
-      <!-- Step 1 : Formule -->
-      <div class="step active" id="s1">
-        <div class="st">Votre formule</div>
-        <div class="ss">SÃÂÃÂ©lectionnez la prestation souhaitÃÂÃÂ©e</div>
-        <div class="sopts">
-          <div class="sopt" id="o1" onclick="selSvc(1)">
-            <div class="sopt-icon g1">ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ</div>
-            <div class="sopt-info"><div class="sopt-name">Pack Solo ÃÂ¢ÃÂÃÂ 1 tonte</div><div class="sopt-price">ÃÂÃÂ partir de 29,90ÃÂ¢ÃÂÃÂ¬</div></div>
-            <div class="sopt-check"></div>
-          </div>
-          <div class="sopt" id="o2" onclick="selSvc(2)">
-            <div class="sopt-icon g2">ÃÂ°ÃÂÃÂÃÂ¿</div>
-            <div class="sopt-info"><div class="sopt-name">Pack Essentiel ÃÂ¢ÃÂÃÂ 5 tontes</div><div class="sopt-price">ÃÂÃÂ partir de 130ÃÂ¢ÃÂÃÂ¬</div></div>
-            <div class="sopt-check"></div>
-          </div>
-          <div class="sopt" id="o3" onclick="selSvc(3)">
-            <div class="sopt-icon g3">ÃÂ°ÃÂÃÂÃÂ</div>
-            <div class="sopt-info"><div class="sopt-name">Pack SÃÂÃÂ©rÃÂÃÂ©nitÃÂÃÂ© ÃÂ¢ÃÂÃÂ 10 tontes</div><div class="sopt-price">ÃÂÃÂ partir de 232ÃÂ¢ÃÂÃÂ¬</div></div>
-            <div class="sopt-check"></div>
-          </div>
-        </div>
-        <button class="btn-p" onclick="gostep(2)" style="margin-top:20px">Continuer ÃÂ¢ÃÂÃÂ</button>
-      </div>
-
-      <!-- Step 2 : Terrain & conditions -->
-      <div class="step" id="s2">
-        <div class="st">Votre terrain</div>
-        <div class="ss">Surface, adresse et conditions d'accÃÂÃÂ¨s</div>
-        <div class="slabel">Surface du terrain</div>
-        <div class="sgrid">
-          <div class="chip" onclick="selSurf(this,'0-500')">0 ÃÂ¢ÃÂÃÂ 500 mÃÂÃÂ²<small>Petit jardin</small></div>
-          <div class="chip" onclick="selSurf(this,'500-1500')">500 ÃÂ¢ÃÂÃÂ 1500 mÃÂÃÂ²<small>Jardin moyen</small></div>
-          <div class="chip" onclick="selSurf(this,'1500-3000')">1500 ÃÂ¢ÃÂÃÂ 3000 mÃÂÃÂ²<small>Grand jardin</small></div>
-          <div class="chip" onclick="selSurf(this,'3000-7000')">3000 ÃÂ¢ÃÂÃÂ 7000 mÃÂÃÂ²<small>TrÃÂÃÂ¨s grand</small></div>
-        </div>
-        <label class="flabel">Adresse</label>
-        <input class="finput" type="text" placeholder="Ex : 12 rue des Hortensias" id="addr">
-        <label class="flabel">Ville</label>
-        <input class="finput" type="text" placeholder="Flers, Gorron, AlenÃÂÃÂ§onÃÂ¢ÃÂÃÂ¦" id="city">
-
-        <button class="btn-p" onclick="gostep(3)">Continuer ÃÂ¢ÃÂÃÂ</button>
-        <button class="btn-s" onclick="gostep(1)">ÃÂ¢ÃÂÃÂ Retour</button>
-      </div>
-
-      <!-- Step 3 : Date & heure -->
-      <div class="step" id="s3">
-        <div class="st">Date & Heure</div>
-        <div class="ss">Choisissez votre crÃÂÃÂ©neau d'intervention</div>
-        <div class="cal">
-          <div class="cal-hd">
-            <button class="cal-nav-btn">ÃÂ¢ÃÂÃÂ¹</button>
-            <div class="cal-title">Avril 2026</div>
-            <button class="cal-nav-btn">ÃÂ¢ÃÂÃÂº</button>
-          </div>
-          <div class="cal-dow"><div>Lu</div><div>Ma</div><div>Me</div><div>Je</div><div>Ve</div><div>Sa</div><div>Di</div></div>
-          <div class="cal-grid" id="cg"></div>
-        </div>
-        <div class="slabel" style="margin-bottom:9px">CrÃÂÃÂ©neaux disponibles</div>
-        <div class="tslots">
-          <div class="tslot" onclick="selTime(this)">8hÃÂ¢ÃÂÃÂ10h</div>
-          <div class="tslot" onclick="selTime(this)">10hÃÂ¢ÃÂÃÂ12h</div>
-          <div class="tslot na">12hÃÂ¢ÃÂÃÂ14h</div>
-          <div class="tslot" onclick="selTime(this)">14hÃÂ¢ÃÂÃÂ16h</div>
-          <div class="tslot" onclick="selTime(this)">16hÃÂ¢ÃÂÃÂ18h</div>
-          <div class="tslot na">18hÃÂ¢ÃÂÃÂ20h</div>
-        </div>
-        <button class="btn-p" onclick="gostep(4)" style="margin-top:18px">Continuer ÃÂ¢ÃÂÃÂ</button>
-        <button class="btn-s" onclick="gostep(2)">ÃÂ¢ÃÂÃÂ Retour</button>
-      </div>
-
-      <!-- Step 4 : RÃÂÃÂ©cap -->
-      <div class="step" id="s4">
-        <div class="st">RÃÂÃÂ©capitulatif</div>
-        <div class="ss">VÃÂÃÂ©rifiez votre commande avant de confirmer</div>
-        <div class="scard2">
-          <div class="sr"><span class="sk">Formule</span><span class="sv" id="sum-svc">ÃÂ¢ÃÂÃÂ</span></div>
-          <div class="sr"><span class="sk">Surface</span><span class="sv" id="sum-surf">ÃÂ¢ÃÂÃÂ</span></div>
-          <div class="sr"><span class="sk">Adresse</span><span class="sv" id="sum-addr">ÃÂ¢ÃÂÃÂ</span></div>
-          <div class="sr"><span class="sk">Date</span><span class="sv" id="sum-date">ÃÂ¢ÃÂÃÂ</span></div>
-          <div class="sr"><span class="sk">CrÃÂÃÂ©neau</span><span class="sv" id="sum-time">ÃÂ¢ÃÂÃÂ</span></div>
-          <div class="sr"><span class="sk">Prix estimÃÂÃÂ© TTC</span><span class="sv big" id="sum-price">29,90ÃÂ¢ÃÂÃÂ¬</span></div>
-        </div>
-        <p class="snote">Prix exact confirmÃÂÃÂ© aprÃÂÃÂ¨s vÃÂÃÂ©rification sur site.<br>TVA non applicable. Paiement aprÃÂÃÂ¨s la prestation.</p>
-        <button class="btn-p" onclick="doConfirm()">ÃÂ¢ÃÂÃÂ Confirmer la rÃÂÃÂ©servation</button>
-        <button class="btn-s" onclick="gostep(3)">ÃÂ¢ÃÂÃÂ Retour</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SUCCESS -->
-  <div class="screen" id="success">
-    <div class="suc-anim">ÃÂ¢ÃÂÃÂ</div>
-    <div class="suc-title">RÃÂÃÂ©servation confirmÃÂÃÂ©e !</div>
-    <div class="suc-sub">Votre demande a bien ÃÂÃÂ©tÃÂÃÂ© enregistrÃÂÃÂ©e.<br>Notre ÃÂÃÂ©quipe vous contactera sous 24h.</div>
-    <div class="suc-card">
-      <div class="suc-ref-label">NumÃÂÃÂ©ro de rÃÂÃÂ©servation</div>
-      <div class="suc-ref-num" id="refnum">NGH-2026-0001</div>
-      <div class="sr"><span class="sk">Formule</span><span class="sv" id="sc-svc">ÃÂ¢ÃÂÃÂ</span></div>
-      <div class="sr"><span class="sk">Surface</span><span class="sv" id="sc-surf">ÃÂ¢ÃÂÃÂ</span></div>
-      <div class="sr"><span class="sk">Date</span><span class="sv" id="sc-date">ÃÂ¢ÃÂÃÂ</span></div>
-      <div class="sr"><span class="sk">Montant estimÃÂÃÂ©</span><span class="sv" style="color:var(--green-dark)" id="sc-price">ÃÂ¢ÃÂÃÂ</span></div>
-    </div>
-    <p style="font-size:10px;color:var(--grey);text-align:center;margin-bottom:16px">ÃÂ°ÃÂÃÂÃÂ 06.35.58.47.00 ÃÂÃÂ· novogardenhub.com</p>
-    <button class="btn-p" onclick="goTo('home')">Retour ÃÂÃÂ  l'accueil</button>
   </div>
 </div>
 
-<script>
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ TARIFS exacts selon grille tarifaire Novogarden ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
-const SVCS = ['','Pack Solo ÃÂ¢ÃÂÃÂ 1 tonte','Pack Essentiel ÃÂ¢ÃÂÃÂ 5 tontes','Pack SÃÂÃÂ©rÃÂÃÂ©nitÃÂÃÂ© ÃÂ¢ÃÂÃÂ 10 tontes'];
-const PRICES = {
-  1: { '0-500':'29,90ÃÂ¢ÃÂÃÂ¬', '500-1500':'39ÃÂ¢ÃÂÃÂ¬ TTC', '1500-3000':'49ÃÂ¢ÃÂÃÂ¬ TTC', '3000-7000':'67ÃÂ¢ÃÂÃÂ¬ TTC' },
-  2: { '0-500':'130ÃÂ¢ÃÂÃÂ¬',   '500-1500':'175ÃÂ¢ÃÂÃÂ¬ TTC','1500-3000':'220ÃÂ¢ÃÂÃÂ¬ TTC','3000-7000':'265ÃÂ¢ÃÂÃÂ¬ TTC' },
-  3: { '0-500':'232ÃÂ¢ÃÂÃÂ¬',   '500-1500':'312ÃÂ¢ÃÂÃÂ¬ TTC','1500-3000':'392ÃÂ¢ÃÂÃÂ¬ TTC','3000-7000':'472ÃÂ¢ÃÂÃÂ¬ TTC' }
-};
+<!-- BOOKING -->
+<div class="screen" id="booking">
+  <div class="bheader">
+    <button class="back-btn" onclick="goTo('home')">&#8592;</button>
+    <h2>Reservation</h2>
+    <p id="bsub">Choisissez votre formule</p>
+    <div class="progress">
+      <div class="ps done" id="ps1"></div>
+      <div class="ps" id="ps2"></div>
+      <div class="ps" id="ps3"></div>
+      <div class="ps" id="ps4"></div>
+    </div>
+  </div>
+  <div class="bcontent">
+    <!-- Step 1 -->
+    <div class="step active" id="s1">
+      <div class="st">Votre formule</div>
+      <div class="ss">Selectionnez la prestation souhaitee</div>
+      <div class="opts">
+        <div class="opt" id="o1" onclick="selSvc(1)">
+          <div class="opt-icon g1"><svg viewBox="0 0 24 24"><path d="M17 8C8 8 3 14.5 3 19c2-2 4-3 6-3-2 1-3 3-3 5h12c0-2-1-4-3-5 2 0 4 1 6 3 0-4.5-5-11-4-11z" fill="#7DB532"/></svg></div>
+          <div><div class="opt-name">Pack Solo &mdash; 1 tonte</div><div class="opt-price">A partir de 29,90&euro;</div></div>
+          <div class="opt-check"></div>
+        </div>
+        <div class="opt" id="o2" onclick="selSvc(2)">
+          <div class="opt-icon g2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#5a8e1e" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#5a8e1e"/></svg></div>
+          <div><div class="opt-name">Pack Essentiel &mdash; 5 tontes</div><div class="opt-price">A partir de 130&euro;</div></div>
+          <div class="opt-check"></div>
+        </div>
+        <div class="opt" id="o3" onclick="selSvc(3)">
+          <div class="opt-icon g3"><svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#f0a030"/></svg></div>
+          <div><div class="opt-name">Pack Serenite &mdash; 10 tontes</div><div class="opt-price">A partir de 232&euro;</div></div>
+          <div class="opt-check"></div>
+        </div>
+      </div>
+      <button class="btn-p" onclick="gostep(2)" style="margin-top:20px">Continuer</button>
+    </div>
+    <!-- Step 2 -->
+    <div class="step" id="s2">
+      <div class="st">Votre terrain</div>
+      <div class="ss">Surface, adresse et conditions d'acces</div>
+      <div class="slabel">Surface du terrain</div>
+      <div class="sgrid">
+        <div class="chip" onclick="selSurf(this,'0-500')">0 &ndash; 500 m&sup2;<small>Petit jardin</small></div>
+        <div class="chip" onclick="selSurf(this,'500-1500')">500 &ndash; 1500 m&sup2;<small>Jardin moyen</small></div>
+        <div class="chip" onclick="selSurf(this,'1500-3000')">1500 &ndash; 3000 m&sup2;<small>Grand jardin</small></div>
+        <div class="chip" onclick="selSurf(this,'3000-7000')">3000 &ndash; 7000 m&sup2;<small>Tres grand</small></div>
+      </div>
+      <label class="flabel">Adresse</label>
+      <input class="finput" type="text" placeholder="Ex : 12 rue des Hortensias" id="addr">
+      <label class="flabel">Ville</label>
+      <input class="finput" type="text" placeholder="Flers, Gorron, Alencon..." id="city">
+      <button class="btn-p" onclick="gostep(3)">Continuer</button>
+      <button class="btn-s" onclick="gostep(1)">&#8592; Retour</button>
+    </div>
+    <!-- Step 3 -->
+    <div class="step" id="s3">
+      <div class="st">Date &amp; Heure</div>
+      <div class="ss">Choisissez votre creneau d'intervention</div>
+      <div class="cal">
+        <div class="cal-hd">
+          <span style="font-size:11px;color:var(--grey)">&#10094;</span>
+          <div class="cal-title">Avril 2026</div>
+          <span style="font-size:11px;color:var(--grey)">&#10095;</span>
+        </div>
+        <div class="cal-dows"><div>Lu</div><div>Ma</div><div>Me</div><div>Je</div><div>Ve</div><div>Sa</div><div>Di</div></div>
+        <div class="cal-grid" id="cg"></div>
+      </div>
+      <div class="slabel" style="margin-bottom:9px">Creneaux disponibles</div>
+      <div class="tslots">
+        <div class="tslot" onclick="selTime(this)">8h&ndash;10h</div>
+        <div class="tslot" onclick="selTime(this)">10h&ndash;12h</div>
+        <div class="tslot na">12h&ndash;14h</div>
+        <div class="tslot" onclick="selTime(this)">14h&ndash;16h</div>
+        <div class="tslot" onclick="selTime(this)">16h&ndash;18h</div>
+        <div class="tslot na">18h&ndash;20h</div>
+      </div>
+      <button class="btn-p" onclick="gostep(4)" style="margin-top:8px">Continuer</button>
+      <button class="btn-s" onclick="gostep(2)">&#8592; Retour</button>
+    </div>
+    <!-- Step 4 -->
+    <div class="step" id="s4">
+      <div class="st">Recapitulatif</div>
+      <div class="ss">Verifiez votre commande avant de confirmer</div>
+      <div class="recap-card">
+        <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sum-svc">&mdash;</span></div>
+        <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sum-surf">&mdash;</span></div>
+        <div class="rrow"><span class="rk">Adresse</span><span class="rv" id="sum-addr">&mdash;</span></div>
+        <div class="rrow"><span class="rk">Date</span><span class="rv" id="sum-date">&mdash;</span></div>
+        <div class="rrow"><span class="rk">Creneau</span><span class="rv" id="sum-time">&mdash;</span></div>
+        <div class="rrow"><span class="rk">Prix estime TTC</span><span class="rv big" id="sum-price">29,90&euro;</span></div>
+      </div>
+      <p class="snote">Prix exact confirme apres verification sur site.<br>TVA non applicable. Paiement apres la prestation.</p>
+      <button class="btn-p" onclick="doConfirm()">Confirmer la reservation</button>
+      <button class="btn-s" onclick="gostep(3)">&#8592; Retour</button>
+    </div>
+  </div>
+</div>
 
-let bk = { svc:1, surf:'', date:'', time:'' };
+<!-- SUCCESS -->
+<div class="screen" id="success">
+  <div class="suc-circle">
+    <svg viewBox="0 0 48 48"><path d="M20 34L10 24l2.83-2.83L20 28.34l15.17-15.17L38 16z"/></svg>
+  </div>
+  <div class="suc-title">Reservation confirmee !</div>
+  <div class="suc-sub">Votre demande a bien ete enregistree.<br>Notre equipe vous contactera sous 24h.</div>
+  <div class="suc-card">
+    <div class="ref-label">Numero de reservation</div>
+    <div class="ref-num" id="refnum">NGH-2026-0001</div>
+    <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sc-svc">&mdash;</span></div>
+    <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sc-surf">&mdash;</span></div>
+    <div class="rrow"><span class="rk">Date</span><span class="rv" id="sc-date">&mdash;</span></div>
+    <div class="rrow"><span class="rk">Montant estime</span><span class="rv" style="color:var(--dark-green)" id="sc-price">&mdash;</span></div>
+  </div>
+  <p class="contact-note">06.35.58.47.00 &middot; novogardenhub.com</p>
+  <button class="btn-p" onclick="goTo('home')">Retour a l'accueil</button>
+</div>
+
+<script>
+const SVCS = ['','Pack Solo &ndash; 1 tonte','Pack Essentiel &ndash; 5 tontes','Pack Serenite &ndash; 10 tontes'];
+const PRICES = {
+  1: {'0-500':'29,90&euro;','500-1500':'39&euro;','1500-3000':'49&euro;','3000-7000':'67&euro;'},
+  2: {'0-500':'130&euro;','500-1500':'175&euro;','1500-3000':'220&euro;','3000-7000':'265&euro;'},
+  3: {'0-500':'232&euro;','500-1500':'312&euro;','1500-3000':'392&euro;','3000-7000':'472&euro;'}
+};
+let bk = {svc:1, surf:'', date:'', time:''};
 
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
 function startBooking(n) { bk.svc=n; selSvc(n); goTo('booking'); showStep(1); }
-
 function selSvc(n) {
   bk.svc=n;
-  document.querySelectorAll('.sopt').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
   document.getElementById('o'+n).classList.add('sel');
 }
-
-function selSurf(el, v) {
+function selSurf(el,v) {
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel'); bk.surf=v;
 }
-
-
 function selTime(el) {
   document.querySelectorAll('.tslot').forEach(t=>t.classList.remove('sel'));
   el.classList.add('sel'); bk.time=el.textContent;
 }
-
 function showStep(n) {
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
-  for(let i=1;i<=4;i++) document.getElementById('ps'+i).classList.toggle('done', i<=n);
-  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et crÃÂÃÂ©neau','RÃÂÃÂ©capitulatif'];
+  for(let i=1;i<=4;i++) document.getElementById('ps'+i).classList.toggle('done',i<=n);
+  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et creneau','Recapitulatif'];
   document.getElementById('bsub').textContent=subs[n-1];
   document.querySelector('.bcontent').scrollTop=0;
 }
-
 function getPrice() {
-  return bk.surf ? (PRICES[bk.svc][bk.surf] || 'Sur devis') : 'ÃÂÃÂ partir de 29,90ÃÂ¢ÃÂÃÂ¬';
+  return bk.surf ? (PRICES[bk.svc][bk.surf]||'Sur devis') : 'A partir de 29,90&euro;';
 }
-
 function gostep(n) {
   if(n===4) {
     document.getElementById('sum-svc').textContent = SVCS[bk.svc];
-    document.getElementById('sum-surf').textContent = bk.surf ? bK.surf+' mÃÂÃÂ²' : 'ÃÂ¢ÃÂÃÂ';
+    document.getElementById('sum-surf').textContent = bk.surf ? bk.surf+' m&#178;' : '&mdash;';
     const a=document.getElementById('addr').value, c=document.getElementById('city').value;
-    document.getElementById('sum-addr').textContent = (a||c) ? [a,c].filter(Boolean).join(', ') : 'ÃÂ¢ÃÂÃÂ';
-    document.getElementById('sum-date').textContent = bk.date || 'ÃÂ¢ÃÂÃÂ';
-    document.getElementById('sum-time').textContent = bk.time || 'ÃÂ¢ÃÂÃÂ';
+    document.getElementById('sum-addr').textContent = (a||c) ? [a,c].filter(Boolean).join(', ') : '&mdash;';
+    document.getElementById('sum-date').textContent = bk.date || '&mdash;';
+    document.getElementById('sum-time').textContent = bk.time || '&mdash;';
     document.getElementById('sum-price').textContent = getPrice();
   }
   showStep(n);
 }
-
 function doConfirm() {
   const ref = 'NGH-2026-' + String(Math.floor(1000+Math.random()*8999)).padStart(4,'0');
   document.getElementById('refnum').textContent = ref;
   document.getElementById('sc-svc').textContent = SVCS[bk.svc];
-  document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' mÃÂÃÂ²' : 'ÃÂ¢ÃÂÃÂ';
-  document.getElementById('sc-date').textContent = bk.date || 'ÃÂ¢ÃÂÃÂ';
+  document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m&#178;' : '&mdash;';
+  document.getElementById('sc-date').textContent = bk.date || '&mdash;';
   document.getElementById('sc-price').textContent = getPrice();
   goTo('success');
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Calendrier Avril 2026 (commence Mercredi = offset 2) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// Calendrier Avril 2026 (commence Mercredi = offset 2)
 function buildCal() {
   const g=document.getElementById('cg'); g.innerHTML='';
-  for(let i=0;i<2;i++){const d=document.createElement('div');d.className='cday emp';g.appendChild(d);}
+  for(let i=0;i<2;i++){const d=document.createElement('div');d.className='cday';g.appendChild(d);}
   for(let d=1;d<=30;d++) {
     const div=document.createElement('div');
-    const isWeekend = ((d+2-1)%7 >= 5); // Sam=5, Dim=6
+    const isWeekend = ((d+1)%7>=5);
     div.className='cday'+(d<7?' dis':'')+(isWeekend?' dis':'');
     div.textContent=d;
     if(d>=7 && !isWeekend) div.onclick=function(){
@@ -658,18 +608,10 @@ function buildCal() {
 buildCal();
 selSvc(1);
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/novogarden-app/sw.js');
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
 }
 </script>
-<script>if ('serviceWorker' in navigator) {
-    // Tuer tous les anciens service workers et vider les caches
-    navigator.serviceWorker.getRegistrations().then(regs => {
-      regs.forEach(reg => reg.unregister());
-    });
-    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-    // Réenregistrer le nouveau SW
-    navigator.serviceWorker.register('/novogarden-app/sw.js');
-  }</script>
 </body>
 </html>
