@@ -1,4 +1,4 @@
-const CACHE_NAME = 'novogarden-v1';
+const CACHE_NAME = 'novogarden-v2';
 const ASSETS = [
   '/novogarden-app/',
   '/novogarden-app/index.html',
@@ -19,6 +19,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('/novogarden-app/')))
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
