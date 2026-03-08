@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=375, maximum-scale=375">
-<title>Novogarden – Réservation</title>
+<link rel="manifest" href="/novogarden-app/manifest.json">
+<meta name="theme-color" content="#7DB532">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Novogarden">
+<title>Novogarden â RÃ©servation</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -68,7 +73,7 @@
   .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
 
-  /* ── SPLASH ── */
+  /* ââ SPLASH ââ */
   #splash {
     background: linear-gradient(160deg, #8dc83a 0%, var(--green) 40%, var(--green-dark) 80%, #2e5a08 100%);
     align-items: center; justify-content: center;
@@ -113,7 +118,7 @@
   }
   .splash-btn:active { transform:scale(0.96); }
 
-  /* ── HOME ── */
+  /* ââ HOME ââ */
   #home { overflow-y:auto; }
   .home-header {
     background: linear-gradient(135deg, #8dc83a 0%, var(--green-dark) 100%);
@@ -169,7 +174,7 @@
   .tag { background:var(--grey-light); color:var(--dark); font-size:9px; font-weight:700; padding:3px 8px; border-radius:6px; }
   .tag.g { background:#e0f0c0; color:var(--green-dark); }
 
-  /* TARIFS TABLE - corrigée selon flyer */
+  /* TARIFS TABLE - corrigÃ©e selon flyer */
   .tarif-wrap { background:white; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-card); margin-bottom:24px; }
   .tarif-head { background:var(--green); color:white; display:grid; grid-template-columns:1.3fr 1fr 1.1fr 1.2fr; padding:9px 10px; font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
   .tarif-row { display:grid; grid-template-columns:1.3fr 1fr 1.1fr 1.2fr; padding:8px 10px; border-bottom:1px solid var(--grey-light); font-size:9.5px; }
@@ -187,7 +192,7 @@
   .nav-label { font-size:9px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; }
   .nav-item.active .nav-label { color:var(--green); }
 
-  /* ── BOOKING ── */
+  /* ââ BOOKING ââ */
   #booking { overflow-y:auto; }
   .bheader {
     background:var(--green); padding:48px 22px 24px; color:white; position:relative; flex-shrink:0;
@@ -228,7 +233,7 @@
   .sopt-price { font-size:11px; color:var(--green-dark); font-weight:700; margin-top:2px; }
   .sopt-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--grey-light); transition:all 0.2s; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .sopt.sel .sopt-check { background:var(--green); border-color:var(--green); color:white; font-size:11px; }
-  .sopt.sel .sopt-check::after { content:'✓'; }
+  .sopt.sel .sopt-check::after { content:'â'; }
 
   .slabel { font-size:11px; font-weight:700; color:var(--dark); margin-bottom:7px; text-transform:uppercase; letter-spacing:0.5px; }
   .sgrid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:18px; }
@@ -259,7 +264,7 @@
   .citem.on { border-color:#b0d870; background:#fafff5; }
   .cbox { width:18px; height:18px; border-radius:5px; border:2px solid var(--grey-light); flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
   .citem.on .cbox { background:var(--green); border-color:var(--green); color:white; font-size:10px; }
-  .citem.on .cbox::after { content:'✓'; }
+  .citem.on .cbox::after { content:'â'; }
   .ctext { font-size:11px; font-weight:600; color:var(--dark); flex:1; }
   .cbadge { font-size:9px; font-weight:800; padding:2px 7px; border-radius:5px; white-space:nowrap; }
   .cbadge.red { color:#c05000; background:#ffeed0; }
@@ -310,7 +315,7 @@
     font-family:'Montserrat',sans-serif; cursor:pointer; transition:all 0.15s; margin-top:8px;
   }
 
-  /* ── SUCCESS ── */
+  /* ââ SUCCESS ââ */
   #success { background:var(--cream); align-items:center; justify-content:center; padding:28px; text-align:center; overflow-y:auto; }
   .suc-anim { width:96px; height:96px; background:linear-gradient(135deg,var(--green),var(--green-dark)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:44px; margin:0 auto 22px; box-shadow:var(--shadow); animation:pop 0.5s ease; color:white; }
   .suc-title { font-size:24px; font-weight:800; color:var(--dark); margin-bottom:7px; }
@@ -328,19 +333,19 @@
   <div class="status-bar">
     <div class="notch"></div>
     <span>9:41</span>
-    <div class="status-icons"><span>●●●</span><span> WiFi</span><span> 🔋</span></div>
+    <div class="status-icons"><span>âââ</span><span> WiFi</span><span> ð</span></div>
   </div>
 
   <!-- SPLASH -->
   <div class="screen active" id="splash">
     <div class="splash-logo">
-      <div class="logo-box">🌿</div>
+      <div class="logo-box">ð¿</div>
       <h1>Novogarden</h1>
-      <p>Tonte à la demande</p>
+      <p>Tonte Ã  la demande</p>
     </div>
-    <p class="splash-tagline">Votre pelouse tondue à petit prix,<br>sans que vous bougiez le petit doigt !</p>
-    <p class="splash-zone">🗺️ Orne (61) · Mayenne (53) · Cher (18)</p>
-    <button class="splash-btn" onclick="goTo('home')">Commencer →</button>
+    <p class="splash-tagline">Votre pelouse tondue Ã  petit prix,<br>sans que vous bougiez le petit doigt !</p>
+    <p class="splash-zone">ðºï¸ Orne (61) Â· Mayenne (53) Â· Cher (18)</p>
+    <button class="splash-btn" onclick="goTo('home')">Commencer â</button>
     <div class="splash-grass"></div>
   </div>
 
@@ -348,46 +353,46 @@
   <div class="screen" id="home">
     <div class="home-header">
       <div class="home-header-top">
-        <div class="home-logo"><span>🌿</span><span>Novogarden</span></div>
-        <div class="notif-btn">🔔</div>
+        <div class="home-logo"><span>ð¿</span><span>Novogarden</span></div>
+        <div class="notif-btn">ð</div>
       </div>
-      <div class="home-greeting">Bonjour 👋</div>
+      <div class="home-greeting">Bonjour ð</div>
       <div class="home-title">Quel service<br>souhaitez-vous ?</div>
     </div>
     <div class="home-body">
       <div class="promo-band">
-        <div class="em">🌱</div>
+        <div class="em">ð±</div>
         <div>
-          <p>Bêta-test mars 2026</p>
-          <p>Réservez maintenant – tonte dès avril !</p>
+          <p>BÃªta-test mars 2026</p>
+          <p>RÃ©servez maintenant â tonte dÃ¨s avril !</p>
         </div>
       </div>
 
       <div class="sect">Nos formules</div>
       <div class="cards-col">
         <div class="scard" onclick="startBooking(1)">
-          <div class="corner c1"></div><div class="cem">✂️</div>
+          <div class="corner c1"></div><div class="cem">âï¸</div>
           <div class="clabel">Pack Solo</div>
           <div class="cname">1 Tonte de pelouse</div>
-          <div class="cdesc">Une tonte ponctuelle, sans engagement. Idéal pour un entretien occasionnel.</div>
-          <div class="cprice">À partir de 29,90€ <small>/passage</small></div>
-          <div class="ctags"><span class="tag g">Sans abonnement</span><span class="tag">Jusqu'à 67€ / 7000m²</span></div>
+          <div class="cdesc">Une tonte ponctuelle, sans engagement. IdÃ©al pour un entretien occasionnel.</div>
+          <div class="cprice">Ã partir de 29,90â¬ <small>/passage</small></div>
+          <div class="ctags"><span class="tag g">Sans abonnement</span><span class="tag">Jusqu'Ã  67â¬ / 7000mÂ²</span></div>
         </div>
         <div class="scard" onclick="startBooking(2)">
-          <div class="corner c2"></div><div class="cem">🌿</div>
+          <div class="corner c2"></div><div class="cem">ð¿</div>
           <div class="clabel">Pack Essentiel</div>
           <div class="cname">5 Tontes de pelouse</div>
-          <div class="cdesc">5 passages planifiés pour une pelouse impeccable tout au long de la saison.</div>
-          <div class="cprice">À partir de 130€ <small>– 5 passages</small></div>
-          <div class="ctags"><span class="tag g">5 passages</span><span class="tag">Jusqu'à 265€ / 7000m²</span></div>
+          <div class="cdesc">5 passages planifiÃ©s pour une pelouse impeccable tout au long de la saison.</div>
+          <div class="cprice">Ã partir de 130â¬ <small>â 5 passages</small></div>
+          <div class="ctags"><span class="tag g">5 passages</span><span class="tag">Jusqu'Ã  265â¬ / 7000mÂ²</span></div>
         </div>
         <div class="scard" onclick="startBooking(3)">
-          <div class="corner c3"></div><div class="cem">🏆</div>
-          <div class="clabel">Pack Sérénité</div>
+          <div class="corner c3"></div><div class="cem">ð</div>
+          <div class="clabel">Pack SÃ©rÃ©nitÃ©</div>
           <div class="cname">10 Tontes de pelouse</div>
-          <div class="cdesc">La formule complète pour une pelouse parfaite toute l'année. Meilleur tarif garanti.</div>
-          <div class="cprice">À partir de 232€ <small>– 10 passages</small></div>
-          <div class="ctags"><span class="tag g">10 passages</span><span class="tag">Jusqu'à 472€ / 7000m²</span></div>
+          <div class="cdesc">La formule complÃ¨te pour une pelouse parfaite toute l'annÃ©e. Meilleur tarif garanti.</div>
+          <div class="cprice">Ã partir de 232â¬ <small>â 10 passages</small></div>
+          <div class="ctags"><span class="tag g">10 passages</span><span class="tag">Jusqu'Ã  472â¬ / 7000mÂ²</span></div>
         </div>
       </div>
 
@@ -397,54 +402,54 @@
           <div>Surface</div>
           <div>Pack Solo</div>
           <div>Pack Essentiel</div>
-          <div>Pack Sérénité</div>
+          <div>Pack SÃ©rÃ©nitÃ©</div>
         </div>
         <div class="tarif-row">
-          <div class="tc">0 – 500 m²</div>
-          <div class="tc p">29,90€</div>
-          <div class="tc p">130€</div>
-          <div class="tc p">232€</div>
+          <div class="tc">0 â 500 mÂ²</div>
+          <div class="tc p">29,90â¬</div>
+          <div class="tc p">130â¬</div>
+          <div class="tc p">232â¬</div>
         </div>
         <div class="tarif-row">
-          <div class="tc">500 – 1500 m²</div>
-          <div class="tc p">39€</div>
-          <div class="tc p">175€</div>
-          <div class="tc p">312€</div>
+          <div class="tc">500 â 1500 mÂ²</div>
+          <div class="tc p">39â¬</div>
+          <div class="tc p">175â¬</div>
+          <div class="tc p">312â¬</div>
         </div>
         <div class="tarif-row">
-          <div class="tc">1500 – 3000 m²</div>
-          <div class="tc p">49€</div>
-          <div class="tc p">220€</div>
-          <div class="tc p">392€</div>
+          <div class="tc">1500 â 3000 mÂ²</div>
+          <div class="tc p">49â¬</div>
+          <div class="tc p">220â¬</div>
+          <div class="tc p">392â¬</div>
         </div>
         <div class="tarif-row">
-          <div class="tc">3000 – 7000 m²</div>
-          <div class="tc p">67€</div>
-          <div class="tc p">265€</div>
-          <div class="tc p">472€</div>
+          <div class="tc">3000 â 7000 mÂ²</div>
+          <div class="tc p">67â¬</div>
+          <div class="tc p">265â¬</div>
+          <div class="tc p">472â¬</div>
         </div>
         <div class="tarif-row">
-          <div class="tc">+ de 7000 m²</div>
+          <div class="tc">+ de 7000 mÂ²</div>
           <div class="tc p">Devis</div>
           <div class="tc p">Devis</div>
           <div class="tc p">Devis</div>
         </div>
       </div>
-      <p class="tva-note">TVA non applicable · Réservation sur novogardenhub.com</p>
+      <p class="tva-note">TVA non applicable Â· RÃ©servation sur novogardenhub.com</p>
     </div>
     <div class="bottom-nav">
-      <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">Accueil</div></div>
-      <div class="nav-item" onclick="startBooking(1)"><div class="nav-icon">📅</div><div class="nav-label">Réserver</div></div>
-      <div class="nav-item"><div class="nav-icon">📋</div><div class="nav-label">Mes tontes</div></div>
-      <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profil</div></div>
+      <div class="nav-item active"><div class="nav-icon">ð </div><div class="nav-label">Accueil</div></div>
+      <div class="nav-item" onclick="startBooking(1)"><div class="nav-icon">ð</div><div class="nav-label">RÃ©server</div></div>
+      <div class="nav-item"><div class="nav-icon">ð</div><div class="nav-label">Mes tontes</div></div>
+      <div class="nav-item"><div class="nav-icon">ð¤</div><div class="nav-label">Profil</div></div>
     </div>
   </div>
 
   <!-- BOOKING -->
   <div class="screen" id="booking">
     <div class="bheader">
-      <button class="back-btn" onclick="goTo('home')">←</button>
-      <h2>Réservation</h2>
+      <button class="back-btn" onclick="goTo('home')">â</button>
+      <h2>RÃ©servation</h2>
       <p id="bsub">Choisissez votre formule</p>
       <div class="prog">
         <div class="ps done" id="ps1"></div>
@@ -458,117 +463,117 @@
       <!-- Step 1 : Formule -->
       <div class="step active" id="s1">
         <div class="st">Votre formule</div>
-        <div class="ss">Sélectionnez la prestation souhaitée</div>
+        <div class="ss">SÃ©lectionnez la prestation souhaitÃ©e</div>
         <div class="sopts">
           <div class="sopt" id="o1" onclick="selSvc(1)">
-            <div class="sopt-icon g1">✂️</div>
-            <div class="sopt-info"><div class="sopt-name">Pack Solo – 1 tonte</div><div class="sopt-price">À partir de 29,90€</div></div>
+            <div class="sopt-icon g1">âï¸</div>
+            <div class="sopt-info"><div class="sopt-name">Pack Solo â 1 tonte</div><div class="sopt-price">Ã partir de 29,90â¬</div></div>
             <div class="sopt-check"></div>
           </div>
           <div class="sopt" id="o2" onclick="selSvc(2)">
-            <div class="sopt-icon g2">🌿</div>
-            <div class="sopt-info"><div class="sopt-name">Pack Essentiel – 5 tontes</div><div class="sopt-price">À partir de 130€</div></div>
+            <div class="sopt-icon g2">ð¿</div>
+            <div class="sopt-info"><div class="sopt-name">Pack Essentiel â 5 tontes</div><div class="sopt-price">Ã partir de 130â¬</div></div>
             <div class="sopt-check"></div>
           </div>
           <div class="sopt" id="o3" onclick="selSvc(3)">
-            <div class="sopt-icon g3">🏆</div>
-            <div class="sopt-info"><div class="sopt-name">Pack Sérénité – 10 tontes</div><div class="sopt-price">À partir de 232€</div></div>
+            <div class="sopt-icon g3">ð</div>
+            <div class="sopt-info"><div class="sopt-name">Pack SÃ©rÃ©nitÃ© â 10 tontes</div><div class="sopt-price">Ã partir de 232â¬</div></div>
             <div class="sopt-check"></div>
           </div>
         </div>
-        <button class="btn-p" onclick="gostep(2)" style="margin-top:20px">Continuer →</button>
+        <button class="btn-p" onclick="gostep(2)" style="margin-top:20px">Continuer â</button>
       </div>
 
       <!-- Step 2 : Terrain & conditions -->
       <div class="step" id="s2">
         <div class="st">Votre terrain</div>
-        <div class="ss">Surface, adresse et conditions d'accès</div>
+        <div class="ss">Surface, adresse et conditions d'accÃ¨s</div>
         <div class="slabel">Surface du terrain</div>
         <div class="sgrid">
-          <div class="chip" onclick="selSurf(this,'0-500')">0 – 500 m²<small>Petit jardin</small></div>
-          <div class="chip" onclick="selSurf(this,'500-1500')">500 – 1500 m²<small>Jardin moyen</small></div>
-          <div class="chip" onclick="selSurf(this,'1500-3000')">1500 – 3000 m²<small>Grand jardin</small></div>
-          <div class="chip" onclick="selSurf(this,'3000-7000')">3000 – 7000 m²<small>Très grand</small></div>
+          <div class="chip" onclick="selSurf(this,'0-500')">0 â 500 mÂ²<small>Petit jardin</small></div>
+          <div class="chip" onclick="selSurf(this,'500-1500')">500 â 1500 mÂ²<small>Jardin moyen</small></div>
+          <div class="chip" onclick="selSurf(this,'1500-3000')">1500 â 3000 mÂ²<small>Grand jardin</small></div>
+          <div class="chip" onclick="selSurf(this,'3000-7000')">3000 â 7000 mÂ²<small>TrÃ¨s grand</small></div>
         </div>
         <label class="flabel">Adresse</label>
         <input class="finput" type="text" placeholder="Ex : 12 rue des Hortensias" id="addr">
         <label class="flabel">Ville</label>
-        <input class="finput" type="text" placeholder="Flers, Gorron, Alençon…" id="city">
+        <input class="finput" type="text" placeholder="Flers, Gorron, AlenÃ§onâ¦" id="city">
 
-        <button class="btn-p" onclick="gostep(3)">Continuer →</button>
-        <button class="btn-s" onclick="gostep(1)">← Retour</button>
+        <button class="btn-p" onclick="gostep(3)">Continuer â</button>
+        <button class="btn-s" onclick="gostep(1)">â Retour</button>
       </div>
 
       <!-- Step 3 : Date & heure -->
       <div class="step" id="s3">
         <div class="st">Date & Heure</div>
-        <div class="ss">Choisissez votre créneau d'intervention</div>
+        <div class="ss">Choisissez votre crÃ©neau d'intervention</div>
         <div class="cal">
           <div class="cal-hd">
-            <button class="cal-nav-btn">‹</button>
+            <button class="cal-nav-btn">â¹</button>
             <div class="cal-title">Avril 2026</div>
-            <button class="cal-nav-btn">›</button>
+            <button class="cal-nav-btn">âº</button>
           </div>
           <div class="cal-dow"><div>Lu</div><div>Ma</div><div>Me</div><div>Je</div><div>Ve</div><div>Sa</div><div>Di</div></div>
           <div class="cal-grid" id="cg"></div>
         </div>
-        <div class="slabel" style="margin-bottom:9px">Créneaux disponibles</div>
+        <div class="slabel" style="margin-bottom:9px">CrÃ©neaux disponibles</div>
         <div class="tslots">
-          <div class="tslot" onclick="selTime(this)">8h–10h</div>
-          <div class="tslot" onclick="selTime(this)">10h–12h</div>
-          <div class="tslot na">12h–14h</div>
-          <div class="tslot" onclick="selTime(this)">14h–16h</div>
-          <div class="tslot" onclick="selTime(this)">16h–18h</div>
-          <div class="tslot na">18h–20h</div>
+          <div class="tslot" onclick="selTime(this)">8hâ10h</div>
+          <div class="tslot" onclick="selTime(this)">10hâ12h</div>
+          <div class="tslot na">12hâ14h</div>
+          <div class="tslot" onclick="selTime(this)">14hâ16h</div>
+          <div class="tslot" onclick="selTime(this)">16hâ18h</div>
+          <div class="tslot na">18hâ20h</div>
         </div>
-        <button class="btn-p" onclick="gostep(4)" style="margin-top:18px">Continuer →</button>
-        <button class="btn-s" onclick="gostep(2)">← Retour</button>
+        <button class="btn-p" onclick="gostep(4)" style="margin-top:18px">Continuer â</button>
+        <button class="btn-s" onclick="gostep(2)">â Retour</button>
       </div>
 
-      <!-- Step 4 : Récap -->
+      <!-- Step 4 : RÃ©cap -->
       <div class="step" id="s4">
-        <div class="st">Récapitulatif</div>
-        <div class="ss">Vérifiez votre commande avant de confirmer</div>
+        <div class="st">RÃ©capitulatif</div>
+        <div class="ss">VÃ©rifiez votre commande avant de confirmer</div>
         <div class="scard2">
-          <div class="sr"><span class="sk">Formule</span><span class="sv" id="sum-svc">–</span></div>
-          <div class="sr"><span class="sk">Surface</span><span class="sv" id="sum-surf">–</span></div>
-          <div class="sr"><span class="sk">Adresse</span><span class="sv" id="sum-addr">–</span></div>
-          <div class="sr"><span class="sk">Date</span><span class="sv" id="sum-date">–</span></div>
-          <div class="sr"><span class="sk">Créneau</span><span class="sv" id="sum-time">–</span></div>
-          <div class="sr"><span class="sk">Prix estimé TTC</span><span class="sv big" id="sum-price">29,90€</span></div>
+          <div class="sr"><span class="sk">Formule</span><span class="sv" id="sum-svc">â</span></div>
+          <div class="sr"><span class="sk">Surface</span><span class="sv" id="sum-surf">â</span></div>
+          <div class="sr"><span class="sk">Adresse</span><span class="sv" id="sum-addr">â</span></div>
+          <div class="sr"><span class="sk">Date</span><span class="sv" id="sum-date">â</span></div>
+          <div class="sr"><span class="sk">CrÃ©neau</span><span class="sv" id="sum-time">â</span></div>
+          <div class="sr"><span class="sk">Prix estimÃ© TTC</span><span class="sv big" id="sum-price">29,90â¬</span></div>
         </div>
-        <p class="snote">Prix exact confirmé après vérification sur site.<br>TVA non applicable. Paiement après la prestation.</p>
-        <button class="btn-p" onclick="doConfirm()">✓ Confirmer la réservation</button>
-        <button class="btn-s" onclick="gostep(3)">← Retour</button>
+        <p class="snote">Prix exact confirmÃ© aprÃ¨s vÃ©rification sur site.<br>TVA non applicable. Paiement aprÃ¨s la prestation.</p>
+        <button class="btn-p" onclick="doConfirm()">â Confirmer la rÃ©servation</button>
+        <button class="btn-s" onclick="gostep(3)">â Retour</button>
       </div>
     </div>
   </div>
 
   <!-- SUCCESS -->
   <div class="screen" id="success">
-    <div class="suc-anim">✓</div>
-    <div class="suc-title">Réservation confirmée !</div>
-    <div class="suc-sub">Votre demande a bien été enregistrée.<br>Notre équipe vous contactera sous 24h.</div>
+    <div class="suc-anim">â</div>
+    <div class="suc-title">RÃ©servation confirmÃ©e !</div>
+    <div class="suc-sub">Votre demande a bien Ã©tÃ© enregistrÃ©e.<br>Notre Ã©quipe vous contactera sous 24h.</div>
     <div class="suc-card">
-      <div class="suc-ref-label">Numéro de réservation</div>
+      <div class="suc-ref-label">NumÃ©ro de rÃ©servation</div>
       <div class="suc-ref-num" id="refnum">NGH-2026-0001</div>
-      <div class="sr"><span class="sk">Formule</span><span class="sv" id="sc-svc">—</span></div>
-      <div class="sr"><span class="sk">Surface</span><span class="sv" id="sc-surf">—</span></div>
-      <div class="sr"><span class="sk">Date</span><span class="sv" id="sc-date">—</span></div>
-      <div class="sr"><span class="sk">Montant estimé</span><span class="sv" style="color:var(--green-dark)" id="sc-price">—</span></div>
+      <div class="sr"><span class="sk">Formule</span><span class="sv" id="sc-svc">â</span></div>
+      <div class="sr"><span class="sk">Surface</span><span class="sv" id="sc-surf">â</span></div>
+      <div class="sr"><span class="sk">Date</span><span class="sv" id="sc-date">â</span></div>
+      <div class="sr"><span class="sk">Montant estimÃ©</span><span class="sv" style="color:var(--green-dark)" id="sc-price">â</span></div>
     </div>
-    <p style="font-size:10px;color:var(--grey);text-align:center;margin-bottom:16px">📞 06.35.58.47.00 · novogardenhub.com</p>
-    <button class="btn-p" onclick="goTo('home')">Retour à l'accueil</button>
+    <p style="font-size:10px;color:var(--grey);text-align:center;margin-bottom:16px">ð 06.35.58.47.00 Â· novogardenhub.com</p>
+    <button class="btn-p" onclick="goTo('home')">Retour Ã  l'accueil</button>
   </div>
 </div>
 
 <script>
-// ─── TARIFS exacts selon grille tarifaire Novogarden ───
-const SVCS = ['','Pack Solo – 1 tonte','Pack Essentiel – 5 tontes','Pack Sérénité – 10 tontes'];
+// âââ TARIFS exacts selon grille tarifaire Novogarden âââ
+const SVCS = ['','Pack Solo â 1 tonte','Pack Essentiel â 5 tontes','Pack SÃ©rÃ©nitÃ© â 10 tontes'];
 const PRICES = {
-  1: { '0-500':'29,90€', '500-1500':'39€ TTC', '1500-3000':'49€ TTC', '3000-7000':'67€ TTC' },
-  2: { '0-500':'130€',   '500-1500':'175€ TTC','1500-3000':'220€ TTC','3000-7000':'265€ TTC' },
-  3: { '0-500':'232€',   '500-1500':'312€ TTC','1500-3000':'392€ TTC','3000-7000':'472€ TTC' }
+  1: { '0-500':'29,90â¬', '500-1500':'39â¬ TTC', '1500-3000':'49â¬ TTC', '3000-7000':'67â¬ TTC' },
+  2: { '0-500':'130â¬',   '500-1500':'175â¬ TTC','1500-3000':'220â¬ TTC','3000-7000':'265â¬ TTC' },
+  3: { '0-500':'232â¬',   '500-1500':'312â¬ TTC','1500-3000':'392â¬ TTC','3000-7000':'472â¬ TTC' }
 };
 
 let bk = { svc:1, surf:'', date:'', time:'' };
@@ -601,23 +606,23 @@ function showStep(n) {
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
   for(let i=1;i<=4;i++) document.getElementById('ps'+i).classList.toggle('done', i<=n);
-  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et créneau','Récapitulatif'];
+  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et crÃ©neau','RÃ©capitulatif'];
   document.getElementById('bsub').textContent=subs[n-1];
   document.querySelector('.bcontent').scrollTop=0;
 }
 
 function getPrice() {
-  return bk.surf ? (PRICES[bk.svc][bk.surf] || 'Sur devis') : 'À partir de 29,90€';
+  return bk.surf ? (PRICES[bk.svc][bk.surf] || 'Sur devis') : 'Ã partir de 29,90â¬';
 }
 
 function gostep(n) {
   if(n===4) {
     document.getElementById('sum-svc').textContent = SVCS[bk.svc];
-    document.getElementById('sum-surf').textContent = bk.surf ? bK.surf+' m²' : '–';
+    document.getElementById('sum-surf').textContent = bk.surf ? bK.surf+' mÂ²' : 'â';
     const a=document.getElementById('addr').value, c=document.getElementById('city').value;
-    document.getElementById('sum-addr').textContent = (a||c) ? [a,c].filter(Boolean).join(', ') : '–';
-    document.getElementById('sum-date').textContent = bk.date || '–';
-    document.getElementById('sum-time').textContent = bk.time || '–';
+    document.getElementById('sum-addr').textContent = (a||c) ? [a,c].filter(Boolean).join(', ') : 'â';
+    document.getElementById('sum-date').textContent = bk.date || 'â';
+    document.getElementById('sum-time').textContent = bk.time || 'â';
     document.getElementById('sum-price').textContent = getPrice();
   }
   showStep(n);
@@ -627,13 +632,13 @@ function doConfirm() {
   const ref = 'NGH-2026-' + String(Math.floor(1000+Math.random()*8999)).padStart(4,'0');
   document.getElementById('refnum').textContent = ref;
   document.getElementById('sc-svc').textContent = SVCS[bk.svc];
-  document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m²' : '–';
-  document.getElementById('sc-date').textContent = bk.date || '–';
+  document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' mÂ²' : 'â';
+  document.getElementById('sc-date').textContent = bk.date || 'â';
   document.getElementById('sc-price').textContent = getPrice();
   goTo('success');
 }
 
-// ─── Calendrier Avril 2026 (commence Mercredi = offset 2) ───
+// âââ Calendrier Avril 2026 (commence Mercredi = offset 2) âââ
 function buildCal() {
   const g=document.getElementById('cg'); g.innerHTML='';
   for(let i=0;i<2;i++){const d=document.createElement('div');d.className='cday emp';g.appendChild(d);}
@@ -652,6 +657,10 @@ function buildCal() {
 }
 buildCal();
 selSvc(1);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/novogarden-app/sw.js');
+}
 </script>
 </body>
 </html>
