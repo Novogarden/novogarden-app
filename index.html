@@ -345,6 +345,35 @@ html, body {
 .tslot.sel { background: var(--green); border-color: var(--green); color: white; }
 .tslot.na { color: var(--grey-light); cursor: not-allowed; background: #f5f5f5; }
 
+/* -- RECURRENCE AUTOMATIQUE -- */
+.recur-section { margin-top:16px; border-top:1px solid var(--grey-light); padding-top:14px; }
+.recur-title { font-size:13px; font-weight:700; margin-bottom:3px; }
+.recur-sub { font-size:11px; color:var(--grey); margin-bottom:12px; }
+.freq-block { background:white; border-radius:12px; padding:14px 16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); margin-bottom:12px; }
+.freq-display { text-align:center; font-size:13px; font-weight:700; margin-bottom:8px; }
+.freq-display strong { color:var(--green); font-size:20px; }
+.freq-limits { display:flex; justify-content:space-between; font-size:10px; color:var(--grey); margin-bottom:4px; }
+.freq-slider { width:100%; -webkit-appearance:none; height:5px; border-radius:3px; background:var(--grey-light); outline:none; cursor:pointer; }
+.freq-slider::-webkit-slider-thumb { -webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:var(--green); cursor:pointer; box-shadow:0 2px 8px rgba(125,181,50,0.45); }
+.dates-cal-list { display:flex; flex-direction:column; gap:7px; }
+.date-item { display:flex; align-items:center; gap:9px; background:white; border-radius:11px; padding:9px 13px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.di-num { font-size:10px; font-weight:700; color:white; background:var(--green); border-radius:20px; padding:3px 8px; white-space:nowrap; text-align:center; min-width:54px; }
+.di-date { flex:1; font-size:12px; font-weight:600; }
+.di-edit { font-size:11px; font-weight:700; color:var(--green); border:1.5px solid var(--green); background:white; border-radius:8px; padding:5px 9px; cursor:pointer; white-space:nowrap; }
+.edit-date-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300; display:none; align-items:flex-end; justify-content:center; }
+.edit-date-sheet { background:var(--cream); border-radius:22px 22px 0 0; padding:20px 16px 36px; width:100%; max-width:480px; }
+.edit-date-hd { font-size:14px; font-weight:700; text-align:center; margin-bottom:14px; }
+.mini-cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.mini-nav-btn { background:none; border:none; font-size:20px; color:var(--green); cursor:pointer; padding:4px 10px; }
+.mini-cal-title-lbl { font-size:13px; font-weight:700; }
+.recap-dates { margin-top:10px; padding-top:10px; border-top:1px dashed var(--grey-light); }
+.recap-dates-lbl { font-size:10px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.rdi-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--grey-light); }
+.rdi-row:last-child { border-bottom:none; }
+.rdi-n { font-size:10px; font-weight:700; color:white; background:var(--green); border-radius:12px; padding:2px 7px; }
+.rdi-d { flex:1; font-size:11px; font-weight:600; }
+.rdi-btn { font-size:10px; font-weight:700; color:var(--green); background:none; border:1px solid var(--green); border-radius:6px; padding:3px 7px; cursor:pointer; }
+
 /* RECAP */
 .recap-card { background: white; border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 20px rgba(20,20,15,0.08); margin-bottom: 14px; }
 .rrow { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--grey-light); }
@@ -585,7 +614,18 @@ html, body {
         <div class="tslot" onclick="selTime(this)">16h–18h</div>
         <div class="tslot na">18h–20h</div>
       </div>
-      <button class="btn-p" onclick="gostep(4)" style="margin-top:8px">Continuer</button>
+      <!-- Recurrence automatique (Packs 5 ou 10 tontes) -->
+      <div id="recur-section" class="recur-section" style="display:none">
+        <div class="recur-title">Planification automatique</div>
+        <div class="recur-sub" id="recur-sub">Repartissez vos tontes selon votre rythme</div>
+        <div class="freq-block">
+          <div class="freq-display">Toutes les <strong id="freq-val">2</strong> semaine(s)</div>
+          <div class="freq-limits"><span>1 sem.</span><span>8 sem.</span></div>
+          <input type="range" id="freq-slider" class="freq-slider" min="1" max="8" value="2" oninput="updateFrequency(this.value)">
+        </div>
+        <div class="dates-cal-list" id="dates-list"></div>
+      </div>
+      <button class="btn-p" onclick="gostep(4)" style="margin-top:14px">Continuer</button>
       <button class="btn-s" onclick="gostep(2)">&#8592; Retour</button>
     </div>
     <!-- Step 4 -->
@@ -599,6 +639,10 @@ html, body {
         <div class="rrow"><span class="rk">Date</span><span class="rv" id="sum-date">—</span></div>
         <div class="rrow"><span class="rk">Creneau</span><span class="rv" id="sum-time">—</span></div>
         <div class="rrow"><span class="rk">Prix estime TTC</span><span class="rv big" id="sum-price">29,90€</span></div>
+        <div class="recap-dates" id="recap-dates" style="display:none">
+          <div class="recap-dates-lbl">Calendrier des tontes</div>
+          <div id="recap-dates-list"></div>
+        </div>
       </div>
       <p class="snote">Prix exact confirme apres verification sur site.<br>TVA non applicable. Paiement apres la prestation.</p>
       <button class="btn-p" onclick="doConfirm()">Confirmer la reservation</button>
@@ -809,11 +853,27 @@ html, body {
     <div class="ref-num" id="refnum">NGH-2026-0001</div>
     <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sc-svc">—</span></div>
     <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sc-surf">—</span></div>
-    <div class="rrow"><span class="rk">Date</span><span class="rv" id="sc-date">—</span></div>
+    <div class="rrow" id="sc-date-row"><span class="rk">Date</span><span class="rv" id="sc-date">—</span></div>
+    <div id="sc-dates-list" style="display:none"></div>
     <div class="rrow"><span class="rk">Montant estime</span><span class="rv" style="color:var(--dark-green)" id="sc-price">—</span></div>
   </div>
   <p class="contact-note">06.35.58.47.00 &middot; novogardenhub.com</p>
   <button class="btn-p" onclick="navTo('home')">Retour a l'accueil</button>
+</div>
+
+<!-- Modal modification date recurrente -->
+<div class="edit-date-overlay" id="edit-date-modal">
+  <div class="edit-date-sheet">
+    <div class="edit-date-hd">Modifier la date — Tonte n°<span id="edit-session-num">1</span></div>
+    <div class="mini-cal-nav">
+      <button class="mini-nav-btn" onclick="miniCalPrev()">&#10094;</button>
+      <span class="mini-cal-title-lbl" id="mini-cal-title">Avril 2026</span>
+      <button class="mini-nav-btn" onclick="miniCalNext()">&#10095;</button>
+    </div>
+    <div class="cal-dows"><div>Lu</div><div>Ma</div><div>Me</div><div>Je</div><div>Ve</div><div>Sa</div><div>Di</div></div>
+    <div class="cal-grid" id="mini-cal-grid"></div>
+    <button class="btn-s" style="margin-top:14px" onclick="closeEditDate()">Annuler</button>
+  </div>
 </div>
 
 <script>
@@ -823,7 +883,11 @@ const PRICES = {
   2: {'0-500':'130€','500-1500':'175€','1500-3000':'220€','3000-7000':'265€'},
   3: {'0-500':'232€','500-1500':'312€','1500-3000':'392€','3000-7000':'472€'}
 };
-let bk = {svc:1, surf:'', date:'', time:''};
+let bk = {svc:1, surf:'', date:'', time:'', frequency:2, dates:[]};
+const SESSIONS = {1:1, 2:5, 3:10};
+const MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MONTHS_FULL = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -943,6 +1007,9 @@ function selSvc(n) {
   bk.svc=n;
   document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
   document.getElementById('o'+n).classList.add('sel');
+  bk.dates=[]; bk.date='';
+  const rs=document.getElementById('recur-section');
+  if(rs) rs.style.display='none';
 }
 function selSurf(el,v) {
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
@@ -969,9 +1036,21 @@ function gostep(n) {
     document.getElementById('sum-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
     const a=document.getElementById('addr').value, c=document.getElementById('city').value;
     document.getElementById('sum-addr').textContent = (a||c) ? [a,c].filter(Boolean).join(', ') : '—';
-    document.getElementById('sum-date').textContent = bk.date || '—';
     document.getElementById('sum-time').textContent = bk.time || '—';
     document.getElementById('sum-price').textContent = getPrice();
+    if(bk.svc>1 && bk.dates.length>1) {
+      document.getElementById('sum-date').textContent = 'Voir le calendrier ci-dessous';
+      const rd=document.getElementById('recap-dates'); rd.style.display='block';
+      const rdl=document.getElementById('recap-dates-list'); rdl.innerHTML='';
+      bk.dates.forEach((d,i)=>{
+        const r=document.createElement('div'); r.className='rdi-row';
+        r.innerHTML='<span class="rdi-n">T'+(i+1)+'</span><span class="rdi-d">'+formatDateStr(d)+'</span><button class="rdi-btn" onclick="editRecurDate('+i+')">Modifier</button>';
+        rdl.appendChild(r);
+      });
+    } else {
+      document.getElementById('sum-date').textContent = bk.date || '—';
+      document.getElementById('recap-dates').style.display='none';
+    }
   }
   showStep(n);
 }
@@ -980,11 +1059,121 @@ function doConfirm() {
   document.getElementById('refnum').textContent = ref;
   document.getElementById('sc-svc').textContent = SVCS[bk.svc];
   document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
-  document.getElementById('sc-date').textContent = bk.date || '—';
+  if(bk.svc>1 && bk.dates.length>1) {
+    document.getElementById('sc-date-row').style.display='none';
+    const sdl=document.getElementById('sc-dates-list'); sdl.style.display='block';
+    sdl.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Calendrier des tontes</div>';
+    bk.dates.forEach((d,i)=>{
+      sdl.innerHTML+='<div class="rrow"><span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:11px">'+formatDateStr(d)+'</span></div>';
+    });
+  } else {
+    document.getElementById('sc-date-row').style.display='';
+    document.getElementById('sc-date').textContent=bk.date||'—';
+    document.getElementById('sc-dates-list').style.display='none';
+  }
   document.getElementById('sc-price').textContent = getPrice();
   goTo('success');
 }
 
+// ============ RECURRENCE AUTOMATIQUE ============
+
+function parseDateStr(str) {
+  const m={'janvier':0,'février':1,'mars':2,'avril':3,'mai':4,'juin':5,
+           'juillet':6,'août':7,'septembre':8,'octobre':9,'novembre':10,'décembre':11};
+  const p=str.split(' ');
+  return new Date(parseInt(p[2]),m[p[1]],parseInt(p[0]));
+}
+
+function formatDateStr(date) {
+  return DAYS_SHORT[date.getDay()]+' '+date.getDate()+' '+MONTHS_FR[date.getMonth()]+' '+date.getFullYear();
+}
+
+function generateDates(startDate, count, weeks) {
+  const dates=[]; let cur=new Date(startDate);
+  for(let i=0;i<count;i++) {
+    while(cur.getDay()===0||cur.getDay()===6) cur.setDate(cur.getDate()+1);
+    dates.push(new Date(cur));
+    cur=new Date(cur); cur.setDate(cur.getDate()+weeks*7);
+  }
+  return dates;
+}
+
+function onDateSelected(dateStr) {
+  bk.date=dateStr;
+  if(bk.svc>1) {
+    const n=SESSIONS[bk.svc];
+    bk.dates=generateDates(parseDateStr(bk.date),n,bk.frequency);
+    document.getElementById('recur-section').style.display='block';
+    document.getElementById('recur-sub').textContent='Répartissez vos '+n+' tontes selon votre rythme';
+    renderDatesList();
+  }
+}
+
+function updateFrequency(val) {
+  bk.frequency=parseInt(val);
+  document.getElementById('freq-val').textContent=val;
+  if(bk.date&&bk.svc>1) {
+    bk.dates=generateDates(parseDateStr(bk.date),SESSIONS[bk.svc],bk.frequency);
+    renderDatesList();
+  }
+}
+
+function renderDatesList() {
+  const list=document.getElementById('dates-list'); if(!list) return;
+  list.innerHTML='';
+  bk.dates.forEach((d,i)=>{
+    const item=document.createElement('div'); item.className='date-item';
+    item.innerHTML='<div class="di-num">Tonte '+(i+1)+'</div><div class="di-date">'+formatDateStr(d)+'</div><button class="di-edit" onclick="editRecurDate('+i+')">Modifier</button>';
+    list.appendChild(item);
+  });
+}
+
+let _mcy=2026, _mcm=3, _mci=-1;
+
+function editRecurDate(idx) {
+  _mci=idx;
+  const d=bk.dates[idx]; _mcy=d.getFullYear(); _mcm=d.getMonth();
+  document.getElementById('edit-session-num').textContent=idx+1;
+  document.getElementById('edit-date-modal').style.display='flex';
+  buildMiniCal();
+}
+
+function closeEditDate() {
+  document.getElementById('edit-date-modal').style.display='none'; _mci=-1;
+}
+
+function miniCalPrev() { _mcm--; if(_mcm<0){_mcm=11;_mcy--;} buildMiniCal(); }
+function miniCalNext() { _mcm++; if(_mcm>11){_mcm=0;_mcy++;} buildMiniCal(); }
+
+function buildMiniCal() {
+  document.getElementById('mini-cal-title').textContent=MONTHS_FULL[_mcm]+' '+_mcy;
+  const g=document.getElementById('mini-cal-grid'); g.innerHTML='';
+  const firstDay=new Date(_mcy,_mcm,1).getDay();
+  const offset=firstDay===0?6:firstDay-1;
+  const daysInMonth=new Date(_mcy,_mcm+1,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0);
+  for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='cday';g.appendChild(e);}
+  for(let d=1;d<=daysInMonth;d++){
+    const div=document.createElement('div');
+    const dt=new Date(_mcy,_mcm,d);
+    const isWe=dt.getDay()===0||dt.getDay()===6;
+    const isPast=dt<today;
+    const cur=bk.dates[_mci];
+    const isSel=cur&&cur.getFullYear()===_mcy&&cur.getMonth()===_mcm&&cur.getDate()===d;
+    div.className='cday'+(isWe||isPast?' dis':'')+(isSel?' sel':'');
+    div.textContent=d;
+    if(!isWe&&!isPast) div.onclick=(function(day){return function(){
+      bk.dates[_mci]=new Date(_mcy,_mcm,day);
+      if(_mci===0) bk.date=day+' '+MONTHS_FR[_mcm]+' '+_mcy;
+      renderDatesList();
+      if(document.getElementById('s4').classList.contains('active')) gostep(4);
+      closeEditDate();
+    };})(d);
+    g.appendChild(div);
+  }
+}
+
+// =====================================================
 // Calendrier Avril 2026 (commence Mercredi = offset 2)
 function buildCal() {
   const g=document.getElementById('cg'); g.innerHTML='';
@@ -995,9 +1184,9 @@ function buildCal() {
     div.className='cday'+(d<7?' dis':'')+(isWeekend?' dis':'');
     div.textContent=d;
     if(d>=7 && !isWeekend) div.onclick=function(){
-      document.querySelectorAll('.cday').forEach(c=>c.classList.remove('sel'));
+      document.querySelectorAll('#cg .cday').forEach(c=>c.classList.remove('sel'));
       this.classList.add('sel');
-      bk.date=this.textContent+' avril 2026';
+      onDateSelected(this.textContent+' avril 2026');
     };
     g.appendChild(div);
   }
