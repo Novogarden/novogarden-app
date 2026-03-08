@@ -373,6 +373,25 @@ html, body {
 .rdi-n { font-size:10px; font-weight:700; color:white; background:var(--green); border-radius:12px; padding:2px 7px; }
 .rdi-d { flex:1; font-size:11px; font-weight:600; }
 .rdi-btn { font-size:10px; font-weight:700; color:var(--green); background:none; border:1px solid var(--green); border-radius:6px; padding:3px 7px; cursor:pointer; }
+/* -- CHAMPS CONTACT (step 4) -- */
+.contact-section { margin-top:14px; border-top:1px solid var(--grey-light); padding-top:14px; }
+.contact-title { font-size:13px; font-weight:700; margin-bottom:3px; }
+.contact-sub { font-size:11px; color:var(--grey); margin-bottom:12px; }
+.bk-field-wrap { margin-bottom:10px; }
+.bk-field-wrap .flabel { display:block; margin-bottom:4px; }
+.field-error { font-size:10px; color:#e53e3e; font-weight:600; display:block; margin-top:3px; min-height:14px; }
+.cgv-row { display:flex; align-items:flex-start; gap:10px; margin:12px 0 14px; }
+.cgv-row input[type=checkbox] { width:18px; height:18px; min-width:18px; accent-color:var(--green); margin-top:1px; cursor:pointer; }
+.cgv-row label { font-size:11px; color:var(--grey); line-height:1.4; }
+.cgv-row a { color:var(--green); }
+.btn-p:disabled { opacity:0.55; cursor:not-allowed; }
+.send-spinner { display:none; align-items:center; justify-content:center; gap:8px; font-size:12px; color:var(--grey); margin:8px 0; }
+.send-spinner::before { content:''; width:18px; height:18px; border:2px solid var(--grey-light); border-top-color:var(--green); border-radius:50%; animation:spin 0.7s linear infinite; display:block; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.booking-error { background:#fff5f5; border:1px solid #feb2b2; border-radius:10px; padding:10px 14px; font-size:12px; color:#c53030; margin:10px 0; display:none; line-height:1.5; }
+/* -- SUCCESS ENRICHI -- */
+.pay-btn { display:block; background:var(--green); color:white; text-align:center; text-decoration:none; border-radius:var(--radius); padding:14px; font-size:15px; font-weight:700; margin:12px 0 6px; }
+.pay-hint { font-size:11px; color:var(--grey); text-align:center; margin-bottom:10px; }
 
 /* RECAP */
 .recap-card { background: white; border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 20px rgba(20,20,15,0.08); margin-bottom: 14px; }
@@ -645,7 +664,39 @@ html, body {
         </div>
       </div>
       <p class="snote">Prix exact confirme apres verification sur site.<br>TVA non applicable. Paiement apres la prestation.</p>
-      <button class="btn-p" onclick="doConfirm()">Confirmer la reservation</button>
+      <!-- Coordonnees client -->
+      <div class="contact-section">
+        <div class="contact-title">Vos coordonnées</div>
+        <div class="contact-sub">Nécessaires pour la confirmation et votre facture</div>
+        <div class="bk-field-wrap">
+          <label class="flabel">Nom complet *</label>
+          <input class="finput" type="text" id="bk-name" placeholder="Jean Dupont" autocomplete="name">
+          <span class="field-error" id="err-name"></span>
+        </div>
+        <div class="bk-field-wrap">
+          <label class="flabel">Téléphone *</label>
+          <input class="finput" type="tel" id="bk-phone" placeholder="06 12 34 56 78" autocomplete="tel">
+          <span class="field-error" id="err-phone"></span>
+        </div>
+        <div class="bk-field-wrap">
+          <label class="flabel">Email *</label>
+          <input class="finput" type="email" id="bk-email" placeholder="jean.dupont@email.com" autocomplete="email">
+          <span class="field-error" id="err-email"></span>
+          <span style="font-size:10px;color:var(--grey);display:block;margin-top:3px">La facture et le lien de paiement seront envoyés à cette adresse</span>
+        </div>
+        <div class="bk-field-wrap">
+          <label class="flabel">Note pour le jardinier (optionnel)</label>
+          <input class="finput" type="text" id="bk-note" placeholder="Code portail, chien dans le jardin…">
+        </div>
+        <div class="cgv-row">
+          <input type="checkbox" id="bk-cgv">
+          <label for="bk-cgv">J’accepte les <a href="https://novogardenhub.com/cgv" target="_blank">Conditions Générales de Vente</a> et la politique de confidentialité</label>
+        </div>
+        <span class="field-error" id="err-cgv"></span>
+      </div>
+      <div class="booking-error" id="booking-error"></div>
+      <div class="send-spinner" id="send-spinner">Envoi en cours…</div>
+      <button class="btn-p" id="btn-confirm" onclick="doConfirm()">Confirmer la réservation</button>
       <button class="btn-s" onclick="gostep(3)">&#8592; Retour</button>
     </div>
   </div>
@@ -857,7 +908,12 @@ html, body {
     <div id="sc-dates-list" style="display:none"></div>
     <div class="rrow"><span class="rk">Montant estime</span><span class="rv" style="color:var(--dark-green)" id="sc-price">—</span></div>
   </div>
-  <p class="contact-note">06.35.58.47.00 &middot; novogardenhub.com</p>
+  <div id="sc-payment-wrap" style="display:none">
+    <a class="pay-btn" id="sc-pay-link" href="#" target="_blank">Payer ma facture en ligne</a>
+    <p class="pay-hint">Le lien est aussi envoyé à votre adresse email</p>
+  </div>
+  <p id="sc-email-note" style="font-size:11px;color:var(--grey);text-align:center;margin:8px 0 12px;display:none">Facture envoyée à <strong id="sc-email-addr"></strong></p>
+  <p class="contact-note">06.35.58.47.00 · novogardenhub.com</p>
   <button class="btn-p" onclick="navTo('home')">Retour a l'accueil</button>
 </div>
 
@@ -883,6 +939,9 @@ const PRICES = {
   2: {'0-500':'130€','500-1500':'175€','1500-3000':'220€','3000-7000':'265€'},
   3: {'0-500':'232€','500-1500':'312€','1500-3000':'392€','3000-7000':'472€'}
 };
+// Endpoint Wix Velo (activé après publication du site Wix avec Velo)
+const WIX_ENDPOINT = 'https://www.novogardenhub.com/_functions/booking';
+
 let bk = {svc:1, surf:'', date:'', time:'', frequency:2, dates:[]};
 const SESSIONS = {1:1, 2:5, 3:10};
 const MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -1054,25 +1113,94 @@ function gostep(n) {
   }
   showStep(n);
 }
-function doConfirm() {
-  const ref = 'NGH-2026-' + String(Math.floor(1000+Math.random()*8999)).padStart(4,'0');
-  document.getElementById('refnum').textContent = ref;
-  document.getElementById('sc-svc').textContent = SVCS[bk.svc];
-  document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
-  if(bk.svc>1 && bk.dates.length>1) {
-    document.getElementById('sc-date-row').style.display='none';
-    const sdl=document.getElementById('sc-dates-list'); sdl.style.display='block';
-    sdl.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Calendrier des tontes</div>';
-    bk.dates.forEach((d,i)=>{
-      sdl.innerHTML+='<div class="rrow"><span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:11px">'+formatDateStr(d)+'</span></div>';
-    });
-  } else {
-    document.getElementById('sc-date-row').style.display='';
-    document.getElementById('sc-date').textContent=bk.date||'—';
-    document.getElementById('sc-dates-list').style.display='none';
+async function doConfirm() {
+  // -- Validation des champs contact --
+  const name  = document.getElementById('bk-name').value.trim();
+  const phone = document.getElementById('bk-phone').value.trim();
+  const email = document.getElementById('bk-email').value.trim();
+  const note  = document.getElementById('bk-note').value.trim();
+  const cgv   = document.getElementById('bk-cgv').checked;
+  let ok = true;
+
+  const setErr = (id, msg) => { document.getElementById(id).textContent = msg; if(msg) ok = false; };
+  setErr('err-name',  name.length < 2  ? 'Nom requis (min 2 caractères)' : '');
+  setErr('err-phone', !/^[\d\s\+\-\.]{8,15}$/.test(phone) ? 'Numéro invalide' : '');
+  setErr('err-email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Email invalide' : '');
+  setErr('err-cgv',   !cgv ? 'Veuillez accepter les CGV' : '');
+
+  if (!ok) { document.getElementById('bk-name').scrollIntoView({behavior:'smooth'}); return; }
+
+  // -- UI loading --
+  const btn = document.getElementById('btn-confirm');
+  const spinner = document.getElementById('send-spinner');
+  const errBox  = document.getElementById('booking-error');
+  btn.disabled = true; spinner.style.display = 'flex'; errBox.style.display = 'none';
+
+  // -- Payload --
+  const datesISO = bk.dates.length > 1
+    ? bk.dates.map(d => d.toISOString())
+    : (bk.date ? [parseDateStr(bk.date).toISOString()] : []);
+
+  const payload = {
+    clientName:    name,
+    clientPhone:   phone,
+    clientEmail:   email,
+    clientAddress: [document.getElementById('addr').value, document.getElementById('city').value].filter(Boolean).join(', '),
+    surfKey:       bk.surf,
+    svcNum:        bk.svc,
+    scheduledDate: datesISO[0] || new Date().toISOString(),
+    allDates:      datesISO,
+    frequency:     bk.svc > 1 ? bk.frequency : null,
+    creneau:       bk.time || '',
+    clientNote:    note,
+  };
+
+  try {
+    const res  = await fetch(WIX_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    const data = await res.json();
+
+    if (!res.ok || !data.success) throw new Error(data.error || 'Erreur serveur');
+
+    // -- Succès : remplir l'écran de confirmation --
+    const ref = data.ref || ('NVG-' + Math.random().toString(36).slice(2,8).toUpperCase());
+    document.getElementById('refnum').textContent = ref;
+    document.getElementById('sc-svc').textContent  = SVCS[bk.svc];
+    document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
+    document.getElementById('sc-price').textContent = getPrice();
+
+    if(bk.svc>1 && bk.dates.length>1) {
+      document.getElementById('sc-date-row').style.display='none';
+      const sdl=document.getElementById('sc-dates-list'); sdl.style.display='block';
+      sdl.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Calendrier des tontes</div>';
+      bk.dates.forEach((d,i)=>{
+        sdl.innerHTML+='<div class="rrow"><span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:11px">'+formatDateStr(d)+'</span></div>';
+      });
+    } else {
+      document.getElementById('sc-date-row').style.display='';
+      document.getElementById('sc-date').textContent = bk.date||'—';
+      document.getElementById('sc-dates-list').style.display='none';
+    }
+
+    // Lien de paiement
+    if (data.paymentUrl) {
+      document.getElementById('sc-pay-link').href = data.paymentUrl;
+      document.getElementById('sc-payment-wrap').style.display = 'block';
+    }
+    // Note email
+    document.getElementById('sc-email-addr').textContent = email;
+    document.getElementById('sc-email-note').style.display = 'block';
+
+    goTo('success');
+
+  } catch(err) {
+    errBox.style.display = 'block';
+    errBox.innerHTML =
+      '<strong>Erreur de connexion</strong><br>' +
+      (err.message || 'Vérifiez votre réseau.') +
+      '<br>Ou appelez le <a href="tel:0635584700" style="color:var(--green)">06.35.58.47.00</a>';
+  } finally {
+    btn.disabled = false; spinner.style.display = 'none';
   }
-  document.getElementById('sc-price').textContent = getPrice();
-  goTo('success');
 }
 
 // ============ RECURRENCE AUTOMATIQUE ============
