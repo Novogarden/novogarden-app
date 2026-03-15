@@ -967,7 +967,7 @@ async function doConfirm(){
   const dISO=bk.dates.length>1?bk.dates.map(d=>d.toISOString()):(bk.date?[parseDate(bk.date).toISOString()]:[]);
   const payload={clientName:name,clientPhone:phone,clientEmail:email,clientAddress:[document.getElementById('addr').value,document.getElementById('city').value].filter(Boolean).join(', '),surfKey:bk.surf,svcNum:bk.svc,scheduledDate:dISO[0]||new Date().toISOString(),allDates:dISO,frequency:bk.svc>1?bk.frequency:null,creneau:bk.time||'',clientNote:note};
   try{
-    const res=await fetch(WIX,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const res=await ...Object.fromEn,headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const data=await res.json();
     if(!res.ok||!data.success)throw new Error(data.error||'Erreur');
     fillSuccess(data.ref,email,data.paymentUrl);
