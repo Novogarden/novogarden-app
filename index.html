@@ -1125,7 +1125,7 @@ async function doConfirm() {
   se('err-phone', !/^[\d\s\+\-\.()]{6,20}$/.test(phone)?'Numéro invalide':'');
   se('err-email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?'Email invalide':'');
   se('err-cgv', !cgv?'Veuillez accepter les CGV':'');
-  if(!bk.date&&!(bk.dates&&bk.dates.length)){se('err-name','Date ou créneau manquant — retournez à l\'étape 3.');ok=false;}
+  if(!bk.time){se('err-name','Date ou créneau manquant — retournez à l\'étape 3.');ok=false;}
   if(!ok){document.getElementById('bk-name').scrollIntoView({behavior:'smooth'});return;}
   const btn=document.getElementById('btn-confirm');
   const eb=document.getElementById('booking-error');
