@@ -1237,6 +1237,9 @@ function buildMiniCal() {
 
 // =====================================================
 // Calendrier Avril 2026 (commence Mercredi = offset 2)
+function initCal(){if(!_calY){const n=new Date();_calY=n.getFullYear();_calM=n.getMonth();}buildCal();}
+function calPrev(){_calM--;if(_calM<0){_calM=11;_calY--;}buildCal();}
+function calNext(){_calM++;if(_calM>11){_calM=0;_calY++;}buildCal();}
 function buildCal() {
   const g=document.getElementById('cg'); g.innerHTML='';
   for(let i=0;i<2;i++){const d=document.createElement('div');d.className='cday';g.appendChild(d);}
