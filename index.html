@@ -1114,96 +1114,30 @@ function gostep(n) {
   showStep(n);
 }
 async function doConfirm() {
-  // -- Validation des champs contact --
   const name  = document.getElementById('bk-name').value.trim();
   const phone = document.getElementById('bk-phone').value.trim();
   const email = document.getElementById('bk-email').value.trim();
   const note  = document.getElementById('bk-note').value.trim();
   const cgv   = document.getElementById('bk-cgv').checked;
   let ok = true;
-
-  const setErr = (id, msg) => { document.getElementById(id).textContent = msg; if(msg) ok = false; };
-  setErr('err-name',  name.length < 2  ? 'Nom requis (min 2 caractères)' : '');
-  setErr('err-phone', !/^[\d\s\+\-\.]{8,15}$/.test(phone) ? 'Numéro invalide' : '');
-  setErr('err-email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Email invalide' : '');
-  setErr('err-cgv',   !cgv ? 'Veuillez accepter les CGV' : '');
-
-  if (!ok) { document.getElementById('bk-name').scrollIntoView({behavior:'smooth'}); return; }
-
-  // -- UI loading --
-  const btn = document.getElementById('btn-confirm');
-  const spinner = document.getElementById('send-spinner');
-  const errBox  = document.getElementById('booking-error');
-  btn.disabled = true; spinner.style.display = 'flex'; errBox.style.display = 'none';
-
-  // -- Payload --
-  const datesISO = bk.dates.length > 1
-    ? bk.dates.map(d => d.toISOString())
-    : (bk.date ? [parseDateStr(bk.date).toISOString()] : []);
-
-  const payload = {
-    clientName:    name,
-    clientPhone:   phone,
-    clientEmail:   email,
-    clientAddress: [document.getElementById('addr').value, document.getElementById('city').value].filter(Boolean).join(', '),
-    surfKey:       bk.surf,
-    svcNum:        bk.svc,
-    scheduledDate: datesISO[0] || new Date().toISOString(),
-    allDates:      datesISO,
-    frequency:     bk.svc > 1 ? bk.frequency : null,
-    creneau:       bk.time || '',
-    clientNote:    note,
-  };
-
-  try {
-    const res  = await fetch(WIX_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-    const data = await res.json();
-
-    if (!res.ok || !data.success) throw new Error(data.error || 'Erreur serveur');
-
-    // -- Succès : remplir l'écran de confirmation --
-    const ref = data.ref || ('NVG-' + Math.random().toString(36).slice(2,8).toUpperCase());
-    document.getElementById('refnum').textContent = ref;
-    document.getElementById('sc-svc').textContent  = SVCS[bk.svc];
-    document.getElementById('sc-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
-    document.getElementById('sc-price').textContent = getPrice();
-
-    if(bk.svc>1 && bk.dates.length>1) {
-      document.getElementById('sc-date-row').style.display='none';
-      const sdl=document.getElementById('sc-dates-list'); sdl.style.display='block';
-      sdl.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 6px">Calendrier des tontes</div>';
-      bk.dates.forEach((d,i)=>{
-        sdl.innerHTML+='<div class="rrow"><span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:11px">'+formatDateStr(d)+'</span></div>';
-      });
-    } else {
-      document.getElementById('sc-date-row').style.display='';
-      document.getElementById('sc-date').textContent = bk.date||'—';
-      document.getElementById('sc-dates-list').style.display='none';
-    }
-
-    // Lien de paiement
-    if (data.paymentUrl) {
-      document.getElementById('sc-pay-link').href = data.paymentUrl;
-      document.getElementById('sc-payment-wrap').style.display = 'block';
-    }
-    // Note email
-    document.getElementById('sc-email-addr').textContent = email;
-    document.getElementById('sc-email-note').style.display = 'block';
-
-    goTo('success');
-
-  } catch(err) {
-    errBox.style.display = 'block';
-    errBox.innerHTML =
-      '<strong>Erreur de connexion</strong><br>' +
-      (err.message || 'Vérifiez votre réseau.') +
-      '<br>Ou appelez le <a href="tel:0635584700" style="color:var(--green)">06.35.58.47.00</a>';
-  } finally {
-    btn.disabled = false; spinner.style.display = 'none';
-  }
+  const se=(id,msg)=>{const el=document.getElementById(id);if(el)el.textContent=msg;if(msg)ok=false;};
+  se('err-name', name.length<2?'Nom requis (min 2 caractères)':'');
+  se('err-phone', !/^[\d\s\+\-\.()]{6,20}$/.test(phone)?'Numéro invalide':'');
+  se('err-email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?'Email invalide':'');
+  se('err-cgv', !cgv?'Veuillez accepter les CGV':'');
+  if(!bk.date&&!(bk.dates&&bk.dates.length)){se('err-name','Date ou créneau manquant — retournez à l\'étape 3.');ok=false;}
+  if(!ok){document.getElementById('bk-name').scrollIntoView({behavior:'smooth'});return;}
+  const btn=document.getElementById('btn-confirm');
+  const eb=document.getElementById('booking-error');
+  btn.disabled=true; eb.style.display='none';
+  const addr=[document.getElementById('addr').value,document.getElementById('city').value].filter(Boolean).join(', ');
+  const ref='NGV-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  const SURF={'0-500':'0-500m2','500-1500':'500-1500m2','1500-3000':'1500-3000m2','3000-7000':'3000-7000m2'};
+  let dl=bk.svc>1&&bk.dates&&bk.dates.length>1?'\nCalendrier:\n'+bk.dates.map((d,i)=>'  '+(i+1)+'. '+fmtDate(d)).join('\n')+'\nEspacement: '+bk.frequency+' sem.':'\nDate: '+bk.date;
+  const body='Devis Novogarden - '+ref+'\n---\nNom: '+name+'\nTel: '+phone+'\nEmail: '+email+'\nAdresse: '+addr+'\nFormule: '+SVCS[bk.svc]+'\nSurface: '+(SURF[bk.surf]||bk.surf)+'\nCreneau: '+bk.time+dl+'\nPrix: '+getPrice()+(note?'\nNote: '+note:'');
+  window.location.href='mailto:contact@novogardenhub.com?subject='+encodeURIComponent('[Devis] '+name+' - '+SVCS[bk.svc]+' - '+ref)+'&body='+encodeURIComponent(body);
+  setTimeout(()=>{fillSuccess(ref,email,null);btn.disabled=false;},800);
 }
-
-// ============ RECURRENCE AUTOMATIQUE ============
 
 function parseDateStr(str) {
   const m={'janvier':0,'février':1,'mars':2,'avril':3,'mai':4,'juin':5,
