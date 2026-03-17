@@ -1303,7 +1303,10 @@ function buildMiniCal() {
 
 // =====================================================
 // Calendrier Avril 2026 (commence Mercredi = offset 2)
-function buildCal() { if(!_calY){const _d=new Date();_calY=_d.getFullYear();_calM=_d.getMonth();} document.getElementById('cal-title').textContent=MFR[_calM]+' '+_calY;
+let _calY=0,_calM=0;
+function calPrev(){_calM--;if(_calM<0){_calM=11;_calY--;}buildCal();}
+function calNext(){_calM++;if(_calM>11){_calM=0;_calY++;}buildCal();}
+let _calY=0,_calM=0;function calPrev(){_calM--;if(_calM<0){_calM=11;_calY--;}buildCal();}function calNext(){_calM++;if(_calM>11){_calM=0;_calY++;}buildCal();}function buildCal() { if(!_calY){const _d=new Date();_calY=_d.getFullYear();_calM=_d.getMonth();} document.getElementById('cal-title').textContent=MFR[_calM]+' '+_calY;
   const g=document.getElementById('cg'); g.innerHTML='';
   for(let i=0;i<2;i++){const d=document.createElement('div');d.className='cday';g.appendChild(d);}
   for(let d=1;d<=30;d++) {
