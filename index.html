@@ -1089,7 +1089,7 @@ function showStep(n) {
 function getPrice() {
   return bk.surf ? (PRICES[bk.svc][bk.surf]||'Sur devis') : 'A partir de 29,90€';
 }
-function gostep(n) {
+function gostep(n) { if(n===3) initCal();
   if(n===4) {
     document.getElementById('sum-svc').textContent = SVCS[bk.svc];
     document.getElementById('sum-surf').textContent = bk.surf ? bk.surf+' m²' : '—';
