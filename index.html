@@ -457,6 +457,9 @@ html, body {
           <label class="flabel">Ville <span class="req">*</span></label>
           <input id="city" class="finput" type="text" placeholder="Alençon, Laval…" oninput="checkS2()">
           <div class="err-msg" id="err-city"></div>
+          <label class="flabel">Code postal <span class="req">*</span></label>
+          <input id="zip" class="finput" type="text" inputmode="numeric" maxlength="5" placeholder="61000" oninput="checkS2()">
+          <div class="err-msg" id="err-zip"></div>
           <button class="btn-p" id="btn-s2" onclick="goS2()" disabled>Continuer</button>
           <button class="btn-s" onclick="showStep(1)">← Retour</button>
         </div>
@@ -591,6 +594,9 @@ html, body {
             <button class="btn-p" onclick="doRegister()">Créer mon compte</button>
           </div>
         </div>
+        <div style="text-align:center;padding:16px 0 4px">
+          <button style="background:none;border:none;color:var(--grey);font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif" onclick="openBugReport()">🐛 Signaler un bug</button>
+        </div>
       </div>
       <div class="profile-panel" id="profile-panel">
         <div class="profile-hero">
@@ -612,6 +618,7 @@ html, body {
           <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">18 avril 2026</span></div>
         </div>
         <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
+        <button class="btn-logout" style="background:#fff3e0;color:#e65100;margin-top:8px" onclick="openBugReport()">🐛 Signaler un bug</button>
       </div>
     </div>
 
@@ -720,6 +727,17 @@ html, body {
     <div class="sheet-msg">Contactez-nous pour choisir une nouvelle date.</div>
     <button class="sheet-btn green" onclick="window.open('tel:0635584700')">Appeler le 06.35.58.47.00</button>
     <button class="sheet-btn outline" onclick="closeOverlay('report-overlay')">Annuler</button>
+  </div>
+</div>
+<div class="overlay center" id="bug-overlay">
+  <div class="sheet" style="padding-bottom:20px">
+    <div class="sheet-icon">🐛</div>
+    <div class="sheet-title">Signaler un problème</div>
+    <div class="sheet-msg">Décrivez le bug ou la gêne rencontrée. Nous vous répondrons par email.</div>
+    <textarea id="bug-desc" style="width:100%;min-height:90px;border:1.5px solid var(--grey-light);border-radius:12px;padding:10px 12px;font-family:'Montserrat',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:8px" placeholder="Ex : le bouton ne répond pas, la page se bloque…"></textarea>
+    <div class="err-msg" id="err-bug" style="margin-bottom:6px"></div>
+    <button class="sheet-btn green" id="btn-bug" onclick="doReportBug()">📤 Envoyer</button>
+    <button class="sheet-btn outline" onclick="closeOverlay('bug-overlay')">Annuler</button>
   </div>
 </div>
 <div class="date-overlay" id="date-overlay">
@@ -922,16 +940,18 @@ function showStep(n){
 }
 function getPrice(){return bk.surf?(PRICES[bk.svc][bk.surf]||'Sur devis'):'À partir de 29,90€';}
 
-function checkS2(){const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const btn=document.getElementById('btn-s2');if(btn)btn.disabled=!(bk.surf&&a&&c);}
+function checkS2(){const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const z=document.getElementById('zip').value.trim();const btn=document.getElementById('btn-s2');if(btn)btn.disabled=!(bk.surf&&a&&c&&/^\d{5}$/.test(z));}
 function goS2(){
-  const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();let ok=true;
+  const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const z=document.getElementById('zip').value.trim();let ok=true;
   if(!bk.surf){showToast('Sélectionnez une surface.');ok=false;}
   if(!a){document.getElementById('err-addr').textContent='Adresse requise.';document.getElementById('addr').classList.add('err');ok=false;}else{document.getElementById('err-addr').textContent='';document.getElementById('addr').classList.remove('err');}
   if(!c){document.getElementById('err-city').textContent='Ville requise.';document.getElementById('city').classList.add('err');ok=false;}else{document.getElementById('err-city').textContent='';document.getElementById('city').classList.remove('err');}
+  if(!z||!/^\d{5}$/.test(z)){document.getElementById('err-zip').textContent='Code postal invalide (5 chiffres).';document.getElementById('zip').classList.add('err');ok=false;}else{document.getElementById('err-zip').textContent='';document.getElementById('zip').classList.remove('err');}
   if(ok)showStep(3);
 }
 document.getElementById('addr').addEventListener('input',checkS2);
 document.getElementById('city').addEventListener('input',checkS2);
+document.getElementById('zip').addEventListener('input',checkS2);
 
 function checkS3(){const btn=document.getElementById('btn-s3');if(btn)btn.disabled=!(bk.date&&bk.time);}
 function goS3(){
@@ -950,8 +970,8 @@ function checkS4(){
 function buildRecap(){
   document.getElementById('sum-svc').textContent=SVCS[bk.svc];
   document.getElementById('sum-surf').textContent=bk.surf?bk.surf+' m²':'—';
-  const a=document.getElementById('addr').value,c=document.getElementById('city').value;
-  document.getElementById('sum-addr').textContent=(a||c)?[a,c].filter(Boolean).join(', '):'—';
+  const a=document.getElementById('addr').value,c=document.getElementById('city').value,z=document.getElementById('zip').value;
+  document.getElementById('sum-addr').textContent=(a||c)?[a,(z?z+' ':'')+c].filter(Boolean).join(', '):'—';
   document.getElementById('sum-time').textContent=bk.time||'—';
   document.getElementById('sum-price').textContent=getPrice();
   if(bk.svc>1&&bk.dates.length>1){
@@ -977,7 +997,8 @@ async function doConfirm(){
   if(!ok){document.getElementById('bk-name').scrollIntoView({behavior:'smooth'});return;}
   const btn=document.getElementById('btn-confirm');const eb=document.getElementById('booking-error');
   btn.disabled=true;btn.textContent='⏳ Envoi en cours…';eb.style.display='none';
-  const addr=[document.getElementById('addr').value,document.getElementById('city').value].filter(Boolean).join(', ');
+  const _z=document.getElementById('zip').value,_c=document.getElementById('city').value;
+  const addr=[document.getElementById('addr').value,(_z?_z+' ':'')+_c].filter(Boolean).join(', ');
   const devisRef='NGV-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
   const SURF_LBL={'0-500':'0–500 m²','500-1500':'500–1500 m²','1500-3000':'1500–3000 m²','3000-7000':'3000–7000 m²'};
   const svcLbl=SVCS[bk.svc]||'';
@@ -1159,6 +1180,44 @@ function saveEdit(){
    OVERLAYS
    ================================================================ */
 function closeOverlay(id){document.getElementById(id).style.display='none';}
+function openBugReport(){
+  document.getElementById('bug-desc').value='';
+  document.getElementById('err-bug').textContent='';
+  const btn=document.getElementById('btn-bug');btn.disabled=false;btn.textContent='📤 Envoyer';
+  document.getElementById('bug-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('bug-desc').focus(),100);
+}
+async function doReportBug(){
+  const desc=document.getElementById('bug-desc').value.trim();
+  const err=document.getElementById('err-bug');
+  if(!desc||desc.length<10){err.textContent='Décrivez le bug en quelques mots (min. 10 caractères).';return;}
+  err.textContent='';
+  const btn=document.getElementById('btn-bug');btn.disabled=true;btn.textContent='⏳ Envoi…';
+  const userInfo=currentUser?'Utilisateur : '+currentUser.prenom+' '+currentUser.nom+'\nEmail : '+currentUser.email:'Utilisateur non connecté';
+  try{
+    const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'[Bug Novogarden] Signalement client',
+        _captcha:'false',
+        _template:'table',
+        source:'PWA Bug Report',
+        utilisateur:userInfo,
+        description:desc,
+        date:new Date().toLocaleString('fr-FR')
+      })
+    });
+    const data=await resp.json();
+    if(data.success==='true'||data.success===true){
+      closeOverlay('bug-overlay');
+      showToast('Merci ! Votre signalement a été envoyé. 🙏');
+    }else{throw new Error(data.message||'Send failed');}
+  }catch(e){
+    err.textContent='Erreur d\'envoi. Réessayez ou contactez contact@novogardenhub.com';
+    btn.disabled=false;btn.textContent='📤 Envoyer';
+  }
+}
 document.querySelectorAll('.overlay,.date-overlay,.edit-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.style.display='none';});});
 
 /* ================================================================
