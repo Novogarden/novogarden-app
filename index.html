@@ -548,9 +548,9 @@ html, body {
         </div>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Total</div></div>
-        <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">À venir</div></div>
-        <div class="stat-card"><div class="stat-val">0€</div><div class="stat-lbl">Dépenses</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-total">0</div><div class="stat-lbl">Total</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-avenir">0</div><div class="stat-lbl">À venir</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-depenses">0€</div><div class="stat-lbl">Dépenses</div></div>
       </div>
       <div class="tonte-list" id="tonte-list">
       </div>
@@ -619,14 +619,14 @@ html, body {
     <div id="solde" class="screen">
       <div class="solde-hero">
         <div class="solde-label">Solde du compte</div>
-        <div class="solde-amount">0,00 €</div>
+        <div class="solde-amount" id="solde-amount">0,00 €</div>
         <div class="solde-sub">Aucun avoir en cours</div>
       </div>
       <div class="solde-body">
         <div class="solde-stats">
-          <div class="solde-stat"><div class="val">0€</div><div class="lbl">Dépensé</div></div>
-          <div class="solde-stat"><div class="val">0</div><div class="lbl">Tontes</div></div>
-          <div class="solde-stat"><div class="val">0</div><div class="lbl">En attente</div></div>
+          <div class="solde-stat"><div class="val" id="sd-depense">0€</div><div class="lbl">Dépensé</div></div>
+          <div class="solde-stat"><div class="val" id="sd-tontes">0</div><div class="lbl">Tontes</div></div>
+          <div class="solde-stat"><div class="val" id="sd-attente">0</div><div class="lbl">En attente</div></div>
         </div>
         <p class="sect">Historique des paiements</p>
         <div class="inv-list" id="inv-list">
@@ -649,7 +649,7 @@ html, body {
       <div class="success-body">
         <div class="success-icon">📧</div>
         <div class="success-title">Devis envoyé !</div>
-        <div class="success-sub">Votre client de messagerie s'est ouvert.<br>Vérifiez et envoyez l'email pour transmettre le devis.</div>
+        <div class="success-sub">Votre devis a été envoyé automatiquement par email.<br>Vous recevrez une confirmation à votre adresse.</div>
         <div class="ref-box">
           <div style="font-size:11px;color:var(--grey);margin-bottom:4px;font-weight:700;">Numéro de réservation</div>
           <div class="ref-num" id="refnum">NGH-2026-0001</div>
@@ -773,8 +773,69 @@ function navTo(id){
 /* ================================================================
    AUTH
    ================================================================ */
-function loadSession(){try{const s=localStorage.getItem('ng_user');if(s){currentUser=JSON.parse(s);updateAuthUI();}}catch(e){}}
+function loadSession(){try{const s=localStorage.getItem('ng_user');if(s){currentUser=JSON.parse(s);updateAuthUI();}}catch(e){}refreshTontes();refreshSolde();}
 function saveSession(u){currentUser=u;localStorage.setItem('ng_user',JSON.stringify(u));updateAuthUI();}
+function refreshTontes(){
+  try{
+    const res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
+    const list=document.getElementById('tonte-list');if(!list)return;
+    const today=new Date();today.setHours(0,0,0,0);
+    let total=0,avenir=0,depenses=0;
+    list.innerHTML='';
+    if(res.length===0){list.innerHTML='<p style="text-align:center;color:var(--grey);font-size:13px;padding:24px 0;">Aucune réservation pour le moment</p>';}
+    else{
+      res.slice().reverse().forEach(function(r){
+        total++;
+        // parse first date
+        let d=null;
+        if(r.dates&&r.dates.length>0){d=new Date(r.dates[0]);}
+        else if(r.date){d=parseDate(r.date);}
+        const isPast=d&&d<today;
+        if(!isPast)avenir++;
+        const priceNum=parseFloat((r.price||'').replace(/[^0-9,.]/g,'').replace(',','.'));
+        if(!isNaN(priceNum))depenses+=priceNum;
+        const dateStr=d?fmtDate(d):(r.date||'—');
+        const statusLbl=isPast?'Effectuée':'À venir';
+        const statusCls=isPast?'done':'';
+        list.innerHTML+='<div class="tonte-card '+statusCls+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:12px;font-weight:800;color:var(--grey)">'+dateStr+'</span><span class="inv-status '+(isPast?'paid':'pending')+'" style="font-size:10px">'+statusLbl+'</span></div><div style="font-weight:800;font-size:14px">'+r.svc+'</div>'+(r.surf?'<div style="font-size:12px;color:var(--grey);margin-top:2px">'+r.surf+' m²</div>':'')+'<div style="font-size:12px;color:var(--grey);margin-top:2px">Réf. '+r.ref+'</div></div>';
+      });
+    }
+    document.getElementById('stat-total').textContent=total;
+    document.getElementById('stat-avenir').textContent=avenir;
+    document.getElementById('stat-depenses').textContent=depenses>0?depenses.toFixed(2).replace('.',',')+'€':'0€';
+  }catch(e){}
+}
+function refreshSolde(){
+  try{
+    const res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
+    const list=document.getElementById('inv-list');if(!list)return;
+    const today=new Date();today.setHours(0,0,0,0);
+    let depTotal=0,tontes=0,attente=0;
+    list.innerHTML='';
+    if(res.length===0){list.innerHTML='<p style="text-align:center;color:var(--grey);font-size:13px;padding:16px 0;">Aucun historique</p>';}
+    else{
+      res.slice().reverse().forEach(function(r){
+        tontes++;
+        let d=null;
+        if(r.dates&&r.dates.length>0){d=new Date(r.dates[0]);}
+        else if(r.date){d=parseDate(r.date);}
+        const isPast=d&&d<today;
+        const priceNum=parseFloat((r.price||'').replace(/[^0-9,.]/g,'').replace(',','.'));
+        if(!isNaN(priceNum))depTotal+=priceNum;
+        if(!isPast)attente++;
+        const dateStr=d?fmtDate(d):(r.date||'—');
+        const statusLbl=isPast?'Payé':'En attente';
+        const statusCls=isPast?'paid':'pending';
+        list.innerHTML+='<div class="inv-item"><div><div class="inv-date">'+dateStr+'</div><div class="inv-service">'+r.svc+'</div><div style="font-size:11px;color:var(--grey)">'+r.ref+'</div></div><div class="inv-right"><div class="inv-amount">'+(r.price||'—')+'</div><span class="inv-status '+statusCls+'">'+statusLbl+'</span></div></div>';
+      });
+    }
+    const depStr=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0€';
+    document.getElementById('sd-depense').textContent=depStr;
+    document.getElementById('sd-tontes').textContent=tontes;
+    document.getElementById('sd-attente').textContent=attente;
+    document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0,00 €';
+  }catch(e){}
+}
 function updateAuthUI(){
   const btn=document.getElementById('topbar-auth-btn');
   if(currentUser){
@@ -981,6 +1042,15 @@ function fillSuccess(devisRef,email,payUrl){
   }else{document.getElementById('sc-date-row').style.display='';document.getElementById('sc-date').textContent=bk.date||'—';document.getElementById('sc-dates-list').style.display='none';}
   if(payUrl){document.getElementById('sc-pay-link').href=payUrl;document.getElementById('sc-payment-wrap').style.display='block';}
   navTo('success');
+  // Save reservation to localStorage
+  try{
+    const res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
+    const priceRaw=getPrice();
+    res.push({ref:devisRef,svc:SVCS[bk.svc],surf:bk.surf,date:bk.date,dates:bk.dates?bk.dates.slice():[], price:priceRaw,time:bk.time,status:'pending',created:new Date().toISOString()});
+    localStorage.setItem('ng_reservations',JSON.stringify(res));
+  }catch(e){}
+  refreshTontes();
+  refreshSolde();
 }
 
 /* ================================================================
