@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 /* ============================================================
    CHARTE GRAPHIQUE NOVOGARDEN — couleurs, typo, radius exacts
@@ -329,7 +330,6 @@ html, body {
 .toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--dark); color:white; padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all 0.3s; z-index:9999; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -343,7 +343,7 @@ html, body {
     <div class="topbar-right">
       <button class="notif-btn" onclick="navTo('notifs')" id="bell-btn">
         <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-        <span class="bell-badge" id="bell-badge">2</span>
+        <span class="bell-badge" id="bell-badge">0</span>
       </button>
       <button class="auth-topbar-btn" id="topbar-auth-btn" onclick="handleAuthClick()">Connexion</button>
     </div>
@@ -396,7 +396,7 @@ html, body {
           <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
           <tbody>
             <tr><td>0–500 m²</td><td>29,90€</td><td>130€</td><td>232€</td></tr>
-            <tr><td>500–1500 m²</td><td>0€</td><td>175€</td><td>312€</td></tr>
+            <tr><td>500–1500 m²</td><td>39€</td><td>175€</td><td>312€</td></tr>
             <tr><td>1500–3000 m²</td><td>49€</td><td>220€</td><td>392€</td></tr>
             <tr><td>3000–7000 m²</td><td>67€</td><td>265€</td><td>472€</td></tr>
             <tr><td>+7000 m²</td><td>Devis</td><td>Devis</td><td>Devis</td></tr>
@@ -533,7 +533,7 @@ html, body {
           </div>
           <div class="err-msg" id="err-cgv"></div>
           <div class="booking-error" id="booking-error"></div>
-          <button class="btn-p" id="btn-confirm" onclick="doConfirm()">📧 Envoyer le devis par email</button>
+          <button class="btn-p" id="btn-confirm" onclick="doConfirm()" disabled>📧 Envoyer le devis par email</button>
           <button class="btn-s" onclick="showStep(3)">← Retour</button>
         </div>
       </div>
@@ -545,7 +545,7 @@ html, body {
         <div class="ph-title">Mes tontes</div>
         <div class="ph-bell" onclick="navTo('notifs')">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-          <span class="bell-badge" id="bell-badge-t">2</span>
+          <span class="bell-badge" id="bell-badge-t">0</span>
         </div>
       </div>
       <div class="stats-row">
@@ -553,9 +553,7 @@ html, body {
         <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">À venir</div></div>
         <div class="stat-card"><div class="stat-val">0€</div><div class="stat-lbl">Dépenses</div></div>
       </div>
-      <div class="tonte-list">
-        
-        
+      <div class="tonte-list" id="tonte-list">
       </div>
       <button class="btn-p btn-nav-cta" onclick="startBooking(1)">+ Nouvelle réservation</button>
     </div>
@@ -611,8 +609,8 @@ html, body {
         <div class="profile-section">
           <div class="ps-label">Mon abonnement</div>
           <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val">Pack Solo</span></div>
-          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val">0 / 0</span></div>
-          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">—</span></div>
+          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val">1 / 1</span></div>
+          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">18 avril 2026</span></div>
         </div>
         <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
       </div>
@@ -628,16 +626,11 @@ html, body {
       <div class="solde-body">
         <div class="solde-stats">
           <div class="solde-stat"><div class="val">0€</div><div class="lbl">Dépensé</div></div>
-          <div class="solde-stat"><div class="val">2</div><div class="lbl">Tontes</div></div>
-          <div class="solde-stat"><div class="val">1</div><div class="lbl">En attente</div></div>
+          <div class="solde-stat"><div class="val">0</div><div class="lbl">Tontes</div></div>
+          <div class="solde-stat"><div class="val">0</div><div class="lbl">En attente</div></div>
         </div>
         <p class="sect">Historique des paiements</p>
-        <div class="inv-list">
-          <div class="inv-item">
-            <div><div class="inv-date">—</div><div class="inv-service">Pack Solo – 1 tonte · Alençon</div></div>
-            <div class="inv-right"><div class="inv-amount">0€</div><span class="inv-status pending">En attente</span></div>
-          </div>
-          
+        <div class="inv-list" id="inv-list">
         </div>
       </div>
     </div>
@@ -649,9 +642,21 @@ html, body {
         <button class="mark-all-btn" onclick="markAllRead()">Tout marquer lu</button>
       </div>
       <div class="notif-list">
-        
-        
-        
+        <div class="notif-item unread" id="n1" onclick="markRead('n1')">
+          <div class="notif-title">🔔 Rappel : tonte demain</div>
+          <div class="notif-body">Votre tonte du 18 avril est confirmée. Notre équipe sera là à 9h00.</div>
+          <div class="notif-time">Aujourd'hui, 8h15</div>
+        </div>
+        <div class="notif-item unread" id="n2" onclick="markRead('n2')">
+          <div class="notif-title">✅ Réservation confirmée</div>
+          <div class="notif-body">Votre réservation NGH-2026-3842 a bien été prise en compte.</div>
+          <div class="notif-time">Hier, 14h32</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-title">🌿 Tonte terminée</div>
+          <div class="notif-body">Votre pelouse a été tondue le 5 mars. Merci pour votre confiance !</div>
+          <div class="notif-time">5 mars, 12h00</div>
+        </div>
       </div>
     </div>
 
@@ -768,7 +773,7 @@ const MFR=['janvier','février','mars','avril','mai','juin','juillet','août','s
 const MCAP=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DSH=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 let bk={svc:1,surf:'',date:'',time:'',frequency:2,dates:[]};
-let _calY,_calM,_mcy=new Date().getFullYear(),_mcm=new Date().getMonth(),_mci=-1,_editField='',_unread=2,currentUser=null;
+let _calY,_calM,_mcy=new Date().getFullYear(),_mcm=new Date().getMonth(),_mci=-1,_editField='',_unread=0,currentUser=null;
 
 /* ================================================================
    NAVIGATION
@@ -912,50 +917,66 @@ function buildRecap(){
   }else{document.getElementById('sum-date').textContent=bk.date||'—';document.getElementById('recap-dates').style.display='none';}
 }
 async function doConfirm(){
-  const btn=document.getElementById('btn-confirm');
-  if(!bk.date||!bk.time||!bk.surf||!bk.svc){showToast('Complétez tous les champs.');return;}
-  btn.disabled=true;btn.textContent='Envoi en cours...';
-  const ref='NGH-'+Date.now().toString(36).toUpperCase();
-  const svcLbl=['','Pack Solo','Pack Essentiel','Pack Sérénité'][bk.svc];
-  const price=getPrice();
-  const datesLine=bk.svc===1?'\nDate souhaitée : '+bk.date:'\nDates : voir calendrier joint';
-  const msg=
-    'NOUVEAU DEVIS NOVOGARDEN — Réf. '+ref+'\n'+
-    '================================\n\n'+
+  const name=document.getElementById('bk-name').value.trim();
+  const phone=document.getElementById('bk-phone').value.trim();
+  const email=document.getElementById('bk-email').value.trim();
+  const note=document.getElementById('bk-note').value.trim();
+  const cgv=document.getElementById('bk-cgv').checked;
+  let ok=true;
+  const se=(id,msg)=>{const el=document.getElementById(id);if(el)el.textContent=msg;if(msg)ok=false;};
+  se('err-name',name.length<2?'Nom requis (min 2 caractères)':'');
+  se('err-phone',!/^[\d\s\+\-\.]{8,15}$/.test(phone)?'Numéro invalide':'');
+  se('err-email',!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?'Email invalide':'');
+  se('err-cgv',!cgv?'Veuillez accepter les CGV':'');
+  if(!bk.date||!bk.time){se('err-name','Date ou créneau manquant — retournez à l\'étape 3.');ok=false;}
+  if(!ok){document.getElementById('bk-name').scrollIntoView({behavior:'smooth'});return;}
+  const btn=document.getElementById('btn-confirm');const eb=document.getElementById('booking-error');
+  btn.disabled=true;btn.textContent='⏳ Envoi en cours…';eb.style.display='none';
+  const addr=[document.getElementById('addr').value,document.getElementById('city').value].filter(Boolean).join(', ');
+  const devisRef='NGV-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  const SURF_LBL={'0-500':'0–500 m²','500-1500':'500–1500 m²','1500-3000':'1500–3000 m²','3000-7000':'3000–7000 m²'};
+  const svcLbl=SVCS[bk.svc]||'';
+  let datesLine='';
+  if(bk.svc>1&&bk.dates.length>1){
+    datesLine='\nCalendrier des tontes :\n'+bk.dates.map((d,i)=>'  Tonte '+(i+1)+' : '+fmtDate(d)).join('\n');
+    datesLine+='\nEspacement : toutes les '+bk.frequency+' semaine(s)';
+  }else{
+    datesLine='\nDate souhaitée : '+bk.date;
+  }
+  const message=
+    'Nouveau devis Novogarden — Réf. '+devisRef+'\n'+
+    '═══════════════════════════════\n\n'+
     'CLIENT\n'+
-    '  Nom    : '+bk.name+'\n'+
-    '  Tél    : '+bk.phone+'\n'+
-    '  Email  : '+bk.email+'\n'+
-    '  Adresse: '+bk.addr+'\n\n'+
+    '  Nom    : '+name+'\n'+
+    '  Tél    : '+phone+'\n'+
+    '  Email  : '+email+'\n'+
+    '  Adresse: '+addr+'\n\n'+
     'PRESTATION\n'+
     '  Formule: '+svcLbl+'\n'+
-    '  Surface: '+(SURF_LBL[bk.surf]||bk.surf||'-')+'\n'+
+    '  Surface: '+(SURF_LBL[bk.surf]||bk.surf||'—')+'\n'+
     '  Créneau: '+bk.time+
     datesLine+'\n\n'+
-    'TARIF ESTIMÉ : '+price+'\n\n'+
-    (bk.note?'NOTE CLIENT : '+bk.note+'\n\n':'')+
-    '================================\n'+
-    'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'})+'\n'+
-    'Envoyé depuis novogardenhub.com';
-  emailjs.init('bDW5NLXZhn9seIz05');
-  emailjs.send('service_p2c9cyo','zu8qb2f',{
-    subject:'['+svcLbl+'] Réf. '+ref,
-    message:msg,
-    to_email:'contact@novogardenhub.com'
-  }).then(()=>{
-    showToast('✅ Devis envoyé !');
-    btn.textContent='✅ Devis envoyé !';
-    setTimeout(()=>showTab('home'),3000);
-  }).catch(err=>{
-    console.error(err);
-    // Fallback: ouvrir la boite mail
-    const s=encodeURIComponent('[Devis Novogarden] '+svcLbl+' — Réf. '+ref);
-    const b=encodeURIComponent(msg);
-    const a=document.createElement('a');
-    a.href='mailto:contact@novogardenhub.com?subject='+s+'&body='+b;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    btn.disabled=false;btn.textContent='📧 Envoyer le devis par email';
-  });
+    'TARIF ESTIMÉ : '+getPrice()+'\n\n'+
+    (note?'NOTE CLIENT : '+note+'\n\n':'')+
+    '─────────────────────────────\n'+
+    'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  try{
+    await emailjs.send('service_p2c9cyo','zu8qb2f',{
+      from_name: name,
+      from_email: email,
+      phone: phone,
+      subject: '[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,
+      message: message,
+      devis_ref: devisRef
+    });
+    fillSuccess(devisRef,email,null);
+  }catch(err){
+    console.error('EmailJS error:',err);
+    eb.textContent='Erreur d\'envoi. Veuillez réessayer ou contacter contact@novogardenhub.com';
+    eb.style.display='block';
+    btn.disabled=false;
+    btn.textContent='📧 Envoyer le devis par email';
+  }
 }
 function fillSuccess(devisRef,email,payUrl){
   document.getElementById('refnum').textContent=ref;
@@ -1041,7 +1062,7 @@ function showCancelModal(){
   const nextDate=bk.date?parseDate(bk.date):null;const diff=nextDate?(nextDate-new Date())/(1000*60*60):-1;
   const icon=document.getElementById('cancel-icon');const msg=document.getElementById('cancel-msg');
   const free=document.getElementById('cancel-free-btns');const pen=document.getElementById('cancel-penalty-btns');
-  if(diff>24){icon.textContent='⚠️';msg.innerHTML='Votre tonte prévue<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
+  if(diff>24){icon.textContent='⚠️';msg.innerHTML='Votre tonte du <strong>18 avril à 9h00</strong> sera annulée.<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
   else{icon.textContent='❌';msg.innerHTML='Votre tonte est dans <strong>moins de 24h</strong>.<br><br>⚠️ Des <strong>pénalités</strong> s\'appliqueront.';free.style.display='none';pen.style.display='block';}
   document.getElementById('cancel-overlay').style.display='flex';
 }
@@ -1087,6 +1108,7 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 /* ================================================================
    INIT
    ================================================================ */
+emailjs.init('bDW5NLXZhn9seIz05');
 loadSession();
 updateBadges();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/novogarden-app/sw.js').catch(()=>{});
