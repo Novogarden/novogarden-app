@@ -669,7 +669,7 @@ html, body {
         </div>
         <div id="sc-dates-list" style="display:none;text-align:left;margin-bottom:14px"></div>
         <div id="sc-payment-wrap" style="display:none;margin-bottom:12px">
-          <a id="sc-pay-link" href="#" class="pay-link">Payer ma facture en ligne</a>
+          <a id="sc-pay-link" href="#" class="pay-link" target="_blank" rel="noopener">Payer ma facture en ligne</a>
           <div style="font-size:11px;color:var(--grey);text-align:center" id="sc-email-note">Le lien est aussi envoyé à votre email</div>
         </div>
         <button class="back-home" onclick="navTo('home')">Retour à l'accueil</button>
@@ -1231,6 +1231,17 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 loadSession();
 updateBadges();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/novogarden-app/sw.js').catch(()=>{});
+// Ouvrir tous les liens externes dans un Custom Tab (évite la barre d'adresse TWA)
+document.addEventListener('click',function(e){
+  const a=e.target.closest('a[href]');
+  if(!a)return;
+  const href=a.getAttribute('href');
+  if(!href||href.startsWith('#')||href.startsWith('/')||href.startsWith('javascript'))return;
+  if(href.startsWith('http')&&!href.includes('novogarden.github.io')){
+    e.preventDefault();
+    window.open(href,'_blank','noopener');
+  }
+});
 </script>
 </body>
 </html>
