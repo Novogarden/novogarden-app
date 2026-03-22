@@ -395,7 +395,7 @@ html, body {
           <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
           <tbody>
             <tr><td>0–500 m²</td><td>29,90€</td><td>130€</td><td>232€</td></tr>
-            <tr><td>500–1500 m²</td><td>39€</td><td>175€</td><td>312€</td></tr>
+            <tr><td>500–1500 m²</td><td>0€</td><td>175€</td><td>312€</td></tr>
             <tr><td>1500–3000 m²</td><td>49€</td><td>220€</td><td>392€</td></tr>
             <tr><td>3000–7000 m²</td><td>67€</td><td>265€</td><td>472€</td></tr>
             <tr><td>+7000 m²</td><td>Devis</td><td>Devis</td><td>Devis</td></tr>
@@ -549,33 +549,12 @@ html, body {
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Total</div></div>
-        <div class="stat-card"><div class="stat-val">1</div><div class="stat-lbl">À venir</div></div>
-        <div class="stat-card"><div class="stat-val">39€</div><div class="stat-lbl">Dépenses</div></div>
+        <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">À venir</div></div>
+        <div class="stat-card"><div class="stat-val">0€</div><div class="stat-lbl">Dépenses</div></div>
       </div>
       <div class="tonte-list">
-        <div class="tonte-card" id="card-upcoming">
-          <span class="tc-badge">À venir</span>
-          <div class="tc-date">📅 18 avril 2026 · 9h00</div>
-          <div class="tc-svc">Pack Solo – 1 tonte</div>
-          <div class="tc-addr">📍 12 rue des Lilas, Alençon</div>
-          <div class="tc-price">39€</div>
-          <div class="tc-actions">
-            <button class="btn-cancel" onclick="showCancelModal()">Annuler</button>
-            <button class="btn-report" onclick="showReportModal()">Reporter</button>
-          </div>
-        </div>
-        <div class="tonte-card done">
-          <span class="tc-badge done-badge">Effectuée ✓</span>
-          <div class="tc-date">5 mars 2026 · 10h30</div>
-          <div class="tc-svc">Pack Solo – 1 tonte</div>
-          <div class="tc-addr">📍 12 rue des Lilas, Alençon</div>
-          <div class="tc-price">39€</div>
-          <div class="stars" id="stars-1">
-            <span class="star" onclick="rateTonte(1,1)">★</span><span class="star" onclick="rateTonte(1,2)">★</span>
-            <span class="star" onclick="rateTonte(1,3)">★</span><span class="star" onclick="rateTonte(1,4)">★</span>
-            <span class="star" onclick="rateTonte(1,5)">★</span>
-          </div>
-        </div>
+        
+        
       </div>
       <button class="btn-p btn-nav-cta" onclick="startBooking(1)">+ Nouvelle réservation</button>
     </div>
@@ -631,8 +610,8 @@ html, body {
         <div class="profile-section">
           <div class="ps-label">Mon abonnement</div>
           <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val">Pack Solo</span></div>
-          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val">1 / 1</span></div>
-          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">18 avril 2026</span></div>
+          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val">0 / 0</span></div>
+          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">—</span></div>
         </div>
         <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
       </div>
@@ -647,20 +626,17 @@ html, body {
       </div>
       <div class="solde-body">
         <div class="solde-stats">
-          <div class="solde-stat"><div class="val">39€</div><div class="lbl">Dépensé</div></div>
+          <div class="solde-stat"><div class="val">0€</div><div class="lbl">Dépensé</div></div>
           <div class="solde-stat"><div class="val">2</div><div class="lbl">Tontes</div></div>
           <div class="solde-stat"><div class="val">1</div><div class="lbl">En attente</div></div>
         </div>
         <p class="sect">Historique des paiements</p>
         <div class="inv-list">
           <div class="inv-item">
-            <div><div class="inv-date">18 avril 2026</div><div class="inv-service">Pack Solo – 1 tonte · Alençon</div></div>
-            <div class="inv-right"><div class="inv-amount">39€</div><span class="inv-status pending">En attente</span></div>
+            <div><div class="inv-date">—</div><div class="inv-service">Pack Solo – 1 tonte · Alençon</div></div>
+            <div class="inv-right"><div class="inv-amount">0€</div><span class="inv-status pending">En attente</span></div>
           </div>
-          <div class="inv-item">
-            <div><div class="inv-date">5 mars 2026</div><div class="inv-service">Pack Solo – 1 tonte · Alençon</div></div>
-            <div class="inv-right"><div class="inv-amount">39€</div><span class="inv-status paid">Payé</span></div>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -672,21 +648,13 @@ html, body {
         <button class="mark-all-btn" onclick="markAllRead()">Tout marquer lu</button>
       </div>
       <div class="notif-list">
-        <div class="notif-item unread" id="n1" onclick="markRead('n1')">
-          <div class="notif-title">🔔 Rappel : tonte demain</div>
-          <div class="notif-body">Votre tonte du 18 avril est confirmée. Notre équipe sera là à 9h00.</div>
-          <div class="notif-time">Aujourd'hui, 8h15</div>
-        </div>
+        
         <div class="notif-item unread" id="n2" onclick="markRead('n2')">
           <div class="notif-title">✅ Réservation confirmée</div>
           <div class="notif-body">Votre réservation NGH-2026-3842 a bien été prise en compte.</div>
           <div class="notif-time">Hier, 14h32</div>
         </div>
-        <div class="notif-item">
-          <div class="notif-title">🌿 Tonte terminée</div>
-          <div class="notif-body">Votre pelouse a été tondue le 5 mars. Merci pour votre confiance !</div>
-          <div class="notif-time">5 mars, 12h00</div>
-        </div>
+        
       </div>
     </div>
 
@@ -1080,7 +1048,7 @@ function showCancelModal(){
   const nextDate=bk.date?parseDate(bk.date):null;const diff=nextDate?(nextDate-new Date())/(1000*60*60):-1;
   const icon=document.getElementById('cancel-icon');const msg=document.getElementById('cancel-msg');
   const free=document.getElementById('cancel-free-btns');const pen=document.getElementById('cancel-penalty-btns');
-  if(diff>24){icon.textContent='⚠️';msg.innerHTML='Votre tonte du <strong>18 avril à 9h00</strong> sera annulée.<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
+  if(diff>24){icon.textContent='⚠️';msg.innerHTML='Votre tonte prévue<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
   else{icon.textContent='❌';msg.innerHTML='Votre tonte est dans <strong>moins de 24h</strong>.<br><br>⚠️ Des <strong>pénalités</strong> s\'appliqueront.';free.style.display='none';pen.style.display='block';}
   document.getElementById('cancel-overlay').style.display='flex';
 }
