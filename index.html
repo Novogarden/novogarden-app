@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 /* ============================================================
    CHARTE GRAPHIQUE NOVOGARDEN — couleurs, typo, radius exacts
@@ -946,17 +945,24 @@ async function doConfirm(){
     '─────────────────────────────\n'+
     'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
   try{
-    await emailjs.send('service_p2c9cyo','zu8qb2f',{
-      from_name: name,
-      from_email: email,
-      phone: phone,
-      subject: '[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,
-      message: message,
-      devis_ref: devisRef
+    const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,
+        _captcha:'false',
+        _template:'table',
+        name:name,
+        email:email,
+        phone:phone,
+        message:message
+      })
     });
-    fillSuccess(devisRef,email,null);
+    const data=await resp.json();
+    if(data.success==='true'||data.success===true){fillSuccess(devisRef,email,null);}
+    else{throw new Error(data.message||'Send failed');}
   }catch(err){
-    console.error('EmailJS error:',err);
+    console.error('FormSubmit error:',err);
     eb.textContent='Erreur d\'envoi. Veuillez réessayer ou contacter contact@novogardenhub.com';
     eb.style.display='block';
     btn.disabled=false;
@@ -964,7 +970,7 @@ async function doConfirm(){
   }
 }
 function fillSuccess(devisRef,email,payUrl){
-  document.getElementById('refnum').textContent=ref;
+  document.getElementById('refnum').textContent=devisRef;
   document.getElementById('sc-svc').textContent=SVCS[bk.svc];
   document.getElementById('sc-surf').textContent=bk.surf?bk.surf+' m²':'—';
   document.getElementById('sc-price').textContent=getPrice();
@@ -1093,7 +1099,6 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 /* ================================================================
    INIT
    ================================================================ */
-emailjs.init('bDW5NLXZhn9seIz05');
 loadSession();
 updateBadges();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/novogarden-app/sw.js').catch(()=>{});
