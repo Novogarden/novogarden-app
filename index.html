@@ -328,6 +328,8 @@ html, body {
 /* ===== TOAST ===== */
 .toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--dark); color:white; padding:10px 20px; border-radius:20px; font-size:13px; font-weight:700; opacity:0; transition:all 0.3s; z-index:9999; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+.inv-item[data-ref]{touch-action:pan-y;user-select:none;}
 </style>
 </head>
 <body>
@@ -613,9 +615,9 @@ html, body {
         </div>
         <div class="profile-section">
           <div class="ps-label">Mon abonnement</div>
-          <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val">Pack Solo</span></div>
-          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val">1 / 1</span></div>
-          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val">18 avril 2026</span></div>
+          <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val" id="pf-svc">—</span></div>
+          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val" id="pf-tontes">—</span></div>
+          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val" id="pf-next">—</span></div>
         </div>
         <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
         <button class="btn-logout" style="background:#fff3e0;color:#e65100;margin-top:8px" onclick="openBugReport()">🐛 Signaler un bug</button>
@@ -846,7 +848,7 @@ function refreshSolde(){
         const dateStr=d?fmtDate(d):(r.date||'—');
         const statusLbl=isPast?'Payé':'En attente';
         const statusCls=isPast?'paid':'pending';
-        list.innerHTML+='<div class="inv-item"><div><div class="inv-date">'+dateStr+'</div><div class="inv-service">'+r.svc+'</div><div style="font-size:11px;color:var(--grey)">'+r.ref+'</div></div><div class="inv-right"><div class="inv-amount">'+(r.price||'—')+'</div><span class="inv-status '+statusCls+'">'+statusLbl+'</span></div></div>';
+        list.innerHTML+='<div class="inv-item" data-ref="'+r.ref+'"><div><div class="inv-date">'+dateStr+'</div><div class="inv-service">'+r.svc+'</div><div style="font-size:11px;color:var(--grey)">'+r.ref+'</div></div><div class="inv-right"><div class="inv-amount">'+(r.price||'—')+'</div><span class="inv-status '+statusCls+'">'+statusLbl+'</span></div></div>';
       });
     }
     const depStr=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0€';
@@ -854,7 +856,45 @@ function refreshSolde(){
     document.getElementById('sd-tontes').textContent=tontes;
     document.getElementById('sd-attente').textContent=attente;
     document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0,00 €';
+    initSwipeDelete();
   }catch(e){}
+}
+function initSwipeDelete(){
+  var items=document.querySelectorAll('#inv-list .inv-item[data-ref]');
+  items.forEach(function(item){
+    var sx=0,sy=0;
+    item.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+    item.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-sx;
+      var dy=e.changedTouches[0].clientY-sy;
+      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){
+        showDelConfirm(item.getAttribute('data-ref'));
+      }
+    });
+  });
+}
+function showDelConfirm(ref){
+  window.__pendingDelRef=ref;
+  var ov=document.getElementById('del-confirm-ov');
+  if(ov){ov.style.display='flex';}
+}
+function confirmDeleteInv(){
+  var ref=window.__pendingDelRef;
+  var ov=document.getElementById('del-confirm-ov');
+  if(ov)ov.style.display='none';
+  if(!ref)return;
+  try{
+    var res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
+    res=res.filter(function(r){return r.ref!==ref;});
+    localStorage.setItem('ng_reservations',JSON.stringify(res));
+    refreshSolde();refreshTontes();
+  }catch(e){}
+  window.__pendingDelRef=null;
+}
+function cancelDeleteInv(){
+  var ov=document.getElementById('del-confirm-ov');
+  if(ov)ov.style.display='none';
+  window.__pendingDelRef=null;
 }
 function updateAuthUI(){
   const btn=document.getElementById('topbar-auth-btn');
@@ -866,6 +906,15 @@ function updateAuthUI(){
     document.getElementById('pf-nom').textContent=currentUser.prenom+' '+currentUser.nom;
     document.getElementById('pf-email').textContent=currentUser.email;
     document.getElementById('pf-tel').textContent=currentUser.tel||'—';
+    try{
+      var _r=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
+      var _s=document.getElementById('pf-svc');
+      var _t=document.getElementById('pf-tontes');
+      var _n=document.getElementById('pf-next');
+      if(_s){var _l=_r[_r.length-1];_s.textContent=_l?_l.svc:'—';}
+      if(_t){var _done=_r.filter(function(rv){var d=rv.dates&&rv.dates.length>0?new Date(rv.dates[0]):rv.date?parseDate(rv.date):null;return d&&d<new Date();}).length;_t.textContent=_done+' / '+_r.length;}
+      if(_n){var _td=new Date();_td.setHours(0,0,0,0);var _nd=_r.map(function(rv){return rv.dates&&rv.dates.length>0?new Date(rv.dates[0]):rv.date?parseDate(rv.date):null;}).filter(function(d){return d&&d>=_td;}).sort(function(a,b){return a-b;})[0];_n.textContent=_nd?fmtDate(_nd):'—';}
+    }catch(_e){}
     prefillBooking();
   } else {
     btn.textContent='Connexion';
@@ -1247,5 +1296,14 @@ document.addEventListener('click',function(e){
   }
 });
 </script>
+
+<div id="del-confirm-ov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);">
+  <div style="background:white;border-radius:16px 16px 0 0;padding:24px 20px;width:100%;max-width:500px;text-align:center;">
+    <p style="font-weight:700;font-size:15px;margin:0 0 6px;">Supprimer cette ligne ?</p>
+    <p style="font-size:13px;color:#888;margin:0 0 20px;">Cette action est irréversible.</p>
+    <button onclick="confirmDeleteInv()" style="width:100%;background:#e53935;color:white;border:none;border-radius:10px;padding:13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;">Supprimer</button>
+    <button onclick="cancelDeleteInv()" style="width:100%;background:#f0f0f0;color:#333;border:none;border-radius:10px;padding:13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;">Annuler</button>
+  </div>
+</div>
 </body>
 </html>
