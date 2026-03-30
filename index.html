@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#7DB532">
-<title>Novogarden â RÃ©servation</title>
+<title>Novogarden – Réservation</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   CHARTE GRAPHIQUE NOVOGARDEN â couleurs, typo, radius exacts
+   CHARTE GRAPHIQUE NOVOGARDEN — couleurs, typo, radius exacts
    ============================================================ */
 :root {
   --green: #7DB532;
@@ -38,7 +38,7 @@ html, body {
 /* ===== SHELL ===== */
 #app { display:flex; flex-direction:column; height:100%; height:100dvh; max-width:430px; margin:0 auto; background:var(--cream); box-shadow:0 0 40px rgba(0,0,0,0.15); position:relative; }
 
-/* ===== TOPBAR â gradient original ===== */
+/* ===== TOPBAR — gradient original ===== */
 .topbar { background:linear-gradient(135deg,#8dc83a 0%,var(--dark-green) 100%); padding:48px 18px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:white; }
 .logo-row { display:flex; align-items:center; gap:10px; }
 .logo-row img { width:28px; height:28px; border-radius:8px; object-fit:cover; }
@@ -55,7 +55,7 @@ html, body {
 .screen.active { display:flex; }
 .content { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
 
-/* ===== BOTTOM NAV â icÃ´nes fill comme l'original ===== */
+/* ===== BOTTOM NAV — icônes fill comme l'original ===== */
 .bottom-nav { background:white; border-top:1px solid var(--grey-light); display:flex; padding:8px 0 20px; flex-shrink:0; }
 .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px; border:none; background:none; font-family:'Montserrat',sans-serif; }
 .nav-item svg { width:22px; height:22px; fill:var(--grey); }
@@ -129,7 +129,7 @@ html, body {
 .opt-price { font-size:11px; color:var(--dark-green); font-weight:700; margin-top:2px; }
 .opt-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--grey-light); margin-left:auto; flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
 .opt.sel .opt-check { background:var(--green); border-color:var(--green); }
-.opt.sel .opt-check::after { content:'â'; color:white; font-size:11px; font-weight:800; }
+.opt.sel .opt-check::after { content:'✓'; color:white; font-size:11px; font-weight:800; }
 
 /* Chips */
 .chip-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
@@ -172,12 +172,12 @@ html, body {
 .cday.today { font-weight:800; border:1.5px solid var(--green); color:var(--green); }
 .cday.today.sel { color:white; }
 
-/* CrÃ©neaux */
+/* Créneaux */
 .tslots { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; margin-bottom:14px; }
 .tslot { background:white; border:2px solid var(--grey-light); border-radius:12px; padding:9px; text-align:center; cursor:pointer; font-size:12px; font-weight:700; transition:all 0.2s; color:var(--dark); }
 .tslot.sel { background:var(--green); border-color:var(--green); color:white; }
 
-/* RÃ©currence */
+/* Récurrence */
 .recur-section { margin-top:16px; border-top:1px solid var(--grey-light); padding-top:14px; }
 .recur-title { font-size:13px; font-weight:700; margin-bottom:3px; }
 .recur-sub { font-size:11px; color:var(--grey); margin-bottom:12px; }
@@ -191,7 +191,7 @@ html, body {
 .di-date { font-size:12px; font-weight:700; flex:1; }
 .di-edit { background:none; border:1.5px solid var(--grey-light); border-radius:8px; padding:3px 10px; font-size:11px; font-weight:700; color:var(--green); cursor:pointer; font-family:'Montserrat',sans-serif; }
 
-/* RÃ©cap */
+/* Récap */
 .recap-card { background:white; border-radius:var(--radius); padding:14px; box-shadow:0 4px 20px rgba(20,20,15,0.08); margin-bottom:14px; }
 .rrow { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
 .rrow:last-child { border-bottom:none; }
@@ -355,59 +355,63 @@ html, body {
     <!-- ACCUEIL -->
     <div id="home" class="screen active">
       <div class="home-header">
-        <h1>Votre pelouse<br>tondue Ã  petit prix</h1>
+        <h1>Votre pelouse<br>tondue à petit prix</h1>
         <p class="sub-txt">Sans bouger le petit doigt !</p>
-        <p class="hero-badge">ð¿ Orne (61) Â· Mayenne (53) Â· Cher (18)</p>
-        <button class="splash-btn" onclick="startBooking(1)">RÃ©server maintenant</button>
+        <p class="hero-badge">🌿 Orne (61) · Mayenne (53) · Cher (18)</p>
+        <button class="splash-btn" onclick="startBooking(1)">Réserver maintenant</button>
       </div>
       <div class="home-body">
+        <div class="promo">
+          <div class="promo-icon"><svg viewBox="0 0 24 24"><path d="M17 8C8 8 3 14.5 3 19c2-2 4-3 6-3-2 1-3 3-3 5h12c0-2-1-4-3-5 2 0 4 1 6 3 0-4.5-5-11-4-11z"/></svg></div>
+          <div><p>Réservez maintenant — tonte dès avril !</p></div>
+        </div>
         <p class="sect">Nos formules</p>
         <div class="cards">
           <div class="card c1" onclick="startBooking(1)">
             <div class="card-corner"></div>
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="#5a8e1e"><path d="M17 8C8 8 3 14.5 3 19c2-2 4-3 6-3-2 1-3 3-3 5h12c0-2-1-4-3-5 2 0 4 1 6 3 0-4.5-5-11-4-11z"/></svg></div>
-            <div class="card-name">Pack Solo â 1 tonte</div>
+            <div class="card-name">Pack Solo — 1 tonte</div>
             <div class="card-desc">Tonte ponctuelle, sans engagement</div>
-            <div class="card-price">Ã partir de 29,90â¬</div>
-            <div class="card-tag">Sans abonnement Â· Jusqu'Ã  67â¬/7000mÂ²</div>
+            <div class="card-price">À partir de 29,90€</div>
+            <div class="card-tag">Sans abonnement · Jusqu'à 67€/7000m²</div>
           </div>
           <div class="card c2" onclick="startBooking(2)">
             <div class="card-corner"></div>
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="#1565c0"><path d="M12 3C6.48 3 2 7.48 2 13c0 2.76 1.12 5.26 2.93 7.07l1.41-1.41C4.88 17.2 4 15.21 4 13c0-4.42 3.58-8 8-8s8 3.58 8 8c0 2.21-.88 4.2-2.34 5.66l1.41 1.41C20.88 18.26 22 15.76 22 13c0-5.52-4.48-10-10-10z"/></svg></div>
-            <div class="card-name">Pack Essentiel â 5 tontes</div>
-            <div class="card-desc">5 passages planifiÃ©s Â· 1 tonte / 6 semaines</div>
-            <div class="card-price">Ã partir de 26â¬/tonte</div>
-            <div class="card-tag">Paiement au prorata Â· Jusqu'Ã  53â¬/tonte</div>
+            <div class="card-name">Pack Essentiel — 5 tontes</div>
+            <div class="card-desc">5 passages planifiés · 1 tonte / 6 semaines</div>
+            <div class="card-price">À partir de 26€/tonte</div>
+            <div class="card-tag">Paiement au prorata · Jusqu'à 53€/tonte</div>
           </div>
           <div class="card c3" onclick="startBooking(3)">
             <div class="card-corner"></div>
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="#e65100"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg></div>
-            <div class="card-name">Pack SÃ©rÃ©nitÃ© â 10 tontes</div>
-            <div class="card-desc">La formule complÃ¨te Â· Meilleur tarif garanti</div>
-            <div class="card-price">Ã partir de 23,20â¬/tonte</div>
-            <div class="card-tag">â­ Paiement au prorata Â· Jusqu'Ã  47â¬/tonte</div>
+            <div class="card-name">Pack Sérénité — 10 tontes</div>
+            <div class="card-desc">La formule complète · Meilleur tarif garanti</div>
+            <div class="card-price">À partir de 23,20€/tonte</div>
+            <div class="card-tag">⭐ Paiement au prorata · Jusqu'à 47€/tonte</div>
           </div>
         </div>
         <p class="sect">Tarifs TTC par surface</p>
         <table class="price-table">
-          <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>SÃ©rÃ©nitÃ©</th></tr></thead>
+          <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
           <tbody>
-            <tr><td>0â500 mÂ²</td><td>29,90â¬</td><td>130â¬</td><td>232â¬</td></tr>
-            <tr><td>500â1500 mÂ²</td><td>39â¬</td><td>175â¬</td><td>312â¬</td></tr>
-            <tr><td>1500â3000 mÂ²</td><td>49â¬</td><td>220â¬</td><td>392â¬</td></tr>
-            <tr><td>3000â7000 mÂ²</td><td>67â¬</td><td>265â¬</td><td>472â¬</td></tr>
-            <tr><td>+7000 mÂ²</td><td>Devis</td><td>Devis</td><td>Devis</td></tr>
+            <tr><td>0–500 m²</td><td>29,90€</td><td>130€</td><td>232€</td></tr>
+            <tr><td>500–1500 m²</td><td>39€</td><td>175€</td><td>312€</td></tr>
+            <tr><td>1500–3000 m²</td><td>49€</td><td>220€</td><td>392€</td></tr>
+            <tr><td>3000–7000 m²</td><td>67€</td><td>265€</td><td>472€</td></tr>
+            <tr><td>+7000 m²</td><td>Devis</td><td>Devis</td><td>Devis</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--grey);text-align:center;padding:10px 0 24px;font-weight:500;">TVA non applicable Â· RÃ©servation sur novogardenhub.com</p>
+        <p style="font-size:11px;color:var(--grey);text-align:center;padding:10px 0 24px;font-weight:500;">TVA non applicable · Réservation sur novogardenhub.com</p>
       </div>
     </div>
 
-    <!-- RÃSERVATION -->
+    <!-- RÉSERVATION -->
     <div id="booking" class="screen">
       <div class="bheader">
-        <button class="back-btn" onclick="navTo('home')">â</button>
-        <h2>RÃ©servation</h2>
+        <button class="back-btn" onclick="navTo('home')">←</button>
+        <h2>Réservation</h2>
         <p id="bsub">Choisissez votre formule</p>
         <div class="progress">
           <div class="ps done" id="ps1"></div><div class="ps" id="ps2"></div>
@@ -418,21 +422,21 @@ html, body {
         <!-- STEP 1 -->
         <div id="s1" class="step active">
           <div class="st">Votre formule</div>
-          <div class="ss">SÃ©lectionnez la prestation souhaitÃ©e</div>
+          <div class="ss">Sélectionnez la prestation souhaitée</div>
           <div class="opts">
             <div class="opt sel" id="o1" onclick="selSvc(1)">
               <div class="opt-icon g1"><svg viewBox="0 0 24 24" fill="#5a8e1e"><path d="M17 8C8 8 3 14.5 3 19c2-2 4-3 6-3-2 1-3 3-3 5h12c0-2-1-4-3-5 2 0 4 1 6 3 0-4.5-5-11-4-11z"/></svg></div>
-              <div><div class="opt-name">Pack Solo â 1 tonte</div><div class="opt-price">Ã partir de 29,90â¬</div></div>
+              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price">À partir de 29,90€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o2" onclick="selSvc(2)">
               <div class="opt-icon g2"><svg viewBox="0 0 24 24" fill="#1565c0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
-              <div><div class="opt-name">Pack Essentiel â 5 tontes</div><div class="opt-price">Ã partir de 130â¬</div></div>
+              <div><div class="opt-name">Pack Essentiel — 5 tontes</div><div class="opt-price">À partir de 130€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o3" onclick="selSvc(3)">
               <div class="opt-icon g3"><svg viewBox="0 0 24 24" fill="#e65100"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg></div>
-              <div><div class="opt-name">Pack SÃ©rÃ©nitÃ© â 10 tontes</div><div class="opt-price">Ã partir de 232â¬</div></div>
+              <div><div class="opt-name">Pack Sérénité — 10 tontes</div><div class="opt-price">À partir de 232€</div></div>
               <div class="opt-check"></div>
             </div>
           </div>
@@ -441,52 +445,52 @@ html, body {
         <!-- STEP 2 -->
         <div id="s2" class="step">
           <div class="st">Votre terrain</div>
-          <div class="ss">Surface, adresse et conditions d'accÃ¨s</div>
+          <div class="ss">Surface, adresse et conditions d'accès</div>
           <label class="flabel">Surface du terrain <span class="req">*</span></label>
           <div class="chip-grid">
-            <div class="chip" onclick="selSurf(this,'0-500')">0â500 mÂ²<small>Petit jardin</small></div>
-            <div class="chip" onclick="selSurf(this,'500-1500')">500â1500 mÂ²<small>Jardin moyen</small></div>
-            <div class="chip" onclick="selSurf(this,'1500-3000')">1500â3000 mÂ²<small>Grand jardin</small></div>
-            <div class="chip" onclick="selSurf(this,'3000-7000')">3000â7000 mÂ²<small>TrÃ¨s grand</small></div>
+            <div class="chip" onclick="selSurf(this,'0-500')">0–500 m²<small>Petit jardin</small></div>
+            <div class="chip" onclick="selSurf(this,'500-1500')">500–1500 m²<small>Jardin moyen</small></div>
+            <div class="chip" onclick="selSurf(this,'1500-3000')">1500–3000 m²<small>Grand jardin</small></div>
+            <div class="chip" onclick="selSurf(this,'3000-7000')">3000–7000 m²<small>Très grand</small></div>
           </div>
           <label class="flabel">Adresse <span class="req">*</span></label>
-          <input id="addr" class="finput" type="text" placeholder="NumÃ©ro et nom de rue" oninput="checkS2()">
+          <input id="addr" class="finput" type="text" placeholder="Numéro et nom de rue" oninput="checkS2()">
           <div class="err-msg" id="err-addr"></div>
           <label class="flabel">Ville <span class="req">*</span></label>
-          <input id="city" class="finput" type="text" placeholder="AlenÃ§on, Lavalâ¦" oninput="checkS2()">
+          <input id="city" class="finput" type="text" placeholder="Alençon, Laval…" oninput="checkS2()">
           <div class="err-msg" id="err-city"></div>
           <label class="flabel">Code postal <span class="req">*</span></label>
           <input id="zip" class="finput" type="text" inputmode="numeric" maxlength="5" placeholder="61000" oninput="checkS2()">
           <div class="err-msg" id="err-zip"></div>
           <button class="btn-p" id="btn-s2" onclick="goS2()" disabled>Continuer</button>
-          <button class="btn-s" onclick="showStep(1)">â Retour</button>
+          <button class="btn-s" onclick="showStep(1)">← Retour</button>
         </div>
         <!-- STEP 3 -->
         <div id="s3" class="step">
           <div class="st">Date & Heure</div>
-          <div class="ss">Choisissez votre crÃ©neau d'intervention</div>
-          <div class="val-banner hidden" id="val-banner">â ï¸ Veuillez sÃ©lectionner une date et un crÃ©neau.</div>
+          <div class="ss">Choisissez votre créneau d'intervention</div>
+          <div class="val-banner hidden" id="val-banner">⚠️ Veuillez sélectionner une date et un créneau.</div>
           <div class="cal">
             <div class="cal-hd">
-              <button class="cal-nav-btn" id="cal-prev" onclick="calPrev()">â</button>
+              <button class="cal-nav-btn" id="cal-prev" onclick="calPrev()">←</button>
               <div class="cal-title" id="cal-title"></div>
-              <button class="cal-nav-btn" id="cal-next" onclick="calNext()">â</button>
+              <button class="cal-nav-btn" id="cal-next" onclick="calNext()">→</button>
             </div>
             <div class="cal-dows"><span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span></div>
             <div class="cal-grid" id="cg"></div>
           </div>
-          <label class="flabel">CrÃ©neaux disponibles</label>
+          <label class="flabel">Créneaux disponibles</label>
           <div class="tslots">
-            <div class="tslot" onclick="selTime(this)">8hâ10h</div>
-            <div class="tslot" onclick="selTime(this)">10hâ12h</div>
-            <div class="tslot" onclick="selTime(this)">12hâ14h</div>
-            <div class="tslot" onclick="selTime(this)">14hâ16h</div>
-            <div class="tslot" onclick="selTime(this)">16hâ18h</div>
-            <div class="tslot" onclick="selTime(this)">18hâ20h</div>
+            <div class="tslot" onclick="selTime(this)">8h–10h</div>
+            <div class="tslot" onclick="selTime(this)">10h–12h</div>
+            <div class="tslot" onclick="selTime(this)">12h–14h</div>
+            <div class="tslot" onclick="selTime(this)">14h–16h</div>
+            <div class="tslot" onclick="selTime(this)">16h–18h</div>
+            <div class="tslot" onclick="selTime(this)">18h–20h</div>
           </div>
           <div class="recur-section" id="recur-section" style="display:none">
             <div class="recur-title">Planification automatique</div>
-            <div class="recur-sub" id="recur-sub">RÃ©partissez vos tontes selon votre rythme</div>
+            <div class="recur-sub" id="recur-sub">Répartissez vos tontes selon votre rythme</div>
             <div class="freq-block">
               <div class="freq-display">Toutes les <strong id="freq-val">2</strong> semaine(s)</div>
               <input class="freq-slider" type="range" min="1" max="8" value="2" oninput="updateFreq(this.value)">
@@ -495,46 +499,46 @@ html, body {
             <div id="dates-list"></div>
           </div>
           <button class="btn-p" id="btn-s3" onclick="goS3()" disabled>Continuer</button>
-          <button class="btn-s" onclick="showStep(2)">â Retour</button>
+          <button class="btn-s" onclick="showStep(2)">← Retour</button>
         </div>
         <!-- STEP 4 -->
         <div id="s4" class="step">
-          <div class="st">RÃ©capitulatif</div>
-          <div class="ss">VÃ©rifiez votre commande avant de confirmer</div>
+          <div class="st">Récapitulatif</div>
+          <div class="ss">Vérifiez votre commande avant de confirmer</div>
           <div class="recap-card">
-            <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sum-svc">â</span></div>
-            <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sum-surf">â</span></div>
-            <div class="rrow"><span class="rk">Adresse</span><span class="rv" id="sum-addr">â</span></div>
-            <div class="rrow" id="sum-date-row"><span class="rk">Date</span><span class="rv" id="sum-date">â</span></div>
-            <div class="rrow"><span class="rk">CrÃ©neau</span><span class="rv" id="sum-time">â</span></div>
+            <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sum-svc">—</span></div>
+            <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sum-surf">—</span></div>
+            <div class="rrow"><span class="rk">Adresse</span><span class="rv" id="sum-addr">—</span></div>
+            <div class="rrow" id="sum-date-row"><span class="rk">Date</span><span class="rv" id="sum-date">—</span></div>
+            <div class="rrow"><span class="rk">Créneau</span><span class="rv" id="sum-time">—</span></div>
           </div>
           <div id="recap-dates" style="display:none;margin-bottom:14px">
             <p style="font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Calendrier des tontes</p>
             <div id="recap-dates-list"></div>
           </div>
-          <div class="price-hl"><span class="lbl">Prix estimÃ© TTC</span><span class="amt" id="sum-price">29,90â¬</span></div>
-          <p style="font-size:11px;color:var(--grey);margin-bottom:16px;font-weight:500;">Prix estimatif, confirmÃ© aprÃ¨s visite. TVA non applicable.</p>
-          <p style="font-size:13px;font-weight:800;margin-bottom:12px;">Vos coordonnÃ©es</p>
-          <div class="autofill-banner" id="autofill-banner">â CoordonnÃ©es prÃ©-remplies depuis votre compte.</div>
+          <div class="price-hl"><span class="lbl">Prix estimé TTC</span><span class="amt" id="sum-price">29,90€</span></div>
+          <p style="font-size:11px;color:var(--grey);margin-bottom:16px;font-weight:500;">Prix estimatif, confirmé après visite. TVA non applicable.</p>
+          <p style="font-size:13px;font-weight:800;margin-bottom:12px;">Vos coordonnées</p>
+          <div class="autofill-banner" id="autofill-banner">✅ Coordonnées pré-remplies depuis votre compte.</div>
           <label class="flabel">Nom complet <span class="req">*</span></label>
           <input id="bk-name" class="finput" type="text" placeholder="Jean Dupont" oninput="checkS4()">
           <div class="err-msg" id="err-name"></div>
-          <label class="flabel">TÃ©lÃ©phone <span class="req">*</span></label>
+          <label class="flabel">Téléphone <span class="req">*</span></label>
           <input id="bk-phone" class="finput" type="tel" placeholder="06 12 34 56 78" oninput="checkS4()">
           <div class="err-msg" id="err-phone"></div>
           <label class="flabel">Email <span class="req">*</span></label>
           <input id="bk-email" class="finput" type="email" placeholder="vous@email.com" oninput="checkS4()">
           <div class="err-msg" id="err-email"></div>
-          <label class="flabel">Note pour le tÃ©lÃ©opÃ©rateur (optionnel)</label>
-          <textarea id="bk-note" class="finput" rows="2" placeholder="AccÃ¨s par le portail latÃ©ralâ¦" style="resize:none"></textarea>
+          <label class="flabel">Note pour le téléopérateur (optionnel)</label>
+          <textarea id="bk-note" class="finput" rows="2" placeholder="Accès par le portail latéral…" style="resize:none"></textarea>
           <div class="cgv-row">
             <input type="checkbox" id="bk-cgv" onchange="checkS4()">
-            <label for="bk-cgv">J'accepte que ces informations soient transmises Ã  Novogarden pour l'Ã©tablissement d'un devis</label>
+            <label for="bk-cgv">J'accepte que ces informations soient transmises à Novogarden pour l'établissement d'un devis</label>
           </div>
           <div class="err-msg" id="err-cgv"></div>
           <div class="booking-error" id="booking-error"></div>
-          <button class="btn-p" id="btn-confirm" onclick="doConfirm()" disabled>ð§ Envoyer le devis par email</button>
-          <button class="btn-s" onclick="showStep(3)">â Retour</button>
+          <button class="btn-p" id="btn-confirm" onclick="doConfirm()" disabled>📧 Envoyer le devis par email</button>
+          <button class="btn-s" onclick="showStep(3)">← Retour</button>
         </div>
       </div>
     </div>
@@ -550,12 +554,12 @@ html, body {
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-val" id="stat-total">0</div><div class="stat-lbl">Total</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-avenir">0</div><div class="stat-lbl">Ã venir</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-depenses">0â¬</div><div class="stat-lbl">DÃ©penses</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-avenir">0</div><div class="stat-lbl">À venir</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-depenses">0€</div><div class="stat-lbl">Dépenses</div></div>
       </div>
       <div class="tonte-list" id="tonte-list">
       </div>
-      <button class="btn-p btn-nav-cta" onclick="startBooking(1)">+ Nouvelle rÃ©servation</button>
+      <button class="btn-p btn-nav-cta" onclick="startBooking(1)">+ Nouvelle réservation</button>
     </div>
 
     <!-- COMPTE -->
@@ -567,55 +571,56 @@ html, body {
             <button class="auth-tab" id="tab-in" onclick="switchTab('in')">Inscription</button>
           </div>
           <div class="auth-form-panel active" id="panel-cx">
-            <div class="auth-title">Bon retour ! ð</div>
-            <div class="auth-sub">Connectez-vous pour accÃ©der Ã  vos rÃ©servations.</div>
+            <div class="auth-title">Bon retour ! 👋</div>
+            <div class="auth-sub">Connectez-vous pour accéder à vos réservations.</div>
             <div class="auth-error" id="login-err"></div>
             <label class="flabel">Email</label>
             <input type="email" id="login-email" class="finput" placeholder="vous@email.com">
             <label class="flabel">Mot de passe</label>
-            <input type="password" id="login-pwd" class="finput" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢">
+            <input type="password" id="login-pwd" class="finput" placeholder="••••••••">
             <button class="btn-p" onclick="doLogin()">Se connecter</button>
             <p style="text-align:center;font-size:12px;color:var(--grey);margin-top:14px;font-weight:500;">Pas encore de compte ? <a href="#" style="color:var(--green);font-weight:800" onclick="switchTab('in');return false">S'inscrire</a></p>
           </div>
           <div class="auth-form-panel" id="panel-in">
-            <div class="auth-title">CrÃ©er un compte ð±</div>
-            <div class="auth-sub">Rejoignez Novogarden et gÃ©rez vos tontes.</div>
+            <div class="auth-title">Créer un compte 🌱</div>
+            <div class="auth-sub">Rejoignez Novogarden et gérez vos tontes.</div>
             <div class="auth-error" id="reg-err"></div>
             <div class="auth-half">
-              <div><label class="flabel">PrÃ©nom</label><input type="text" id="reg-prenom" class="finput" placeholder="Jean"></div>
+              <div><label class="flabel">Prénom</label><input type="text" id="reg-prenom" class="finput" placeholder="Jean"></div>
               <div><label class="flabel">Nom</label><input type="text" id="reg-nom" class="finput" placeholder="Dupont"></div>
             </div>
             <label class="flabel">Email</label>
             <input type="email" id="reg-email" class="finput" placeholder="vous@email.com">
             <label class="flabel">Mot de passe</label>
-            <input type="password" id="reg-pwd" class="finput" placeholder="Min. 8 caractÃ¨res">
-            <button class="btn-p" onclick="doRegister()">CrÃ©er mon compte</button>
+            <input type="password" id="reg-pwd" class="finput" placeholder="Min. 8 caractères">
+            <button class="btn-p" onclick="doRegister()">Créer mon compte</button>
           </div>
         </div>
         <div style="text-align:center;padding:16px 0 4px">
-          <button style="background:none;border:none;color:var(--grey);font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif" onclick="openBugReport()">ð Signaler un bug</button>
+          <button style="background:none;border:none;color:var(--grey);font-size:12px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif" onclick="openBugReport()">🐛 Signaler un bug</button>
         </div>
       </div>
       <div class="profile-panel" id="profile-panel">
         <div class="profile-hero">
-          <div class="profile-avatar">ð¿</div>
+          <div class="profile-avatar">🌿</div>
           <div class="profile-name" id="profile-name">Client Novogarden</div>
+          <div class="profile-badge-txt">Bêta-testeur depuis mars 2026</div>
         </div>
         <div style="height:20px"></div>
         <div class="profile-section">
           <div class="ps-label">Mes informations</div>
-          <div class="ps-row"><span class="ps-key">Nom</span><span class="ps-val" id="pf-nom">â</span><button class="btn-edit" onclick="editField('nom','Nom',document.getElementById('pf-nom').textContent)">â</button></div>
-          <div class="ps-row"><span class="ps-key">Email</span><span class="ps-val" id="pf-email">â</span></div>
-          <div class="ps-row"><span class="ps-key">TÃ©lÃ©phone</span><span class="ps-val" id="pf-tel">â</span><button class="btn-edit" onclick="editField('tel','TÃ©lÃ©phone',document.getElementById('pf-tel').textContent)">â</button></div>
+          <div class="ps-row"><span class="ps-key">Nom</span><span class="ps-val" id="pf-nom">—</span><button class="btn-edit" onclick="editField('nom','Nom',document.getElementById('pf-nom').textContent)">✎</button></div>
+          <div class="ps-row"><span class="ps-key">Email</span><span class="ps-val" id="pf-email">—</span></div>
+          <div class="ps-row"><span class="ps-key">Téléphone</span><span class="ps-val" id="pf-tel">—</span><button class="btn-edit" onclick="editField('tel','Téléphone',document.getElementById('pf-tel').textContent)">✎</button></div>
         </div>
         <div class="profile-section">
           <div class="ps-label">Mon abonnement</div>
-          <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val" id="pf-svc">â</span></div>
-          <div class="ps-row"><span class="ps-key">Tontes effectuÃ©es</span><span class="ps-val" id="pf-tontes">â</span></div>
-          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val" id="pf-next">â</span></div>
+          <div class="ps-row"><span class="ps-key">Formule</span><span class="ps-val" id="pf-svc">—</span></div>
+          <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val" id="pf-tontes">—</span></div>
+          <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val" id="pf-next">—</span></div>
         </div>
-        <button class="btn-logout" onclick="doLogout()">Se dÃ©connecter</button>
-        <button class="btn-logout" style="background:#fff3e0;color:#e65100;margin-top:8px" onclick="openBugReport()">ð Signaler un bug</button>
+        <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
+        <button class="btn-logout" style="background:#fff3e0;color:#e65100;margin-top:8px" onclick="openBugReport()">🐛 Signaler un bug</button>
       </div>
     </div>
 
@@ -623,12 +628,12 @@ html, body {
     <div id="solde" class="screen">
       <div class="solde-hero">
         <div class="solde-label">Solde du compte</div>
-        <div class="solde-amount" id="solde-amount">0,00 â¬</div>
+        <div class="solde-amount" id="solde-amount">0,00 €</div>
         <div class="solde-sub">Aucun avoir en cours</div>
       </div>
       <div class="solde-body">
         <div class="solde-stats">
-          <div class="solde-stat"><div class="val" id="sd-depense">0â¬</div><div class="lbl">DÃ©pensÃ©</div></div>
+          <div class="solde-stat"><div class="val" id="sd-depense">0€</div><div class="lbl">Dépensé</div></div>
           <div class="solde-stat"><div class="val" id="sd-tontes">0</div><div class="lbl">Tontes</div></div>
           <div class="solde-stat"><div class="val" id="sd-attente">0</div><div class="lbl">En attente</div></div>
         </div>
@@ -648,34 +653,34 @@ html, body {
       </div>
     </div>
 
-    <!-- SUCCÃS -->
+    <!-- SUCCÈS -->
     <div id="success" class="screen">
       <div class="success-body">
-        <div class="success-icon">ð§</div>
-        <div class="success-title">Devis envoyÃ© !</div>
-        <div class="success-sub">Votre devis a Ã©tÃ© envoyÃ© automatiquement par email.<br>Vous recevrez une confirmation Ã  votre adresse.</div>
+        <div class="success-icon">📧</div>
+        <div class="success-title">Devis envoyé !</div>
+        <div class="success-sub">Votre devis a été envoyé automatiquement par email.<br>Vous recevrez une confirmation à votre adresse.</div>
         <div class="ref-box">
-          <div style="font-size:11px;color:var(--grey);margin-bottom:4px;font-weight:700;">NumÃ©ro de rÃ©servation</div>
+          <div style="font-size:11px;color:var(--grey);margin-bottom:4px;font-weight:700;">Numéro de réservation</div>
           <div class="ref-num" id="refnum">NGH-2026-0001</div>
         </div>
         <div class="recap-card">
-          <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sc-svc">â</span></div>
-          <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sc-surf">â</span></div>
-          <div class="rrow" id="sc-date-row"><span class="rk">Date</span><span class="rv" id="sc-date">â</span></div>
-          <div class="rrow"><span class="rk">Montant estimÃ©</span><span class="rv" id="sc-price">â</span></div>
+          <div class="rrow"><span class="rk">Formule</span><span class="rv" id="sc-svc">—</span></div>
+          <div class="rrow"><span class="rk">Surface</span><span class="rv" id="sc-surf">—</span></div>
+          <div class="rrow" id="sc-date-row"><span class="rk">Date</span><span class="rv" id="sc-date">—</span></div>
+          <div class="rrow"><span class="rk">Montant estimé</span><span class="rv" id="sc-price">—</span></div>
         </div>
         <div id="sc-dates-list" style="display:none;text-align:left;margin-bottom:14px"></div>
         <div id="sc-payment-wrap" style="display:none;margin-bottom:12px">
           <a id="sc-pay-link" href="#" class="pay-link" target="_blank" rel="noopener">Payer ma facture en ligne</a>
-          <div style="font-size:11px;color:var(--grey);text-align:center" id="sc-email-note">Le lien est aussi envoyÃ© Ã  votre email</div>
+          <div style="font-size:11px;color:var(--grey);text-align:center" id="sc-email-note">Le lien est aussi envoyé à votre email</div>
         </div>
-        <button class="back-home" onclick="navTo('home')">Retour Ã  l'accueil</button>
+        <button class="back-home" onclick="navTo('home')">Retour à l'accueil</button>
       </div>
     </div>
 
   </div><!-- end content -->
 
-  <!-- NAVBAR â icÃ´nes identiques Ã  l'original -->
+  <!-- NAVBAR — icônes identiques à l'original -->
   <nav class="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="navTo('home')">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -683,7 +688,7 @@ html, body {
     </div>
     <div class="nav-item" id="nav-booking" onclick="startBooking(1)">
       <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-      <span class="nav-label">RÃ©server</span>
+      <span class="nav-label">Réserver</span>
     </div>
     <div class="nav-item" id="nav-tontes" onclick="navTo('tontes')">
       <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
@@ -703,7 +708,7 @@ html, body {
 <!-- MODALES -->
 <div class="overlay" id="cancel-overlay">
   <div class="sheet">
-    <div class="sheet-icon" id="cancel-icon">â ï¸</div>
+    <div class="sheet-icon" id="cancel-icon">⚠️</div>
     <div class="sheet-title">Annuler la tonte ?</div>
     <div class="sheet-msg" id="cancel-msg"></div>
     <div id="cancel-free-btns" style="display:none">
@@ -711,15 +716,15 @@ html, body {
       <button class="sheet-btn outline" onclick="closeOverlay('cancel-overlay')">Non, garder</button>
     </div>
     <div id="cancel-penalty-btns" style="display:none">
-      <button class="sheet-btn grey" onclick="window.open('tel:0635584700')">ð Appeler le 06.35.58.47.00</button>
-      <button class="sheet-btn red" onclick="doCancelTonte()">Confirmer (pÃ©nalitÃ©s applicables)</button>
+      <button class="sheet-btn grey" onclick="window.open('tel:0635584700')">📞 Appeler le 06.35.58.47.00</button>
+      <button class="sheet-btn red" onclick="doCancelTonte()">Confirmer (pénalités applicables)</button>
       <button class="sheet-btn outline" onclick="closeOverlay('cancel-overlay')">Fermer</button>
     </div>
   </div>
 </div>
 <div class="overlay" id="report-overlay">
   <div class="sheet">
-    <div class="sheet-icon">ð</div>
+    <div class="sheet-icon">📅</div>
     <div class="sheet-title">Reporter la tonte ?</div>
     <div class="sheet-msg">Contactez-nous pour choisir une nouvelle date.</div>
     <button class="sheet-btn green" onclick="window.open('tel:0635584700')">Appeler le 06.35.58.47.00</button>
@@ -728,24 +733,24 @@ html, body {
 </div>
 <div class="overlay center" id="bug-overlay">
   <div class="sheet" style="padding-bottom:20px">
-    <div class="sheet-icon">ð</div>
-    <div class="sheet-title">Signaler un problÃ¨me</div>
-    <div class="sheet-msg">DÃ©crivez le bug ou la gÃªne rencontrÃ©e. Nous vous rÃ©pondrons par email.</div>
-    <textarea id="bug-desc" style="width:100%;min-height:90px;border:1.5px solid var(--grey-light);border-radius:12px;padding:10px 12px;font-family:'Montserrat',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:8px" placeholder="Ex : le bouton ne rÃ©pond pas, la page se bloqueâ¦"></textarea>
+    <div class="sheet-icon">🐛</div>
+    <div class="sheet-title">Signaler un problème</div>
+    <div class="sheet-msg">Décrivez le bug ou la gêne rencontrée. Nous vous répondrons par email.</div>
+    <textarea id="bug-desc" style="width:100%;min-height:90px;border:1.5px solid var(--grey-light);border-radius:12px;padding:10px 12px;font-family:'Montserrat',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:8px" placeholder="Ex : le bouton ne répond pas, la page se bloque…"></textarea>
     <label style="display:block;margin-bottom:4px;font-size:12px;color:var(--grey)">&#128247; Capture d'&#233;cran (optionnel)</label>
     <input type="file" id="bug-screenshot" accept="image/*" style="width:100%;margin-bottom:10px;font-size:12px;font-family:'Montserrat',sans-serif;">
     <div class="err-msg" id="err-bug" style="margin-bottom:6px"></div>
-    <button class="sheet-btn green" id="btn-bug" onclick="doReportBug()">ð¤ Envoyer</button>
+    <button class="sheet-btn green" id="btn-bug" onclick="doReportBug()">📤 Envoyer</button>
     <button class="sheet-btn outline" onclick="closeOverlay('bug-overlay')">Annuler</button>
   </div>
 </div>
 <div class="date-overlay" id="date-overlay">
   <div class="edit-date-sheet">
-    <div class="edit-date-hd">Modifier â Tonte nÂ°<span id="edit-sess-num">1</span></div>
+    <div class="edit-date-hd">Modifier — Tonte n°<span id="edit-sess-num">1</span></div>
     <div class="mini-cal-nav">
-      <button class="mini-nav-btn" onclick="miniCalPrev()">â</button>
+      <button class="mini-nav-btn" onclick="miniCalPrev()">←</button>
       <div class="mini-cal-title-lbl" id="mini-cal-title"></div>
-      <button class="mini-nav-btn" onclick="miniCalNext()">â</button>
+      <button class="mini-nav-btn" onclick="miniCalNext()">→</button>
     </div>
     <div class="cal-dows"><span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span></div>
     <div class="cal-grid" id="mini-cal-grid"></div>
@@ -766,12 +771,12 @@ html, body {
 /* ================================================================
    CONSTANTES
    ================================================================ */
-const SVCS=['','Pack Solo â 1 tonte','Pack Essentiel â 5 tontes','Pack SÃ©rÃ©nitÃ© â 10 tontes'];
-const PRICES={1:{'0-500':'29,90â¬','500-1500':'39â¬','1500-3000':'49â¬','3000-7000':'67â¬'},2:{'0-500':'130â¬','500-1500':'175â¬','1500-3000':'220â¬','3000-7000':'265â¬'},3:{'0-500':'232â¬','500-1500':'312â¬','1500-3000':'392â¬','3000-7000':'472â¬'}};
+const SVCS=['','Pack Solo – 1 tonte','Pack Essentiel – 5 tontes','Pack Sérénité – 10 tontes'];
+const PRICES={1:{'0-500':'29,90€','500-1500':'39€','1500-3000':'49€','3000-7000':'67€'},2:{'0-500':'130€','500-1500':'175€','1500-3000':'220€','3000-7000':'265€'},3:{'0-500':'232€','500-1500':'312€','1500-3000':'392€','3000-7000':'472€'}};
 const WIX='https://script.google.com/macros/s/AKfycbxxLCUppjc8Sgyx2U3I5Ds30vJT4DEKsmDC_cXCiQGygbsVvvluNSOF1c8UDPrIf1XlbQ/exec';
 const SESSIONS={1:1,2:5,3:10};
-const MFR=['janvier','fÃ©vrier','mars','avril','mai','juin','juillet','aoÃ»t','septembre','octobre','novembre','dÃ©cembre'];
-const MCAP=['Janvier','FÃ©vrier','Mars','Avril','Mai','Juin','Juillet','AoÃ»t','Septembre','Octobre','Novembre','DÃ©cembre'];
+const MFR=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MCAP=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DSH=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 let bk={svc:1,surf:'',date:'',time:'',frequency:2,dates:[]};
 let _calY,_calM,_mcy=new Date().getFullYear(),_mcm=new Date().getMonth(),_mci=-1,_editField='',_unread=0,currentUser=null;
@@ -799,7 +804,7 @@ function refreshTontes(){
     const today=new Date();today.setHours(0,0,0,0);
     let total=0,avenir=0,depenses=0;
     list.innerHTML='';
-    if(res.length===0){list.innerHTML='<p style="text-align:center;color:var(--grey);font-size:13px;padding:24px 0;">Aucune rÃ©servation pour le moment</p>';}
+    if(res.length===0){list.innerHTML='<p style="text-align:center;color:var(--grey);font-size:13px;padding:24px 0;">Aucune réservation pour le moment</p>';}
     else{
       res.slice().reverse().forEach(function(r){
         total++;
@@ -811,15 +816,15 @@ function refreshTontes(){
         if(!isPast)avenir++;
         const priceNum=parseFloat((r.price||'').replace(/[^0-9,.]/g,'').replace(',','.'));
         if(!isNaN(priceNum))depenses+=priceNum;
-        const dateStr=d?fmtDate(d):(r.date||'â');
-        const statusLbl=isPast?'EffectuÃ©e':'Ã venir';
+        const dateStr=d?fmtDate(d):(r.date||'—');
+        const statusLbl=isPast?'Effectuée':'À venir';
         const statusCls=isPast?'done':'';
-        list.innerHTML+='<div class="tonte-card '+statusCls+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:12px;font-weight:800;color:var(--grey)">'+dateStr+'</span><span class="inv-status '+(isPast?'paid':'pending')+'" style="font-size:10px">'+statusLbl+'</span></div><div style="font-weight:800;font-size:14px">'+r.svc+'</div>'+(r.surf?'<div style="font-size:12px;color:var(--grey);margin-top:2px">'+r.surf+' mÂ²</div>':'')+'<div style="font-size:12px;color:var(--grey);margin-top:2px">RÃ©f. '+r.ref+'</div></div>';
+        list.innerHTML+='<div class="tonte-card '+statusCls+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:12px;font-weight:800;color:var(--grey)">'+dateStr+'</span><span class="inv-status '+(isPast?'paid':'pending')+'" style="font-size:10px">'+statusLbl+'</span></div><div style="font-weight:800;font-size:14px">'+r.svc+'</div>'+(r.surf?'<div style="font-size:12px;color:var(--grey);margin-top:2px">'+r.surf+' m²</div>':'')+'<div style="font-size:12px;color:var(--grey);margin-top:2px">Réf. '+r.ref+'</div></div>';
       });
     }
     document.getElementById('stat-total').textContent=total;
     document.getElementById('stat-avenir').textContent=avenir;
-    document.getElementById('stat-depenses').textContent=depenses>0?depenses.toFixed(2).replace('.',',')+'â¬':'0â¬';
+    document.getElementById('stat-depenses').textContent=depenses>0?depenses.toFixed(2).replace('.',',')+'€':'0€';
   }catch(e){}
 }
 function refreshSolde(){
@@ -840,17 +845,17 @@ function refreshSolde(){
         const priceNum=parseFloat((r.price||'').replace(/[^0-9,.]/g,'').replace(',','.'));
         if(!isNaN(priceNum))depTotal+=priceNum;
         if(!isPast)attente++;
-        const dateStr=d?fmtDate(d):(r.date||'â');
-        const statusLbl=isPast?'PayÃ©':'En attente';
+        const dateStr=d?fmtDate(d):(r.date||'—');
+        const statusLbl=isPast?'Payé':'En attente';
         const statusCls=isPast?'paid':'pending';
-        list.innerHTML+='<div class="inv-item" data-ref="'+r.ref+'"><div><div class="inv-date">'+dateStr+'</div><div class="inv-service">'+r.svc+'</div><div style="font-size:11px;color:var(--grey)">'+r.ref+'</div></div><div class="inv-right"><div class="inv-amount">'+(r.price||'â')+'</div><span class="inv-status '+statusCls+'">'+statusLbl+'</span></div></div>';
+        list.innerHTML+='<div class="inv-item" data-ref="'+r.ref+'"><div><div class="inv-date">'+dateStr+'</div><div class="inv-service">'+r.svc+'</div><div style="font-size:11px;color:var(--grey)">'+r.ref+'</div></div><div class="inv-right"><div class="inv-amount">'+(r.price||'—')+'</div><span class="inv-status '+statusCls+'">'+statusLbl+'</span></div></div>';
       });
     }
-    const depStr=depTotal>0?depTotal.toFixed(2).replace('.',',')+'â¬':'0â¬';
+    const depStr=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0€';
     document.getElementById('sd-depense').textContent=depStr;
     document.getElementById('sd-tontes').textContent=tontes;
     document.getElementById('sd-attente').textContent=attente;
-    document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'â¬':'0,00 â¬';
+    document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0,00 €';
     initSwipeDelete();
   }catch(e){}
 }
@@ -900,15 +905,15 @@ function updateAuthUI(){
     document.getElementById('profile-name').textContent=currentUser.prenom+' '+currentUser.nom;
     document.getElementById('pf-nom').textContent=currentUser.prenom+' '+currentUser.nom;
     document.getElementById('pf-email').textContent=currentUser.email;
-    document.getElementById('pf-tel').textContent=currentUser.tel||'â';
+    document.getElementById('pf-tel').textContent=currentUser.tel||'—';
     try{
       var _r=JSON.parse(localStorage.getItem('ng_reservations')||'[]');
       var _s=document.getElementById('pf-svc');
       var _t=document.getElementById('pf-tontes');
       var _n=document.getElementById('pf-next');
-      if(_s){var _l=_r[_r.length-1];_s.textContent=_l?_l.svc:'â';}
+      if(_s){var _l=_r[_r.length-1];_s.textContent=_l?_l.svc:'—';}
       if(_t){var _done=_r.filter(function(rv){var d=rv.dates&&rv.dates.length>0?new Date(rv.dates[0]):rv.date?parseDate(rv.date):null;return d&&d<new Date();}).length;_t.textContent=_done+' / '+_r.length;}
-      if(_n){var _td=new Date();_td.setHours(0,0,0,0);var _nd=_r.map(function(rv){return rv.dates&&rv.dates.length>0?new Date(rv.dates[0]):rv.date?parseDate(rv.date):null;}).filter(function(d){return d&&d>=_td;}).sort(function(a,b){return a-b;})[0];_n.textContent=_nd?fmtDate(_nd):'â';}
+      if(_n){var _td=new Date();_td.setHours(0,0,0,0);var _nd=_r.map(function(rv){return rv.dates&&rv.dates.length>0?new Date(rv.dates[0]):rv.date?parseDate(rv.date):null;}).filter(function(d){return d&&d>=_td;}).sort(function(a,b){return a-b;})[0];_n.textContent=_nd?fmtDate(_nd):'—';}
     }catch(_e){}
     prefillBooking();
   } else {
@@ -932,10 +937,10 @@ function doLogin(){
   try{
     const users=JSON.parse(localStorage.getItem('ng_users')||'[]');
     const user=users.find(u=>u.email===email&&u.pwd===pwd);
-    if(user){saveSession(user);showToast('Bienvenue '+user.prenom+' ! ð');}
-    else if(email.includes('@')&&pwd.length>=3){const d={prenom:'Client',nom:'Novogarden',email,pwd,tel:''};saveSession(d);showToast('Connexion rÃ©ussie ð');}
+    if(user){saveSession(user);showToast('Bienvenue '+user.prenom+' ! 👋');}
+    else if(email.includes('@')&&pwd.length>=3){const d={prenom:'Client',nom:'Novogarden',email,pwd,tel:''};saveSession(d);showToast('Connexion réussie 👋');}
     else{err.textContent='Email ou mot de passe incorrect.';err.style.display='block';}
-  }catch(e){err.textContent='Erreur. RÃ©essayez.';err.style.display='block';}
+  }catch(e){err.textContent='Erreur. Réessayez.';err.style.display='block';}
 }
 function doRegister(){
   const prenom=document.getElementById('reg-prenom').value.trim();
@@ -945,15 +950,15 @@ function doRegister(){
   const err=document.getElementById('reg-err'); err.style.display='none';
   if(!prenom||!nom||!email||!pwd){err.textContent='Tous les champs sont requis.';err.style.display='block';return;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent='Email invalide.';err.style.display='block';return;}
-  if(pwd.length<8){err.textContent='Mot de passe : min. 8 caractÃ¨res.';err.style.display='block';return;}
+  if(pwd.length<8){err.textContent='Mot de passe : min. 8 caractères.';err.style.display='block';return;}
   try{
     const users=JSON.parse(localStorage.getItem('ng_users')||'[]');
-    if(users.find(u=>u.email===email)){err.textContent='Compte dÃ©jÃ  existant.';err.style.display='block';return;}
+    if(users.find(u=>u.email===email)){err.textContent='Compte déjà existant.';err.style.display='block';return;}
     const nu={prenom,nom,email,pwd,tel:''};users.push(nu);localStorage.setItem('ng_users',JSON.stringify(users));
-    saveSession(nu);showToast('Bienvenue '+prenom+' ! ð±');
-  }catch(e){err.textContent='Erreur. RÃ©essayez.';err.style.display='block';}
+    saveSession(nu);showToast('Bienvenue '+prenom+' ! 🌱');
+  }catch(e){err.textContent='Erreur. Réessayez.';err.style.display='block';}
 }
-function doLogout(){currentUser=null;localStorage.removeItem('ng_user');updateAuthUI();navTo('home');showToast('DÃ©connectÃ©.');}
+function doLogout(){currentUser=null;localStorage.removeItem('ng_user');updateAuthUI();navTo('home');showToast('Déconnecté.');}
 function prefillBooking(){
   if(!currentUser)return;
   const n=document.getElementById('bk-name');const e=document.getElementById('bk-email');
@@ -978,18 +983,18 @@ function showStep(n){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   const st=document.getElementById('s'+n);if(st)st.classList.add('active');
   for(let i=1;i<=4;i++){const ps=document.getElementById('ps'+i);if(ps)ps.classList.toggle('done',i<=n);}
-  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et crÃ©neau','RÃ©capitulatif'];
+  const subs=['Choisissez votre formule','Votre terrain & conditions','Date et créneau','Récapitulatif'];
   const sub=document.getElementById('bsub');if(sub)sub.textContent=subs[n-1]||'';
   const bc=document.querySelector('.bcontent');if(bc)bc.scrollTop=0;
   if(n===3){initCal();checkS3();}
   if(n===4){prefillBooking();buildRecap();checkS4();}
 }
-function getPrice(){return bk.surf?(PRICES[bk.svc][bk.surf]||'Sur devis'):'Ã partir de 29,90â¬';}
+function getPrice(){return bk.surf?(PRICES[bk.svc][bk.surf]||'Sur devis'):'À partir de 29,90€';}
 
 function checkS2(){const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const z=document.getElementById('zip').value.trim();const btn=document.getElementById('btn-s2');if(btn)btn.disabled=!(bk.surf&&a&&c&&/^\d{5}$/.test(z));}
 function goS2(){
   const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const z=document.getElementById('zip').value.trim();let ok=true;
-  if(!bk.surf){showToast('SÃ©lectionnez une surface.');ok=false;}
+  if(!bk.surf){showToast('Sélectionnez une surface.');ok=false;}
   if(!a){document.getElementById('err-addr').textContent='Adresse requise.';document.getElementById('addr').classList.add('err');ok=false;}else{document.getElementById('err-addr').textContent='';document.getElementById('addr').classList.remove('err');}
   if(!c){document.getElementById('err-city').textContent='Ville requise.';document.getElementById('city').classList.add('err');ok=false;}else{document.getElementById('err-city').textContent='';document.getElementById('city').classList.remove('err');}
   if(!z||!/^\d{5}$/.test(z)){document.getElementById('err-zip').textContent='Code postal invalide (5 chiffres).';document.getElementById('zip').classList.add('err');ok=false;}else{document.getElementById('err-zip').textContent='';document.getElementById('zip').classList.remove('err');}
@@ -1002,7 +1007,7 @@ document.getElementById('zip').addEventListener('input',checkS2);
 function checkS3(){const btn=document.getElementById('btn-s3');if(btn)btn.disabled=!(bk.date&&bk.time);}
 function goS3(){
   const b=document.getElementById('val-banner');
-  if(!bk.date||!bk.time){if(b)b.classList.remove('hidden');showToast('SÃ©lectionnez une date et un crÃ©neau.');return;}
+  if(!bk.date||!bk.time){if(b)b.classList.remove('hidden');showToast('Sélectionnez une date et un créneau.');return;}
   if(b)b.classList.add('hidden');buildRecap();showStep(4);
 }
 function checkS4(){
@@ -1015,17 +1020,17 @@ function checkS4(){
 }
 function buildRecap(){
   document.getElementById('sum-svc').textContent=SVCS[bk.svc];
-  document.getElementById('sum-surf').textContent=bk.surf?bk.surf+' mÂ²':'â';
+  document.getElementById('sum-surf').textContent=bk.surf?bk.surf+' m²':'—';
   const a=document.getElementById('addr').value,c=document.getElementById('city').value,z=document.getElementById('zip').value;
-  document.getElementById('sum-addr').textContent=(a||c)?[a,(z?z+' ':'')+c].filter(Boolean).join(', '):'â';
-  document.getElementById('sum-time').textContent=bk.time||'â';
+  document.getElementById('sum-addr').textContent=(a||c)?[a,(z?z+' ':'')+c].filter(Boolean).join(', '):'—';
+  document.getElementById('sum-time').textContent=bk.time||'—';
   document.getElementById('sum-price').textContent=getPrice();
   if(bk.svc>1&&bk.dates.length>1){
     document.getElementById('sum-date').textContent='Voir calendrier ci-dessous';
     const rd=document.getElementById('recap-dates');rd.style.display='block';
     const rdl=document.getElementById('recap-dates-list');rdl.innerHTML='';
     bk.dates.forEach((d,i)=>{const r=document.createElement('div');r.className='rrow';r.innerHTML='<span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:12px">'+fmtDate(d)+'</span>';rdl.appendChild(r);});
-  }else{document.getElementById('sum-date').textContent=bk.date||'â';document.getElementById('recap-dates').style.display='none';}
+  }else{document.getElementById('sum-date').textContent=bk.date||'—';document.getElementById('recap-dates').style.display='none';}
 }
 async function doConfirm(){
   const name=document.getElementById('bk-name').value.trim();
@@ -1035,49 +1040,49 @@ async function doConfirm(){
   const cgv=document.getElementById('bk-cgv').checked;
   let ok=true;
   const se=(id,msg)=>{const el=document.getElementById(id);if(el)el.textContent=msg;if(msg)ok=false;};
-  se('err-name',name.length<2?'Nom requis (min 2 caractÃ¨res)':'');
-  se('err-phone',!/^[\d\s\+\-\.]{8,15}$/.test(phone)?'NumÃ©ro invalide':'');
+  se('err-name',name.length<2?'Nom requis (min 2 caractères)':'');
+  se('err-phone',!/^[\d\s\+\-\.]{8,15}$/.test(phone)?'Numéro invalide':'');
   se('err-email',!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?'Email invalide':'');
   se('err-cgv',!cgv?'Veuillez accepter les CGV':'');
-  if(!bk.date||!bk.time){se('err-name','Date ou crÃ©neau manquant â retournez Ã  l\'Ã©tape 3.');ok=false;}
+  if(!bk.date||!bk.time){se('err-name','Date ou créneau manquant — retournez à l\'étape 3.');ok=false;}
   if(!ok){document.getElementById('bk-name').scrollIntoView({behavior:'smooth'});return;}
   const btn=document.getElementById('btn-confirm');const eb=document.getElementById('booking-error');
-  btn.disabled=true;btn.textContent='â³ Envoi en coursâ¦';eb.style.display='none';
+  btn.disabled=true;btn.textContent='⏳ Envoi en cours…';eb.style.display='none';
   const _z=document.getElementById('zip').value,_c=document.getElementById('city').value;
   const addr=[document.getElementById('addr').value,(_z?_z+' ':'')+_c].filter(Boolean).join(', ');
   const devisRef='NGV-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
-  const SURF_LBL={'0-500':'0â500 mÂ²','500-1500':'500â1500 mÂ²','1500-3000':'1500â3000 mÂ²','3000-7000':'3000â7000 mÂ²'};
+  const SURF_LBL={'0-500':'0–500 m²','500-1500':'500–1500 m²','1500-3000':'1500–3000 m²','3000-7000':'3000–7000 m²'};
   const svcLbl=SVCS[bk.svc]||'';
   let datesLine='';
   if(bk.svc>1&&bk.dates.length>1){
     datesLine='\nCalendrier des tontes :\n'+bk.dates.map((d,i)=>'  Tonte '+(i+1)+' : '+fmtDate(d)).join('\n');
     datesLine+='\nEspacement : toutes les '+bk.frequency+' semaine(s)';
   }else{
-    datesLine='\nDate souhaitÃ©e : '+bk.date;
+    datesLine='\nDate souhaitée : '+bk.date;
   }
   const message=
-    'Nouveau devis Novogarden â RÃ©f. '+devisRef+'\n'+
-    'âââââââââââââââââââââââââââââââ\n\n'+
+    'Nouveau devis Novogarden — Réf. '+devisRef+'\n'+
+    '═══════════════════════════════\n\n'+
     'CLIENT\n'+
     '  Nom    : '+name+'\n'+
-    '  TÃ©l    : '+phone+'\n'+
+    '  Tél    : '+phone+'\n'+
     '  Email  : '+email+'\n'+
     '  Adresse: '+addr+'\n\n'+
     'PRESTATION\n'+
     '  Formule: '+svcLbl+'\n'+
-    '  Surface: '+(SURF_LBL[bk.surf]||bk.surf||'â')+'\n'+
-    '  CrÃ©neau: '+bk.time+
+    '  Surface: '+(SURF_LBL[bk.surf]||bk.surf||'—')+'\n'+
+    '  Créneau: '+bk.time+
     datesLine+'\n\n'+
-    'TARIF ESTIMÃ : '+getPrice()+'\n\n'+
+    'TARIF ESTIMÉ : '+getPrice()+'\n\n'+
     (note?'NOTE CLIENT : '+note+'\n\n':'')+
-    'âââââââââââââââââââââââââââââ\n'+
-    'Devis gÃ©nÃ©rÃ© le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    '─────────────────────────────\n'+
+    'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
   try{
     const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify({
-        _subject:'[Devis Novogarden] '+name+' â '+svcLbl+' â RÃ©f. '+devisRef,
+        _subject:'[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,
         _captcha:'false',
         _template:'table',
         name:name,
@@ -1091,22 +1096,22 @@ async function doConfirm(){
     else{throw new Error(data.message||'Send failed');}
   }catch(err){
     console.error('FormSubmit error:',err);
-    eb.textContent='Erreur d\'envoi. Veuillez rÃ©essayer ou contacter contact@novogardenhub.com';
+    eb.textContent='Erreur d\'envoi. Veuillez réessayer ou contacter contact@novogardenhub.com';
     eb.style.display='block';
     btn.disabled=false;
-    btn.textContent='ð§ Envoyer le devis par email';
+    btn.textContent='📧 Envoyer le devis par email';
   }
 }
 function fillSuccess(devisRef,email,payUrl){
   document.getElementById('refnum').textContent=devisRef;
   document.getElementById('sc-svc').textContent=SVCS[bk.svc];
-  document.getElementById('sc-surf').textContent=bk.surf?bk.surf+' mÂ²':'â';
+  document.getElementById('sc-surf').textContent=bk.surf?bk.surf+' m²':'—';
   document.getElementById('sc-price').textContent=getPrice();
   if(bk.svc>1&&bk.dates.length>1){
     document.getElementById('sc-date-row').style.display='none';
     const sdl=document.getElementById('sc-dates-list');sdl.style.display='block';sdl.innerHTML='<p style="font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;margin-bottom:8px;">Calendrier</p>';
     bk.dates.forEach((d,i)=>{sdl.innerHTML+='<div class="rrow"><span class="rk">Tonte '+(i+1)+'</span><span class="rv" style="font-size:12px">'+fmtDate(d)+'</span></div>';});
-  }else{document.getElementById('sc-date-row').style.display='';document.getElementById('sc-date').textContent=bk.date||'â';document.getElementById('sc-dates-list').style.display='none';}
+  }else{document.getElementById('sc-date-row').style.display='';document.getElementById('sc-date').textContent=bk.date||'—';document.getElementById('sc-dates-list').style.display='none';}
   if(payUrl){document.getElementById('sc-pay-link').href=payUrl;document.getElementById('sc-payment-wrap').style.display='block';}
   navTo('success');
   // Save reservation to localStorage
@@ -1121,7 +1126,7 @@ function fillSuccess(devisRef,email,payUrl){
 }
 
 /* ================================================================
-   CALENDRIER CORRIGÃ â navigation dynamique, pas de mois hardcodÃ©
+   CALENDRIER CORRIGÉ — navigation dynamique, pas de mois hardcodé
    ================================================================ */
 function initCal(){if(!_calY){const t=new Date();_calY=t.getFullYear();_calM=t.getMonth();}buildCal();}
 function calPrev(){_calM--;if(_calM<0){_calM=11;_calY--;}buildCal();}
@@ -1151,14 +1156,14 @@ function buildCal(){
 }
 function onDateSelected(str){
   bk.date=str;
-  if(bk.svc>1){bk.dates=genDates(parseDate(str),SESSIONS[bk.svc],bk.frequency);document.getElementById('recur-section').style.display='block';document.getElementById('recur-sub').textContent='RÃ©partissez vos '+SESSIONS[bk.svc]+' tontes';renderDates();}
+  if(bk.svc>1){bk.dates=genDates(parseDate(str),SESSIONS[bk.svc],bk.frequency);document.getElementById('recur-section').style.display='block';document.getElementById('recur-sub').textContent='Répartissez vos '+SESSIONS[bk.svc]+' tontes';renderDates();}
   checkS3();
 }
 
 /* ================================================================
-   RÃCURRENCE
+   RÉCURRENCE
    ================================================================ */
-function parseDate(str){if(!str)return null;const m={janvier:0,fÃ©vrier:1,mars:2,avril:3,mai:4,juin:5,juillet:6,aoÃ»t:7,septembre:8,octobre:9,novembre:10,dÃ©cembre:11};const p=str.split(' ');if(p.length<3)return null;return new Date(parseInt(p[2]),m[p[1]],parseInt(p[0]));}
+function parseDate(str){if(!str)return null;const m={janvier:0,février:1,mars:2,avril:3,mai:4,juin:5,juillet:6,août:7,septembre:8,octobre:9,novembre:10,décembre:11};const p=str.split(' ');if(p.length<3)return null;return new Date(parseInt(p[2]),m[p[1]],parseInt(p[0]));}
 function fmtDate(d){return DSH[d.getDay()]+' '+d.getDate()+' '+MFR[d.getMonth()]+' '+d.getFullYear();}
 function genDates(start,count,weeks){const dates=[];let cur=new Date(start);for(let i=0;i<count;i++){while(cur.getDay()===0||cur.getDay()===6)cur.setDate(cur.getDate()+1);dates.push(new Date(cur));cur=new Date(cur);cur.setDate(cur.getDate()+weeks*7);}return dates;}
 function updateFreq(val){bk.frequency=parseInt(val);document.getElementById('freq-val').textContent=val;if(bk.date&&bk.svc>1){bk.dates=genDates(parseDate(bk.date),SESSIONS[bk.svc],bk.frequency);renderDates();}}
@@ -1190,25 +1195,25 @@ function showCancelModal(){
   const nextDate=bk.date?parseDate(bk.date):null;const diff=nextDate?(nextDate-new Date())/(1000*60*60):-1;
   const icon=document.getElementById('cancel-icon');const msg=document.getElementById('cancel-msg');
   const free=document.getElementById('cancel-free-btns');const pen=document.getElementById('cancel-penalty-btns');
-  if(diff>24){icon.textContent='â ï¸';msg.innerHTML='Votre tonte du <strong>18 avril Ã  9h00</strong> sera annulÃ©e.<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
-  else{icon.textContent='â';msg.innerHTML='Votre tonte est dans <strong>moins de 24h</strong>.<br><br>â ï¸ Des <strong>pÃ©nalitÃ©s</strong> s\'appliqueront.';free.style.display='none';pen.style.display='block';}
+  if(diff>24){icon.textContent='⚠️';msg.innerHTML='Votre tonte du <strong>18 avril à 9h00</strong> sera annulée.<br><br>Annulation gratuite (plus de 24h avant).';free.style.display='block';pen.style.display='none';}
+  else{icon.textContent='❌';msg.innerHTML='Votre tonte est dans <strong>moins de 24h</strong>.<br><br>⚠️ Des <strong>pénalités</strong> s\'appliqueront.';free.style.display='none';pen.style.display='block';}
   document.getElementById('cancel-overlay').style.display='flex';
 }
 function doCancelTonte(){
   closeOverlay('cancel-overlay');
   const card=document.getElementById('card-upcoming');
   if(card){card.style.opacity='0';card.style.transition='opacity 0.4s';setTimeout(()=>card.remove(),400);}
-  showToast('RÃ©servation annulÃ©e.');
+  showToast('Réservation annulée.');
 }
 function showReportModal(){document.getElementById('report-overlay').style.display='flex';}
-function rateTonte(id,rating){const c=document.getElementById('stars-'+id);if(!c)return;c.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<rating));setTimeout(()=>{c.innerHTML='<div class="tc-rated">Merci ! ('+rating+'/5 â­)</div>';},600);showToast('Avis enregistrÃ© !');}
+function rateTonte(id,rating){const c=document.getElementById('stars-'+id);if(!c)return;c.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<rating));setTimeout(()=>{c.innerHTML='<div class="tc-rated">Merci ! ('+rating+'/5 ⭐)</div>';},600);showToast('Avis enregistré !');}
 
 /* ================================================================
    NOTIFICATIONS
    ================================================================ */
 function updateBadges(){['bell-badge','bell-badge-t'].forEach(id=>{const b=document.getElementById(id);if(b){b.textContent=_unread;b.style.display=_unread>0?'flex':'none';}});}
 function markRead(id){const el=document.getElementById(id);if(el&&el.classList.contains('unread')){el.classList.remove('unread');_unread=Math.max(0,_unread-1);updateBadges();}}
-function markAllRead(){document.querySelectorAll('.notif-item.unread').forEach(el=>el.classList.remove('unread'));_unread=0;updateBadges();showToast('Tout marquÃ© comme lu.');}
+function markAllRead(){document.querySelectorAll('.notif-item.unread').forEach(el=>el.classList.remove('unread'));_unread=0;updateBadges();showToast('Tout marqué comme lu.');}
 
 /* ================================================================
    PROFIL
@@ -1219,7 +1224,7 @@ function saveEdit(){
   const el=document.getElementById('pf-'+_editField);if(el)el.textContent=val;
   if(_editField==='nom'&&currentUser){currentUser.nom=val;document.getElementById('profile-name').textContent=val;saveSession(currentUser);}
   if(_editField==='tel'&&currentUser){currentUser.tel=val;saveSession(currentUser);}
-  closeOverlay('edit-overlay');showToast('Mis Ã  jour.');
+  closeOverlay('edit-overlay');showToast('Mis à jour.');
 }
 
 /* ================================================================
@@ -1229,7 +1234,7 @@ function closeOverlay(id){document.getElementById(id).style.display='none';}
 function openBugReport(){
   document.getElementById('bug-desc').value='';
   document.getElementById('err-bug').textContent='';
-  const btn=document.getElementById('btn-bug');btn.disabled=false;btn.textContent='ð¤ Envoyer';
+  const btn=document.getElementById('btn-bug');btn.disabled=false;btn.textContent='📤 Envoyer';
   document.getElementById('bug-overlay').style.display='flex';
   setTimeout(()=>document.getElementById('bug-desc').focus(),100);
 }
@@ -1238,10 +1243,10 @@ async function doReportBug(){
   const screenshotFile=document.getElementById('bug-screenshot');
   const screenshotInfo=screenshotFile&&screenshotFile.files.length>0?' [Capture jointe: '+screenshotFile.files[0].name+']':'';
   const err=document.getElementById('err-bug');
-  if(!desc||desc.length<10){err.textContent='DÃ©crivez le bug en quelques mots (min. 10 caractÃ¨res).';return;}
+  if(!desc||desc.length<10){err.textContent='Décrivez le bug en quelques mots (min. 10 caractères).';return;}
   err.textContent='';
-  const btn=document.getElementById('btn-bug');btn.disabled=true;btn.textContent='â³ Envoiâ¦';
-  const userInfo=currentUser?'Utilisateur : '+currentUser.prenom+' '+currentUser.nom+'\nEmail : '+currentUser.email:'Utilisateur non connectÃ©';
+  const btn=document.getElementById('btn-bug');btn.disabled=true;btn.textContent='⏳ Envoi…';
+  const userInfo=currentUser?'Utilisateur : '+currentUser.prenom+' '+currentUser.nom+'\nEmail : '+currentUser.email:'Utilisateur non connecté';
   try{
     const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
       method:'POST',
@@ -1259,11 +1264,11 @@ async function doReportBug(){
     const data=await resp.json();
     if(data.success==='true'||data.success===true){
       closeOverlay('bug-overlay');
-      showToast('Merci ! Votre signalement a Ã©tÃ© envoyÃ©. ð');
+      showToast('Merci ! Votre signalement a été envoyé. 🙏');
     }else{throw new Error(data.message||'Send failed');}
   }catch(e){
-    err.textContent='Erreur d\'envoi. RÃ©essayez ou contactez contact@novogardenhub.com';
-    btn.disabled=false;btn.textContent='ð¤ Envoyer';
+    err.textContent='Erreur d\'envoi. Réessayez ou contactez contact@novogardenhub.com';
+    btn.disabled=false;btn.textContent='📤 Envoyer';
   }
 }
 document.querySelectorAll('.overlay,.date-overlay,.edit-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.style.display='none';});});
@@ -1279,7 +1284,7 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 loadSession();
 updateBadges();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/novogarden-app/sw.js').catch(()=>{});
-// Ouvrir tous les liens externes dans un Custom Tab (Ã©vite la barre d'adresse TWA)
+// Ouvrir tous les liens externes dans un Custom Tab (évite la barre d'adresse TWA)
 document.addEventListener('click',function(e){
   const a=e.target.closest('a[href]');
   if(!a)return;
@@ -1295,7 +1300,7 @@ document.addEventListener('click',function(e){
 <div id="del-confirm-ov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);">
   <div style="background:white;border-radius:16px 16px 0 0;padding:24px 20px;width:100%;max-width:500px;text-align:center;">
     <p style="font-weight:700;font-size:15px;margin:0 0 6px;">Supprimer cette ligne ?</p>
-    <p style="font-size:13px;color:#888;margin:0 0 20px;">Cette action est irrÃ©versible.</p>
+    <p style="font-size:13px;color:#888;margin:0 0 20px;">Cette action est irréversible.</p>
     <button onclick="confirmDeleteInv()" style="width:100%;background:#e53935;color:white;border:none;border-radius:10px;padding:13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;">Supprimer</button>
     <button onclick="cancelDeleteInv()" style="width:100%;background:#f0f0f0;color:#333;border:none;border-radius:10px;padding:13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;">Annuler</button>
   </div>
