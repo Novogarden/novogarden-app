@@ -38,8 +38,8 @@ html, body {
 /* ===== SHELL ===== */
 #app { display:flex; flex-direction:column; height:100%; height:100dvh; max-width:430px; margin:0 auto; background:var(--cream); box-shadow:0 0 40px rgba(0,0,0,0.15); position:relative; }
 
-/* ===== TOPBAR — gradient original ===== */
-.topbar { background:linear-gradient(135deg,#8dc83a 0%,var(--dark-green) 100%); padding:48px 18px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:white; }
+/* ===== TOPBAR — couleur unifiée (Amélioration B) ===== */
+.topbar { background:var(--green); padding:48px 18px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:white; }
 .logo-row { display:flex; align-items:center; gap:10px; }
 .logo-row img { width:28px; height:28px; border-radius:8px; object-fit:cover; }
 .logo-name { font-size:19px; font-weight:800; color:white; }
@@ -65,7 +65,7 @@ html, body {
 
 /* ===== HOME ===== */
 #home { overflow-y:auto; }
-.home-header { background:linear-gradient(135deg,#8dc83a 0%,var(--dark-green) 100%); padding:24px 20px 40px; color:white; position:relative; flex-shrink:0; }
+.home-header { background:var(--green); padding:24px 20px 40px; color:white; position:relative; flex-shrink:0; }
 .home-header::after { content:''; position:absolute; bottom:-18px; left:0; right:0; height:36px; background:var(--cream); border-radius:22px 22px 0 0; }
 .home-header h1 { font-size:24px; font-weight:800; line-height:1.3; margin-bottom:6px; }
 .home-header .sub-txt { font-size:12px; opacity:0.85; font-weight:500; margin-bottom:4px; }
@@ -246,7 +246,7 @@ html, body {
 .auth-half > div { flex:1; }
 .profile-panel { padding:0 0 20px; display:none; }
 .profile-panel.visible { display:block; }
-.profile-hero { background:linear-gradient(135deg,#8dc83a 0%,var(--dark-green) 100%); color:white; padding:24px 20px 28px; text-align:center; position:relative; }
+.profile-hero { background:var(--green); color:white; padding:24px 20px 28px; text-align:center; position:relative; }
 .profile-hero::after { content:''; position:absolute; bottom:-16px; left:0; right:0; height:32px; background:var(--cream); border-radius:20px 20px 0 0; }
 .profile-avatar { width:72px; height:72px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 12px; }
 .profile-name { font-size:20px; font-weight:800; }
@@ -262,7 +262,7 @@ html, body {
 
 /* ===== SOLDE ===== */
 #solde { overflow-y:auto; }
-.solde-hero { background:linear-gradient(135deg,#8dc83a 0%,var(--dark-green) 100%); color:white; padding:52px 20px 28px; position:relative; }
+.solde-hero { background:var(--green); color:white; padding:52px 20px 28px; position:relative; }
 .solde-hero::after { content:''; position:absolute; bottom:-16px; left:0; right:0; height:32px; background:var(--cream); border-radius:20px 20px 0 0; }
 .solde-label { font-size:11px; opacity:0.8; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:4px; }
 .solde-amount { font-size:40px; font-weight:800; }
