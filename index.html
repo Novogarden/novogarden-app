@@ -126,7 +126,7 @@ html, body {
 .opt-icon svg { width:22px; height:22px; }
 .g1{background:#e0f0c0;} .g2{background:#c8e0ff;} .g3{background:#ffe0c0;}
 .opt-name { font-size:13px; font-weight:700; color:var(--dark); }
-.opt-price { font-size:11px; color:var(--dark-green); font-weight:700; margin-top:2px; }
+.opt-price { display:inline-flex; align-items:center; justify-content:center; background:white; color:var(--green); border:2px solid var(--green); border-radius:50px; padding:4px 10px; font-size:11px; font-weight:700; white-space:nowrap; }
 .opt-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--grey-light); margin-left:auto; flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
 .opt.sel .opt-check { background:var(--green); border-color:var(--green); }
 .opt.sel .opt-check::after { content:'✓'; color:white; font-size:11px; font-weight:800; }
