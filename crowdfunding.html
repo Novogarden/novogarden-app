@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Soutenez Novogarden dans l'acquisition de tondeuses nouvelle génération. 30% de réduction sur vos prestations si l'objectif est atteint ! Tonte de pelouse à la demande en Normandie et Mayenne.">
+<title>Novogarden — Waitlist & Réservations Anticipées 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--green:#7DB532;--dark-green:#5a8e1e;--cream:#FAF9F5;--dark:#14140F;--grey:#808080;--grey-light:#E8E6E6;--radius:20px;--gold:#f0a030;--glass:rgba(255,255,255,0.7);--glass-border:rgba(255,255,255,0.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);background-image:radial-gradient(at 0% 0%, hsla(84,56%,90%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(84,56%,95%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(84,56%,90%,1) 0, transparent 50%);color:var(--dark);min-height:100vh;overflow-x:hidden}
+
+/* HERO */
+.hero{background:linear-gradient(165deg,#1a5c00 0%,var(--green) 50%,#a0d050 100%);color:#fff;padding:80px 20px 100px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url('https://www.transparenttextures.com/patterns/cubes.png');opacity:0.1}
+.hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:60px;background:var(--cream);border-radius:50% 50% 0 0 / 100% 100% 0 0}
+.hero-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;position:relative;z-index:2}
+.hero-logo img{width:42px;height:38px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2))}
+.hero-logo span{font-size:26px;font-weight:900;letter-spacing:.05em;text-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.hero-badge{display:inline-block;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);padding:8px 20px;border-radius:40px;font-size:13px;font-weight:700;margin-bottom:24px;backdrop-filter:blur(8px);position:relative;z-index:2;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.hero h1{font-size:36px;font-weight:900;line-height:1.2;margin-bottom:16px;position:relative;z-index:2;text-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.hero p{font-size:16px;opacity:.95;font-weight:500;max-width:600px;margin:0 auto 32px;position:relative;z-index:2;line-height:1.6}
+.hero-img-wrap{position:relative;z-index:2;display:flex;flex-wrap:wrap;justify-content:center;gap:15px;max-width:900px;margin:0 auto}
+.hero-img{width:280px;height:200px;object-fit:cover;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);transition:transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);border:3px solid rgba(255,255,255,0.2)}
+.hero-img:hover{transform:scale(1.05) translateY(-10px);z-index:10;border-color:#fff}
+@media(max-width:768px){ .hero-img{width:100%;height:auto;max-width:320px} }
+
+/* SOCIAL PROOF TICKER */
+.live-indicator{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.1);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:12px}
+.live-dot{width:8px;height:8px;background:#ff4b4b;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* PROGRESS */
+.progress-section{max-width:650px;margin:-50px auto 0;padding:0 20px;position:relative;z-index:10}
+.progress-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:32px;box-shadow:0 15px 45px rgba(0,0,0,0.1)}
+.progress-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.progress-amount{font-size:42px;font-weight:900;color:var(--dark-green);line-height:1}
+.progress-goal{font-size:15px;color:var(--grey);font-weight:600;margin-bottom:4px}
+.bar-wrap{background:rgba(0,0,0,0.05);border-radius:30px;height:24px;overflow:hidden;margin-bottom:16px;position:relative;border:1px solid rgba(0,0,0,0.03)}
+.bar-fill{height:100%;border-radius:30px;background:linear-gradient(90deg,var(--green),#a0d050,var(--green));background-size:200% 100%;animation:shimmer 3s infinite linear;transition:width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);position:relative}
+@keyframes shimmer{0%{background-position:100% 0%}100%{background-position:-100% 0%}}
+.bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(rgba(255,255,255,0.3),transparent);border-radius:30px}
+.progress-stats{display:flex;justify-content:space-between;font-size:13px;color:var(--grey);font-weight:600;margin-top:8px}
+.contrib-count{font-weight:800;color:var(--dark)}
+.days-left{font-weight:800;color:var(--gold)}
+.month-label{text-align:center;font-size:14px;font-weight:800;color:var(--dark-green);margin-bottom:16px;padding:10px;background:rgba(125,181,50,0.1);border-radius:12px;border:1px solid rgba(125,181,50,0.1)}
+.month-label .reset-info{font-size:11px;font-weight:600;color:var(--grey);display:block;margin-top:4px;opacity:0.8}
+.past-months{margin-top:24px;border-top:1px solid rgba(0,0,0,0.05);padding-top:20px}
+.pm-title{font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.pm-item{display:flex;align-items:center;justify-content:space-between;font-size:13px;margin-bottom:8px;padding:10px 14px;background:rgba(255,255,255,0.5);border-radius:12px;border:1px solid rgba(0,0,0,0.02);transition:all 0.2s}
+.pm-item:hover{background:rgba(255,255,255,0.8);transform:translateX(4px)}
+.pm-month{font-weight:700;display:flex;align-items:center;gap:8px}
+.pm-amount{font-weight:800;color:var(--dark-green)}
+.pm-total{display:flex;justify-content:space-between;font-size:15px;font-weight:900;padding:14px;background:linear-gradient(90deg, #f2fce5, #e5f7d0);border-radius:12px;color:var(--dark-green);margin-top:12px;box-shadow:0 4px 15px rgba(125,181,50,0.1)}
+
+/* CONTREPARTIES */
+.section{max-width:650px;margin:0 auto;padding:60px 20px 0}
+.section-title{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:-0.02em;display:flex;align-items:center;gap:12px}
+.section-sub{font-size:14px;color:var(--grey);font-weight:500;margin-bottom:32px;line-height:1.6}
+
+.reward-card{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:28px;box-shadow:0 10px 30px rgba(0,0,0,0.04);margin-bottom:20px;border:2px solid transparent;cursor:pointer;transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden}
+.reward-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(225deg, transparent 95%, rgba(125,181,50,0.1) 100%);pointer-events:none}
+.reward-card:hover{border-color:var(--green);transform:translateY(-5px) scale(1.01);box-shadow:0 20px 40px rgba(125,181,50,0.15)}
+.reward-card.popular{border-color:var(--green);box-shadow:0 15px 40px rgba(125,181,50,0.1)}
+.reward-card.popular::before{content:'⭐ CONSEILLÉ';position:absolute;top:0;right:0;background:var(--gold);color:#fff;font-size:11px;font-weight:900;padding:6px 20px;border-radius:0 0 0 20px;box-shadow:0 4px 10px rgba(240,160,48,0.2)}
+.rc-price{font-size:32px;font-weight:900;color:var(--dark-green);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.rc-price::after{content:'TTC';font-size:10px;color:var(--grey);font-weight:600;letter-spacing:1px}
+.rc-name{font-size:18px;font-weight:800;margin-bottom:10px;color:var(--dark)}
+.rc-desc{font-size:13px;color:var(--grey);font-weight:500;line-height:1.6;margin-bottom:18px}
+.rc-tag{display:inline-block;background:rgba(125,181,50,0.1);color:var(--dark-green);font-size:12px;font-weight:700;padding:6px 14px;border-radius:30px;margin-right:8px;margin-bottom:8px;border:1px solid rgba(125,181,50,0.1)}
+.rc-remaining{font-size:12px;color:var(--grey);margin-top:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+
+/* WHY */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.why-card{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.03);text-align:center;transition:all 0.3s}
+.why-card:hover{transform:translateY(-5px);background:rgba(255,255,255,0.9)}
+.why-icon{font-size:32px;margin-bottom:12px;display:block}
+.why-title{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--dark)}
+.why-desc{font-size:12px;color:var(--grey);font-weight:500;line-height:1.5}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:40px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:11px;top:8px;bottom:8px;width:4px;background:linear-gradient(180deg,var(--green),#a0d050);border-radius:4px;opacity:0.3}
+.tl-item{margin-bottom:32px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-35px;top:4px;width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--green);box-shadow:0 4px 10px rgba(125,181,50,0.2);z-index:2}
+.tl-date{font-size:12px;font-weight:900;color:var(--dark-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:block}
+.tl-text{font-size:15px;font-weight:700;color:var(--dark)}
+
+/* FAQ */
+.faq-item{background:var(--glass);backdrop-filter:blur(4px);border:1px solid var(--glass-border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.02);transition:all 0.3s}
+.faq-item:hover{background:rgba(255,255,255,0.9)}
+.faq-q{padding:20px 24px;font-size:15px;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--dark)}
+.faq-q::after{content:'\2193';font-size:18px;font-weight:900;color:var(--green);transition:transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)}
+.faq-item.open .faq-q::after{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);padding:0 24px}
+.faq-item.open .faq-a{max-height:400px;padding:0 24px 24px}
+.faq-a p{font-size:14px;color:var(--grey);font-weight:500;line-height:1.7}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,#1a5c00,var(--green),#1a5c00);background-size:200% 200%;animation:gradientBG 10s infinite alternate;border-radius:30px;padding:48px 32px;text-align:center;color:#fff;margin:60px 20px 0;max-width:650px;margin-left:auto;margin-right:auto;box-shadow:0 25px 60px rgba(26,92,0,0.3);position:relative;overflow:hidden}
+@keyframes gradientBG{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.cta-section h2{font-size:28px;font-weight:900;margin-bottom:12px;position:relative;z-index:2}
+.cta-section p{font-size:15px;opacity:.9;margin-bottom:32px;font-weight:500;position:relative;z-index:2}
+.cta-btn{display:inline-block;background:#fff;color:var(--dark-green);border:none;padding:18px 48px;border-radius:16px;font-size:18px;font-weight:900;cursor:pointer;font-family:'Montserrat',sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);position:relative;z-index:2}
+.cta-btn:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 15px 40px rgba(0,0,0,0.3)}
+
+/* TICKER */
+.ticker-wrap{position:fixed;bottom:0;left:0;right:0;background:rgba(20,20,15,0.95);backdrop-filter:blur(10px);color:#fff;padding:10px 0;z-index:1000;border-top:1px solid rgba(255,255,255,0.1)}
+.ticker{display:flex;white-space:nowrap;animation:ticker 30s linear infinite}
+@keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.ticker-item{margin-right:40px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px}
+.ticker-item b{color:var(--green)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.modal-bg.show{display:flex}
+.modal{background:var(--cream);border-radius:30px;padding:40px 32px;width:calc(100% - 32px);max-width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 30px 100px rgba(0,0,0,0.5)}
+.modal-close{position:absolute;top:20px;right:24px;background:none;border:none;font-size:28px;cursor:pointer;color:var(--grey);transition:color 0.2s}
+.modal-close:hover{color:var(--dark)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp .8s cubic-bezier(0.22, 1, 0.36, 1) both}
+@media(max-width:480px){
+  .hero{padding:60px 20px 80px}
+  .hero h1{font-size:26px}
+  .progress-amount{font-size:32px}
+  .why-grid{grid-template-columns:1fr}
+  .section-title{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">
+    <img src="https://static.wixstatic.com/media/8950bf_e95a399a7b2447a4964a24337be104f6~mv2.png" alt="Novogarden">
+    <span>Novogarden</span>
+  </div>
+  <div class="live-indicator"><span class="live-dot"></span> <span id="live-count">12</span> personnes consultent cette offre</div><br>
+  <div class="hero-badge">⏳ Offre Waitlist — Tonte à prix réduit</div>
+  <h1 class="animate">Réservez 10 tontes d'avance<br>Économisez -25% sur votre carnet.</h1>
+  <p class="animate">Rejoignez notre waitlist de déploiement mensuelle. Financez l'arrivée de nos nouvelles machines et profitez d'un tarif imbattable en échange d'un peu de patience.</p>
+  <div class="hero-img-wrap animate">
+    <img class="hero-img" src="assets/robot_real.jpg" alt="Tondeuse autonome Novogarden">
+    <img class="hero-img" src="assets/robot_2.jpg" alt="Tondeuse autonome Novogarden 2">
+    <img class="hero-img" src="assets/robot_3.jpg" alt="Tondeuse autonome Novogarden 3">
+  </div>
+</div>
+
+<!-- RÈGLES DU JEU -->
+<div class="section animate" style="padding-top:20px">
+  <div class="section-title">🎮 Les règles du jeu</div>
+  <div class="faq-item open"><div class="faq-q">Comment fonctionne la Waitlist ?</div><div class="faq-a" style="max-height:500px"><p>
+    1. <strong>Réservez</strong> : Choisissez votre carnet de 10 tontes avec 25% de remise.<br>
+    2. <strong>Patientez</strong> : Votre contribution finance l'achat immédiat de nouvelles tondeuses.<br>
+    3. <strong>Tondez</strong> : Dès réception des machines (sous 4 à 12 semaines), vous êtes prioritaire pour vos 10 tontes.<br>
+    4. <strong>Reset</strong> : Chaque mois, l'objectif de 15 000€ redémarre pour une nouvelle vague de commandes.
+  </p></div></div>
+</div>
+
+<!-- COMPARATIF -->
+<div class="section">
+  <div class="section-title">🤔 Pourquoi choisir Novogarden ?</div>
+  <div class="section-sub">Pourquoi payer pour un service plutôt que d'acheter votre propre matériel ?</div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🚜</div>
+      <div class="why-title">Le vieux tracteur</div>
+      <div class="why-desc">Achat coûteux (2500€+), entretien mécanique, essence, et surtout... c'est vous qui bossez le samedi !</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔌</div>
+      <div class="why-title">Le robot classique</div>
+      <div class="why-desc">Câbles enterrés fragiles, galères avec les trous de taupe, et matériel souvent inadapté aux grands terrains.</div>
+    </div>
+    <div class="why-card popular" style="grid-column: span 2; border: 2px solid var(--green)">
+      <div class="why-icon">🤖</div>
+      <div class="why-title">La solution Novogarden</div>
+      <div class="why-desc"><strong>Zéro investissement matériel.</strong> Zéro entretien. Télépilotage expert. 100% électrique. Vous ne payez que les tontes effectuées, et on s'occupe de tout.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BARRE DE PROGRESSION -->
+<div class="progress-section">
+  <div class="progress-card animate">
+    <div class="month-label" id="month-label">📅 Campagne de mai 2026<span class="reset-info">Relance automatique le 1er de chaque mois</span></div>
+    <div class="progress-top">
+      <div class="progress-amount" id="current-amount">0 €</div>
+      <div class="progress-goal">Seuil de déploiement <strong>15 000 €</strong></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-stats">
+      <span><span class="contrib-count" id="contrib-count">0</span> contributeurs ce mois</span>
+      <span class="days-left" id="days-left">30 jours restants</span>
+    </div>
+    <div class="past-months" id="past-months"></div>
+  </div>
+</div>
+
+<!-- CONTREPARTIES -->
+<div class="section">
+  <div class="section-title">🎁 Choisissez votre contrepartie</div>
+  <div class="section-sub">Chaque contribution finance l'achat de tondeuses nouvelle génération. En échange, recevez un <strong>crédit de m² de tonte gratuite</strong>, utilisable sur n'importe quelle prestation Novogarden.</div>
+
+  <div class="reward-card popular" onclick="openModal(174,'Carnet 10 (≤500m²)','c10_500')">
+    <div style="display:flex; gap:15px; align-items:center">
+      <img src="assets/solo.png" style="width:60px; height:60px; object-fit:cover; border-radius:10px">
+      <div>
+        <div class="rc-price">174 €</div>
+        <div class="rc-name">🌿 Carnet 10 — Jardins ≤ 500 m²</div>
+      </div>
+    </div>
+    <div class="rc-desc" style="margin-top:12px">10 tontes complètes. <span style="text-decoration:line-through">Prix public : 232€</span>. <strong>Économie : 58€ (-25%).</strong></div>
+    <span class="rc-tag">Pack Sérénité -25%</span>
+    <div class="rc-remaining">⭐ Offre la plus choisie</div>
+  </div>
+
+  <div class="reward-card" onclick="openModal(234,'Carnet 10 (1500m²)','c10_1500')">
+    <div style="display:flex; gap:15px; align-items:center">
+      <img src="assets/essentiel.png" style="width:60px; height:60px; object-fit:cover; border-radius:10px">
+      <div>
+        <div class="rc-price">234 €</div>
+        <div class="rc-name">🏆 Carnet 10 — Jardins 500-1500 m²</div>
+      </div>
+    </div>
+    <div class="rc-desc" style="margin-top:12px">10 tontes complètes. <span style="text-decoration:line-through">Prix public : 312€</span>. <strong>Économie : 78€ (-25%).</strong></div>
+    <span class="rc-tag">Pack Sérénité -25%</span>
+  </div>
+
+  <div class="reward-card" onclick="openModal(294,'Carnet 10 (3000m²)','c10_3000')">
+    <div style="display:flex; gap:15px; align-items:center">
+      <img src="assets/serenite.png" style="width:60px; height:60px; object-fit:cover; border-radius:10px">
+      <div>
+        <div class="rc-price">294 €</div>
+        <div class="rc-name">💎 Carnet 10 — Jardins 1500-3000 m²</div>
+      </div>
+    </div>
+    <div class="rc-desc" style="margin-top:12px">10 tontes complètes. <span style="text-decoration:line-through">Prix public : 392€</span>. <strong>Économie : 98€ (-25%).</strong></div>
+    <span class="rc-tag">Priorité Waitlist</span>
+  </div>
+
+  <div class="reward-card" onclick="openModal(354,'Carnet 10 (7000m²)','c10_7000')">
+    <div style="display:flex; gap:15px; align-items:center">
+      <img src="assets/robot_real.jpg" style="width:60px; height:60px; object-fit:cover; border-radius:10px">
+      <div>
+        <div class="rc-price">354 €</div>
+        <div class="rc-name">🏅 Carnet 10 — Jardins 3000-7000 m²</div>
+      </div>
+    </div>
+    <div class="rc-desc" style="margin-top:12px">10 tontes complètes. <span style="text-decoration:line-through">Prix public : 472€</span>. <strong>Économie : 118€ (-25%).</strong></div>
+    <span class="rc-tag">Membre Fondateur</span>
+  </div>
+</div>
+
+<!-- POURQUOI -->
+<div class="section">
+  <div class="section-title">💡 Pourquoi cette levée de fonds ?</div>
+  <div class="section-sub">Novogarden utilise des robots tondeuses téléopérés pour offrir un service d'entretien de pelouse économique et écologique en Normandie.</div>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-icon">🤖</div><div class="why-title">Robots nouvelle gén.</div><div class="why-desc">Des tondeuses plus puissantes, plus rapides, pour couvrir plus de terrain.</div></div>
+    <div class="why-card"><div class="why-icon">🌍</div><div class="why-title">100% électrique</div><div class="why-desc">Zéro émission, zéro bruit. Bon pour vos voisins et la planète.</div></div>
+    <div class="why-card"><div class="why-icon">💰</div><div class="why-title">Prix imbattables</div><div class="why-desc">2 à 3× moins cher qu'un paysagiste. À partir de 23,20€/tonte.</div></div>
+    <div class="why-card"><div class="why-icon">📱</div><div class="why-title">Tout via l'app</div><div class="why-desc">Réservez, suivez et payez directement depuis notre application.</div></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section">
+  <div class="section-title">📅 Calendrier du projet</div>
+  <div class="section-sub">Voici les étapes clés si l'objectif est atteint.</div>
+  <div class="timeline" id="timeline-dynamic">
+    <!-- Géré par JS -->
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="section">
+  <div class="section-title">❓ Questions fréquentes</div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Pourquoi payer maintenant pour une tonte plus tard ?</div><div class="faq-a"><p>C'est un échange gagnant-gagnant : en acceptant un délai de quelques semaines, vous profitez de <strong>tarifs imbattables</strong> (jusqu'à -36% par rapport au prix public). De notre côté, cela nous permet de financer l'achat de nouvelles tondeuses pour répondre à la demande.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Quand ma pelouse sera-t-elle tondue ?</div><div class="faq-a"><p>Les réservations "Waitlist" sont traitées dans un délai de 4 à 12 semaines, au fur et à mesure de l'arrivée des nouvelles machines. Nous vous contactons dès qu'un créneau se libère dans votre zone.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Que se passe-t-il si l'objectif de 15 000 € n'est pas atteint ?</div><div class="faq-a"><p>Votre crédit reste valable ! L'objectif de 15 000 € est une cible mensuelle pour accélérer notre croissance, mais chaque réservation individuelle est enregistrée et honorée dès que possible au prorata des machines disponibles.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Puis-je annuler si je change d'avis ?</div><div class="faq-a"><p>Bien sûr. Vous avez 14 jours pour vous rétracter. Passé ce délai, votre crédit est enregistré et bloqué pour votre future tonte.</p></div></div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>🌿 Participez à l'aventure</h2>
+  <p>Chaque euro compte pour révolutionner l'entretien de vos pelouses !</p>
+  <button class="cta-btn" onclick="openModal(50,'Jardinier','jardinier')">Je contribue maintenant</button>
+</div>
+
+<!-- MENTIONS LÉGALES -->
+<div class="section" style="padding-bottom:0">
+  <div class="section-title">⚖️ Mentions légales & conditions</div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Nature de la collecte</div><div class="faq-a"><p>Cette campagne constitue une <strong>pré-vente de prestations de services avec contreparties</strong>. Il ne s'agit en aucun cas d'un investissement financier, d'un prêt ou d'une prise de participation. Aucun rendement financier n'est promis. Les fonds collectés sont exclusivement destinés à l'acquisition de tondeuses robots pour l'activité Novogarden.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Utilisation des fonds</div><div class="faq-a"><p>100% des fonds collectés sont utilisés pour l'achat de matériel (tondeuses robots, accessoires, batteries). L'achat est réalisé <strong>au prorata du montant collecté</strong>, même si l'objectif de 15 000 € n'est pas atteint. Une transparence complète sera assurée : chaque contributeur recevra un récapitulatif de l'utilisation des fonds par email.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Contreparties & livraison</div><div class="faq-a"><p>Les crédits de m² de tonte offerts sont valables <strong>12 mois</strong> à compter de la date de contribution. Ils sont utilisables sur toute prestation Novogarden dans la zone d'intervention standard (50 km autour du Châtelier, 61450). Les crédits sont <strong>nominatifs et non cessibles</strong>. Un bon de crédit personnalisé sera envoyé par email après réception du paiement.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Droit de rétractation</div><div class="faq-a"><p>Conformément aux articles L.221-18 et suivants du Code de la consommation, vous disposez d'un <strong>délai de 14 jours</strong> à compter de la date de contribution pour exercer votre droit de rétractation, sans motif ni pénalité. Pour exercer ce droit, contactez-nous à <a href="mailto:contact@novogardenhub.com" style="color:var(--green);font-weight:700">contact@novogardenhub.com</a>. Le remboursement sera effectué dans un délai de 14 jours suivant la demande.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Données personnelles (RGPD)</div><div class="faq-a"><p>Les données collectées (nom, email, téléphone) sont nécessaires au traitement de votre contribution et à la livraison des contreparties. Elles sont conservées de manière sécurisée et ne sont jamais cédées à des tiers. Conformément au RGPD (UE 2016/679), vous disposez d'un droit d'accès, de rectification et de suppression sur simple demande à <a href="mailto:contact@novogardenhub.com" style="color:var(--green);font-weight:700">contact@novogardenhub.com</a>.</p></div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Identité du porteur de projet</div><div class="faq-a"><p><strong>Novogarden</strong> — Micro-entreprise<br>Romain Marlier<br>2 La Grande Ganterie, 61450 Le Châtelier<br>SIREN : 995315793<br>TVA non applicable — Art. 293 B du CGI<br>Tél. : 06.35.58.47.00<br>Email : <a href="mailto:contact@novogardenhub.com" style="color:var(--green);font-weight:700">contact@novogardenhub.com</a></p></div></div>
+</div>
+
+<div class="footer">
+  <p>© 2026 Novogarden · <a href="https://novogardenhub.com" target="_blank">novogardenhub.com</a> · 06.35.58.47.00</p>
+  <p style="margin-top:6px">TVA non applicable · Art. 293 B du CGI · Micro-entreprise</p>
+</div>
+
+<!-- MODAL CONTRIBUTION -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="form-view">
+      <h2>🌿 Contribuer</h2>
+      <div class="sub" id="modal-sub">Contrepartie Jardinier — 50 €</div>
+      <label>Prénom & Nom *</label>
+      <input type="text" id="cf-name" placeholder="Jean Dupont">
+      <label>Email *</label>
+      <input type="email" id="cf-email" placeholder="vous@email.com">
+      <label>Téléphone</label>
+      <input type="tel" id="cf-phone" placeholder="06 12 34 56 78">
+      <label>Montant de la contribution</label>
+      <select id="cf-tier" onchange="updatePrice()">
+        <option value="174" selected>🌿 Carnet 10 (≤500m²) — 174 €</option>
+        <option value="234">🏆 Carnet 10 (1500m²) — 234 €</option>
+        <option value="294">💎 Carnet 10 (3000m²) — 294 €</option>
+        <option value="354">🏅 Carnet 10 (7000m²) — 354 €</option>
+      </select>
+      <label>Message (optionnel)</label>
+      <input type="text" id="cf-msg" placeholder="Un mot d'encouragement…">
+      <div class="price-summary">
+        <span class="lbl">Votre contribution</span>
+        <span class="amt" id="cf-total">50 €</span>
+      </div>
+      <button class="submit-btn" onclick="submitContribution()">✅ Confirmer ma contribution</button>
+    </div>
+    <div class="success-msg" id="success-view">
+      <div class="ico">🎉</div>
+      <h3>Merci pour votre soutien !</h3>
+      <p>Nous vous recontacterons par email avec les instructions de paiement.<br><br>Ensemble, révolutionnons l'entretien de vos pelouses ! 🌿</p>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER SOUTIENS -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker-content">
+    <div class="ticker-item">🌱 <b>Jean-Marc D.</b> vient de contribuer 30€</div>
+    <div class="ticker-item">🌿 <b>Sophie L.</b> vient de contribuer 75€</div>
+    <div class="ticker-item">🏆 <b>Société Agripure</b> vient de contribuer 500€</div>
+    <div class="ticker-item">💎 <b>Kevin M.</b> vient de contribuer 150€</div>
+    <div class="ticker-item">🌱 <b>Anonyme</b> vient de contribuer 10€</div>
+  </div>
+</div>
+
+<script>
+const GOAL = 15000;
+const MOIS_FR = ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'];
+
+function getMonthKey(d){ return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0'); }
+function getCurrentMonthKey(){ return getMonthKey(new Date()); }
+function getMonthLabel(key){
+  const [y,m] = key.split('-');
+  return MOIS_FR[parseInt(m)-1] + ' ' + y;
+}
+
+function loadContribs(){
+  try{ return JSON.parse(localStorage.getItem('ng_contribs')||'[]'); }catch(e){return [];}
+}
+function saveContribs(c){ localStorage.setItem('ng_contribs',JSON.stringify(c)); }
+
+function getContribsByMonth(){
+  const all = loadContribs();
+  const months = {};
+  all.forEach(c => {
+    const key = getMonthKey(new Date(c.date));
+    if(!months[key]) months[key] = {total:0, count:0};
+    months[key].total += c.amount;
+    months[key].count++;
+  });
+  return months;
+}
+
+function updateUI(){
+  const curKey = getCurrentMonthKey();
+  const byMonth = getContribsByMonth();
+  const cur = byMonth[curKey] || {total:0, count:0};
+  const pct = Math.min((cur.total / GOAL) * 100, 100);
+
+  document.getElementById('current-amount').textContent = cur.total.toLocaleString('fr-FR') + ' \u20ac';
+  document.getElementById('bar-fill').style.width = pct + '%';
+  document.getElementById('contrib-count').textContent = cur.count;
+  document.getElementById('month-label').innerHTML = '\ud83d\udcc5 Campagne de ' + getMonthLabel(curKey) + '<span class="reset-info">Relance automatique le 1er de chaque mois</span>';
+
+  // Jours restants dans le mois
+  const now = new Date();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth()+1, 0);
+  const daysLeft = endOfMonth.getDate() - now.getDate();
+  document.getElementById('days-left').textContent = daysLeft + ' jour' + (daysLeft>1?'s':'') + ' restant' + (daysLeft>1?'s':'');
+
+  // Historique mois pr\u00e9c\u00e9dents
+  const pastKeys = Object.keys(byMonth).filter(k => k !== curKey).sort().reverse();
+  let html = '';
+  if(pastKeys.length > 0){
+    let grandTotal = 0;
+    html = '<div class="pm-title">Campagnes pr\u00e9c\u00e9dentes</div>';
+    pastKeys.forEach(k => {
+      const m = byMonth[k];
+      grandTotal += m.total;
+      const icon = m.total >= GOAL ? '\u2705' : '\ud83d\udfe0';
+      html += '<div class="pm-item"><span class="pm-month">' + icon + ' ' + getMonthLabel(k) + '</span><span class="pm-amount">' + m.total.toLocaleString('fr-FR') + ' \u20ac / ' + GOAL.toLocaleString('fr-FR') + ' \u20ac</span></div>';
+    });
+    grandTotal += cur.total;
+    html += '<div class="pm-total"><span>Total cumul\u00e9</span><span>' + grandTotal.toLocaleString('fr-FR') + ' \u20ac</span></div>';
+  }
+  document.getElementById('past-months').innerHTML = html;
+  
+  // Timeline dynamique
+  const tl = document.getElementById('timeline-dynamic');
+  const start = new Date();
+  let tlHtml = '';
+  const steps = [
+    "Lancement de la vague de réservation",
+    "Clôture de la vague & commande matériel",
+    "Réception & Tests des nouvelles machines",
+    "Déploiement prioritaire des carnets Waitlist"
+  ];
+  steps.forEach((step, i) => {
+    const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
+    tlHtml += '<div class="tl-item"><div class="tl-date">' + getMonthLabel(getMonthKey(d)) + '</div><div class="tl-text">' + step + '</div></div>';
+  });
+  tl.innerHTML = tlHtml;
+}
+
+function openModal(price, name, tier){
+  document.getElementById('modal-sub').textContent = 'Contrepartie ' + name + ' \u2014 ' + price + ' \u20ac';
+  document.getElementById('cf-tier').value = price;
+  document.getElementById('cf-total').textContent = price + ' \u20ac';
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+  document.getElementById('modal-bg').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal-bg').classList.remove('show'); }
+function updatePrice(){
+  const v = document.getElementById('cf-tier').value;
+  document.getElementById('cf-total').textContent = v + ' \u20ac';
+  const names = {'174':'Carnet 10 (500m²)','234':'Carnet 10 (1500m²)','294':'Carnet 10 (3000m²)','354':'Carnet 10 (7000m²)'};
+  document.getElementById('modal-sub').textContent = 'Contrepartie ' + (names[v]||'') + ' \u2014 ' + v + ' \u20ac';
+}
+
+function submitContribution(){
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const amount = parseInt(document.getElementById('cf-tier').value);
+  const phone = document.getElementById('cf-phone').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  if(!name || !email){ alert('Veuillez remplir le nom et l\'email.'); return; }
+  if(!email.includes('@')){ alert('Email invalide.'); return; }
+
+  const contribs = loadContribs();
+  contribs.push({name, email, phone, amount, msg, date: new Date().toISOString()});
+  saveContribs(contribs);
+
+  try{
+    const formData = new URLSearchParams({type:'crowdfunding', nom:name, email, telephone:phone, montant:amount, message:msg});
+    fetch('https://script.google.com/macros/s/AKfycbxxLCUppjc8Sgyx2U3I5Ds30vJT4DEKsmDC_cXCiQGygbsVvvluNSOF1c8UDPrIf1XlbQ/exec',
+      {method:'POST', body:formData}).catch(()=>{});
+  }catch(e){}
+
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('success-view').style.display = 'block';
+  updateUI();
+  addTickerItem(name, amount);
+}
+
+function addTickerItem(name, amount){
+  const ticker = document.getElementById('ticker-content');
+  const div = document.createElement('div');
+  div.className = 'ticker-item';
+  div.innerHTML = '\ud83c\udf3f <b>' + name + '</b> vient de contribuer ' + amount + '\u20ac';
+  ticker.prepend(div);
+}
+
+// Simulate social proof
+setInterval(() => {
+  const count = document.getElementById('live-count');
+  const current = parseInt(count.textContent);
+  const next = current + (Math.random() > 0.5 ? 1 : -1);
+  if(next > 5 && next < 50) count.textContent = next;
+}, 5000);
+
+document.getElementById('modal-bg').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+window.addEventListener('DOMContentLoaded', function(){ updateUI(); setTimeout(updateUI,500); });
+</script>
+</body>
+</html>
