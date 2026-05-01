@@ -364,6 +364,37 @@ html, body {
         <button class="splash-btn" onclick="startBooking(1)">Réserver maintenant</button>
       </div>
       <div class="home-body">
+        <!-- BANNIÈRE ESSAI GRATUIT 2026 -->
+        <div class="free-trial-banner" style="
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            position: relative;
+            overflow: hidden;
+        " onclick="startBooking(1)">
+            <div style="font-size: 28px; animation: bounce 2s infinite;">🎁</div>
+            <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 800; color: #14140F; text-transform: uppercase; letter-spacing: 0.5px;">Offre de Saison 2026</div>
+                <div style="font-size: 16px; font-weight: 800; color: #14140F; margin-top: 2px;">Votre 1ère tonte OFFERTE</div>
+                <div style="font-size: 11px; color: #14140F; font-weight: 600; opacity: 0.8; margin-top: 2px;">Sans engagement. Places limitées par secteur.</div>
+            </div>
+            <div style="background: #14140F; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">J'en profite</div>
+            <style>
+                @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                    40% {transform: translateY(-5px);}
+                    60% {transform: translateY(-3px);}
+                }
+            </style>
+        </div>
+
         <!-- BANNIÈRE RENTABILITÉ NOVOGARDEN -->
         <div class="profit-banner" style="
             background: #fff;

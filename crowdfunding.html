@@ -103,6 +103,40 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);background-imag
 @keyframes gradientBG{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 .cta-section h2{font-size:28px;font-weight:900;margin-bottom:12px;position:relative;z-index:2}
 .cta-section p{font-size:15px;opacity:.9;margin-bottom:32px;font-weight:500;position:relative;z-index:2}
+.bar-wrap { background: #eee; border-radius: 10px; height: 14px; margin-bottom: 15px; position: relative; overflow: hidden; }
+.bar-fill { background: linear-gradient(90deg, var(--green), #b8e060); height: 100%; border-radius: 10px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.submit-btn {
+  width: 100%;
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(125,181,50,0.3);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.submit-btn:hover { background: var(--dark-green); transform: translateY(-2px); }
+.submit-btn:active { transform: translateY(0); }
 .cta-btn{display:inline-block;background:#fff;color:var(--dark-green);border:none;padding:18px 48px;border-radius:16px;font-size:18px;font-weight:900;cursor:pointer;font-family:'Montserrat',sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);position:relative;z-index:2}
 .cta-btn:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 15px 40px rgba(0,0,0,0.3)}
 
@@ -194,10 +228,10 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);background-imag
       <div class="progress-goal">Seuil de déploiement <strong>15 000 €</strong></div>
     </div>
     <div class="bar-wrap">
-      <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      <div class="bar-fill" id="progress-bar" style="width:0%"></div>
     </div>
     <div class="progress-stats">
-      <span><span class="contrib-count" id="contrib-count">0</span> contributeurs ce mois</span>
+      <span><span class="contrib-count" id="contrib-count">0</span> contributeurs ce mois (<span id="progress-percent">0%</span>)</span>
       <span class="days-left" id="days-left">30 jours restants</span>
     </div>
     <div class="past-months" id="past-months"></div>
@@ -338,7 +372,10 @@ body{font-family:'Montserrat',sans-serif;background:var(--cream);background-imag
         <span class="lbl">Votre contribution</span>
         <span class="amt" id="cf-total">50 €</span>
       </div>
-      <button class="submit-btn" onclick="submitContribution()">✅ Confirmer ma contribution</button>
+      <button class="submit-btn" onclick="submitContribution()">
+        <span id="btn-submit-text">✅ Confirmer ma contribution</span>
+        <div id="btn-submit-loader" class="spinner" style="display:none"></div>
+      </button>
     </div>
     <div class="success-msg" id="success-view">
       <div class="ico">🎉</div>
@@ -404,26 +441,30 @@ function updateUI(){
   const daysLeft = endOfMonth.getDate() - now.getDate();
   document.getElementById('days-left').textContent = daysLeft + ' jour' + (daysLeft>1?'s':'') + ' restant' + (daysLeft>1?'s':'');
 
-  // Historique mois pr\u00e9c\u00e9dents
+  // Mise à jour barre de progression
+  const progressPercent = Math.min(100, Math.round((cur.total / GOAL) * 100));
+  document.getElementById('progress-bar').style.width = progressPercent + '%';
+  document.getElementById('progress-percent').textContent = progressPercent + '%';
+
+  // Historique mois précédents
   const pastKeys = Object.keys(byMonth).filter(k => k !== curKey).sort().reverse();
   let html = '';
   if(pastKeys.length > 0){
     let grandTotal = 0;
-    html = '<div class="pm-title">Campagnes pr\u00e9c\u00e9dentes</div>';
+    html = '<div class="pm-title">Campagnes précédentes</div>';
     pastKeys.forEach(k => {
       const m = byMonth[k];
       grandTotal += m.total;
-      const icon = m.total >= GOAL ? '\u2705' : '\ud83d\udfe0';
-      html += '<div class="pm-item"><span class="pm-month">' + icon + ' ' + getMonthLabel(k) + '</span><span class="pm-amount">' + m.total.toLocaleString('fr-FR') + ' \u20ac / ' + GOAL.toLocaleString('fr-FR') + ' \u20ac</span></div>';
+      const icon = m.total >= GOAL ? '✅' : '🟠';
+      html += '<div class="pm-item"><span class="pm-month">' + icon + ' ' + getMonthLabel(k) + '</span><span class="pm-amount">' + m.total.toLocaleString('fr-FR') + ' € / ' + GOAL.toLocaleString('fr-FR') + ' €</span></div>';
     });
     grandTotal += cur.total;
-    html += '<div class="pm-total"><span>Total cumul\u00e9</span><span>' + grandTotal.toLocaleString('fr-FR') + ' \u20ac</span></div>';
+    html += '<div class="pm-total"><span>Total cumulé (2026)</span><span>' + grandTotal.toLocaleString('fr-FR') + ' €</span></div>';
   }
   document.getElementById('past-months').innerHTML = html;
   
   // Timeline dynamique
   const tl = document.getElementById('timeline-dynamic');
-  const start = new Date();
   let tlHtml = '';
   const steps = [
     "Lancement de la vague de réservation",
@@ -439,19 +480,23 @@ function updateUI(){
 }
 
 function openModal(price, name, tier){
-  document.getElementById('modal-sub').textContent = 'Contrepartie ' + name + ' \u2014 ' + price + ' \u20ac';
+  document.getElementById('modal-sub').textContent = 'Contrepartie ' + name + ' — ' + price + ' €';
   document.getElementById('cf-tier').value = price;
-  document.getElementById('cf-total').textContent = price + ' \u20ac';
+  document.getElementById('cf-total').textContent = price + ' €';
   document.getElementById('form-view').style.display = 'block';
   document.getElementById('success-view').style.display = 'none';
   document.getElementById('modal-bg').classList.add('show');
+  document.getElementById('btn-submit-text').style.display = 'inline';
+  document.getElementById('btn-submit-loader').style.display = 'none';
 }
+
 function closeModal(){ document.getElementById('modal-bg').classList.remove('show'); }
+
 function updatePrice(){
   const v = document.getElementById('cf-tier').value;
-  document.getElementById('cf-total').textContent = v + ' \u20ac';
+  document.getElementById('cf-total').textContent = v + ' €';
   const names = {'174':'Carnet 10 (500m²)','234':'Carnet 10 (1500m²)','294':'Carnet 10 (3000m²)','354':'Carnet 10 (7000m²)'};
-  document.getElementById('modal-sub').textContent = 'Contrepartie ' + (names[v]||'') + ' \u2014 ' + v + ' \u20ac';
+  document.getElementById('modal-sub').textContent = 'Contrepartie ' + (names[v]||'') + ' — ' + v + ' €';
 }
 
 function submitContribution(){
@@ -460,36 +505,80 @@ function submitContribution(){
   const amount = parseInt(document.getElementById('cf-tier').value);
   const phone = document.getElementById('cf-phone').value.trim();
   const msg = document.getElementById('cf-msg').value.trim();
+  
   if(!name || !email){ alert('Veuillez remplir le nom et l\'email.'); return; }
   if(!email.includes('@')){ alert('Email invalide.'); return; }
 
+  // UI State: Loading
+  const btnText = document.getElementById('btn-submit-text');
+  const btnLoader = document.getElementById('btn-submit-loader');
+  if(btnText) btnText.style.display = 'none';
+  if(btnLoader) btnLoader.style.display = 'inline-block';
+
+  // Sauvegarde locale pour persistance immédiate
   const contribs = loadContribs();
   contribs.push({name, email, phone, amount, msg, date: new Date().toISOString()});
   saveContribs(contribs);
 
-  try{
-    const formData = new URLSearchParams({type:'crowdfunding', nom:name, email, telephone:phone, montant:amount, message:msg});
-    fetch('https://script.google.com/macros/s/AKfycbxxLCUppjc8Sgyx2U3I5Ds30vJT4DEKsmDC_cXCiQGygbsVvvluNSOF1c8UDPrIf1XlbQ/exec',
-      {method:'POST', body:formData}).catch(()=>{});
-  }catch(e){}
+  // Envoi vers Google Apps Script via Formulaire (plus robuste que fetch pour GAS)
+  const WIX_URL = 'https://script.google.com/macros/s/AKfycbxxLCUppjc8Sgyx2U3I5Ds30vJT4DEKsmDC_cXCiQGygbsVvvluNSOF1c8UDPrIf1XlbQ/exec';
+  
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = WIX_URL;
+  form.target = 'hidden_iframe'; // Évite le rechargement de page
 
-  document.getElementById('form-view').style.display = 'none';
-  document.getElementById('success-view').style.display = 'block';
-  updateUI();
-  addTickerItem(name, amount);
+  const params = {
+    type: 'crowdfunding',
+    nom: name,
+    email: email,
+    telephone: phone,
+    montant: amount,
+    message: msg
+  };
+
+  for (const key in params) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = params[key];
+    form.appendChild(input);
+  }
+
+  // Création de l'iframe si elle n'existe pas
+  if (!document.getElementById('hidden_iframe')) {
+    const iframe = document.createElement('iframe');
+    iframe.id = 'hidden_iframe';
+    iframe.name = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
+  // Transition vers succès
+  setTimeout(() => {
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+    updateUI();
+    addTickerItem(name, amount);
+  }, 1000);
 }
 
 function addTickerItem(name, amount){
   const ticker = document.getElementById('ticker-content');
   const div = document.createElement('div');
   div.className = 'ticker-item';
-  div.innerHTML = '\ud83c\udf3f <b>' + name + '</b> vient de contribuer ' + amount + '\u20ac';
+  div.innerHTML = '🌱 <b>' + name + '</b> vient de contribuer ' + amount + ' €';
   ticker.prepend(div);
 }
 
-// Simulate social proof
+// Simulation preuve sociale
 setInterval(() => {
   const count = document.getElementById('live-count');
+  if(!count) return;
   const current = parseInt(count.textContent);
   const next = current + (Math.random() > 0.5 ? 1 : -1);
   if(next > 5 && next < 50) count.textContent = next;
@@ -498,7 +587,12 @@ setInterval(() => {
 document.getElementById('modal-bg').addEventListener('click', function(e){
   if(e.target === this) closeModal();
 });
-window.addEventListener('DOMContentLoaded', function(){ updateUI(); setTimeout(updateUI,500); });
+
+window.addEventListener('DOMContentLoaded', function(){ 
+  updateUI(); 
+  // Petit délai pour s'assurer que le DOM est prêt pour les animations
+  setTimeout(updateUI, 300); 
+});
 </script>
 </body>
 </html>
