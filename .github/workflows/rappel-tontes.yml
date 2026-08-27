@@ -1,0 +1,100 @@
+name: Rappel tontes 48h
+
+# Tourne sur les serveurs GitHub, independamment de tout ordinateur allume.
+# 05:00 UTC = 07:00 Paris en ete, 06:00 en hiver.
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  rappel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Chercher les tontes prevues dans 48h
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const fmt = (d) => d.toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' });
+            const cible = fmt(new Date(Date.now() + 2 * 86400000));
+            core.info('Date cible (J+2) : ' + cible);
+
+            let journal;
+            try {
+              journal = JSON.parse(fs.readFileSync('data/journal.json', 'utf8'));
+            } catch (e) {
+              core.setFailed('Lecture de data/journal.json impossible : ' + e.message);
+              return;
+            }
+
+            const clients = journal.clients || {};
+            const concernes = Object.keys(clients).filter(
+              (code) => String(clients[code].prochaine || '').slice(0, 10) === cible
+            );
+
+            if (concernes.length === 0) {
+              core.info('Aucune tonte prevue le ' + cible + '.');
+              return;
+            }
+
+            const ouvertes = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const titresOuverts = new Set(ouvertes.map((i) => i.title));
+
+            for (const code of concernes) {
+              const c = clients[code];
+              const titre = 'Tonte dans 48h - ' + code + ' - ' + cible;
+
+              if (titresOuverts.has(titre)) {
+                core.info('Rappel deja ouvert pour ' + code + ', on passe.');
+                continue;
+              }
+
+              const faites = (c.passages || []).length;
+              const total = c.packTotal || faites;
+              const corps = [
+                '@' + context.repo.owner + ' rappel automatique.',
+                '',
+                '**Client** : ' + code,
+                '**Date prevue** : ' + cible,
+                '**Formule** : ' + (c.pack || 'non renseignee'),
+                '**Avancement du pack** : ' + faites + ' / ' + total,
+                '**Avoir en cours** : ' + (c.avoir || 0) + ' EUR',
+                '',
+                '---',
+                'Une fois la tonte realisee, envoie un mail [NG] TONTE a contact@novogardenhub.com',
+                'puis ferme cette issue.',
+              ].join('\n');
+
+              const { data: issue } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: titre,
+                body: corps,
+              });
+
+              try {
+                await github.rest.issues.addAssignees({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  assignees: [context.repo.owner],
+                });
+              } catch (e) {
+                core.warning('Assignation impossible : ' + e.message);
+              }
+
+              core.info('Rappel cree pour ' + code + ' (issue #' + issue.number + ')');
+            }
