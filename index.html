@@ -1321,5 +1321,300 @@ document.addEventListener('click',function(e){
     <button onclick="cancelDeleteInv()" style="width:100%;background:#f0f0f0;color:#333;border:none;border-radius:10px;padding:13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;">Annuler</button>
   </div>
 </div>
+
+<!-- ================= NOVOGARDEN — JOURNAL CLIENT v1 ================= -->
+<style>
+.ngj-card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.ngj-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.ngj-pack{font-size:14px;font-weight:800}
+.ngj-count{font-size:12px;font-weight:800;color:var(--green);white-space:nowrap}
+.ngj-bar{height:8px;border-radius:8px;background:#eef3e6;overflow:hidden}
+.ngj-fill{height:100%;background:var(--green);border-radius:8px;transition:width .5s ease}
+.ngj-sub{font-size:11px;color:var(--grey);margin-top:8px;font-weight:600}
+.ngj-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:8px}
+.ngj-date{font-size:13px;font-weight:800}
+.ngj-note{font-size:12px;color:var(--grey);font-weight:500;margin-top:2px}
+.ngj-amt{font-size:13px;font-weight:800;color:var(--green);white-space:nowrap}
+.ngj-empty{text-align:center;color:var(--grey);font-size:13px;padding:16px 0;font-weight:500}
+.ngj-admin{padding:14px}
+.ngj-adm-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ngj-adm-h button{border:none;background:#eef3e6;color:var(--green);font-weight:800;border-radius:10px;padding:8px 12px;cursor:pointer}
+.ngj-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;background:#eef3e6;color:var(--green);border-radius:8px;padding:3px 7px}
+</style>
+<script>
+/* Novogarden — canal de donnees lecture seule (data/journal.json).
+   Aucune donnee personnelle dans le journal public : chaque client
+   est identifie par un code derive de son email. */
+(function () {
+  "use strict";
+  var JOURNAL_URL = 'data/journal.json';
+  var J = null;
+  function ngCode(email) {
+    var e = String(email || '').trim().toLowerCase();
+    var h = 5381;
+    for (var i = 0; i < e.length; i++) { h = (((h * 33) ^ e.charCodeAt(i)) >>> 0); }
+    var A = 'ACDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var s = '', v = h;
+    for (var k = 0; k < 6; k++) { s = A.charAt(v % 31) + s; v = Math.floor(v / 31); }
+    return 'NGH-' + s;
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function money(n) {
+    if (n == null || isNaN(n)) return '—';
+    return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + ' €';
+  }
+  function frDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(String(iso).slice(0, 10) + 'T00:00:00');
+    if (isNaN(d.getTime())) return String(iso);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function me() {
+    try { if (typeof currentUser !== 'undefined' && currentUser) return currentUser; } catch (e) {}
+    try { return JSON.parse(localStorage.getItem('ng_user') || 'null'); } catch (e) { return null; }
+  }
+  function myRec() {
+    var u = me();
+    if (!u || !J || !J.clients) return null;
+    return J.clients[ngCode(u.email)] || null;
+  }
+  function renderSolde() {
+    var body = document.querySelector('#solde .solde-body');
+    if (!body) return;
+    var w = document.getElementById('ngj-solde');
+    if (!w) {
+      w = document.createElement('div');
+      w.id = 'ngj-solde';
+      body.insertBefore(w, body.querySelector('p.sect') || body.firstChild);
+    }
+    var r = myRec();
+    if (!r) { w.innerHTML = ''; return; }
+    var pas = r.passages || [];
+    var used = pas.length;
+    var tot = r.packTotal || used;
+    var rest = Math.max(0, tot - used);
+    var pct = tot ? Math.min(100, Math.round(used / tot * 100)) : 0;
+    var pl = rest > 1 ? 's' : '';
+    var h = '<p class="sect">Mon pack</p>'
+      + '<div class="ngj-card">'
+      + '<div class="ngj-head"><div class="ngj-pack">' + esc(r.pack || 'Ma formule') + '</div>'
+      + '<div class="ngj-count">' + used + ' / ' + tot + '</div></div>'
+      + '<div class="ngj-bar"><div class="ngj-fill" style="width:' + pct + '%"></div></div>'
+      + '<div class="ngj-sub">' + rest + ' tonte' + pl + ' restante' + pl
+      + (r.prochaine ? ' · Prochaine : ' + frDate(r.prochaine) : '') + '</div></div>'
+      + '<p class="sect">Historique des passages</p>';
+    if (!used) {
+      h += '<div class="ngj-empty">Aucun passage enregistré pour le moment</div>';
+    } else {
+      for (var i = pas.length - 1; i >= 0; i--) {
+        var p = pas[i];
+        h += '<div class="ngj-item"><div><div class="ngj-date">' + frDate(p.date) + '</div>'
+          + '<div class="ngj-note">Tonte n°' + (i + 1)
+          + (p.note ? ' · ' + esc(p.note) : '') + '</div></div>'
+          + '<div class="ngj-amt">' + (p.montant != null ? money(p.montant) : '') + '</div></div>';
+      }
+    }
+    w.innerHTML = h;
+    var amt = document.getElementById('solde-amount');
+    if (amt && r.avoir != null) {
+      amt.textContent = money(r.avoir);
+      var sub = document.querySelector('#solde .solde-sub');
+      if (sub) sub.textContent = r.avoir > 0 ? 'Avoir disponible sur votre compte' : 'Aucun avoir en cours';
+    }
+    var stt = document.getElementById('sd-tontes');
+    if (stt) stt.textContent = used;
+    var dep = 0, hasDep = false;
+    for (var m2 = 0; m2 < pas.length; m2++) {
+      if (pas[m2].montant != null && !isNaN(pas[m2].montant)) { dep += Number(pas[m2].montant); hasDep = true; }
+    }
+    var sdd = document.getElementById('sd-depense');
+    if (sdd && hasDep) sdd.textContent = money(dep);
+  }
+  function readMap() {
+    try { return JSON.parse(localStorage.getItem('ng_notifs_lus') || '{}'); } catch (e) { return {}; }
+  }
+  function collectNotifs() {
+    var out = [];
+    var r = myRec();
+    var g = (J && J.annonces) || [];
+    for (var i = 0; i < g.length; i++) out.push(g[i]);
+    if (r) {
+      var a = r.annonces || [];
+      for (var k = 0; k < a.length; k++) out.push(a[k]);
+      var pas = r.passages || [];
+      for (var n = 0; n < pas.length; n++) {
+        var p = pas[n];
+        out.push({
+          id: 'passage-' + String(p.date).slice(0, 10) + '-' + n,
+          date: p.date,
+          titre: 'Tonte effectuée',
+          message: 'Votre tonte du ' + frDate(p.date) + ' a bien été réalisée.'
+            + (p.note ? ' ' + p.note : '')
+        });
+      }
+    }
+    out.sort(function (x, y) { return String(y.date || '').localeCompare(String(x.date || '')); });
+    return out;
+  }
+  function renderNotifs() {
+    var list = document.getElementById('notif-list');
+    if (!list) return;
+    var items = collectNotifs();
+    if (!items.length) { list.innerHTML = '<div class="ngj-empty">Aucune notification</div>'; setBadge(0); return; }
+    var read = readMap(), unread = 0, h = '';
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var id = String(a.id || ('n' + i)).replace(/[^A-Za-z0-9_.:-]/g, '');
+      var isNew = !read[id];
+      if (isNew) unread++;
+      h += '<div class="notif-item' + (isNew ? ' unread' : '') + '" data-ngj="' + id + '">'
+        + '<div class="notif-title">' + esc(a.titre || 'Information Novogarden') + '</div>'
+        + '<div class="notif-body">' + esc(a.message || '') + '</div>'
+        + '<div class="notif-time">' + frDate(a.date) + '</div></div>';
+    }
+    list.innerHTML = h;
+    var els = list.querySelectorAll('.notif-item[data-ngj]');
+    for (var k = 0; k < els.length; k++) { els[k].addEventListener('click', function () { markOne(this); }); }
+    setBadge(unread);
+  }
+  function markOne(el) {
+    if (!el.classList.contains('unread')) return;
+    el.classList.remove('unread');
+    var m = readMap();
+    m[el.getAttribute('data-ngj')] = 1;
+    try { localStorage.setItem('ng_notifs_lus', JSON.stringify(m)); } catch (e) {}
+    setBadge(document.querySelectorAll('#notif-list .notif-item.unread').length);
+  }
+  function setBadge(n) {
+    try { _unread = n; } catch (e) {}
+    var ids = ['bell-badge', 'bell-badge-t'];
+    for (var i = 0; i < ids.length; i++) {
+      var b = document.getElementById(ids[i]);
+      if (b) { b.textContent = n; b.style.display = n > 0 ? 'flex' : 'none'; }
+    }
+  }
+  window.ngjMarkAllRead = function () {
+    var m = readMap();
+    var els = document.querySelectorAll('#notif-list .notif-item[data-ngj]');
+    for (var i = 0; i < els.length; i++) { m[els[i].getAttribute('data-ngj')] = 1; els[i].classList.remove('unread'); }
+    try { localStorage.setItem('ng_notifs_lus', JSON.stringify(m)); } catch (e) {}
+    setBadge(0);
+  };
+  function renderProfil() {
+    var u = me();
+    if (!u) return;
+    var mail = document.getElementById('pf-email');
+    if (mail && !document.getElementById('pf-code')) {
+      var row = mail.closest('.ps-row');
+      if (row && row.parentNode) {
+        var d = document.createElement('div');
+        d.className = 'ps-row';
+        d.innerHTML = '<span class="ps-key">Code client</span><span class="ps-val" id="pf-code">—</span>';
+        row.parentNode.insertBefore(d, row.nextSibling);
+      }
+    }
+    var code = document.getElementById('pf-code');
+    if (code) code.textContent = ngCode(u.email);
+    var r = myRec();
+    if (!r) return;
+    var svc = document.getElementById('pf-svc');
+    var tt = document.getElementById('pf-tontes');
+    var nx = document.getElementById('pf-next');
+    if (svc && r.pack) svc.textContent = r.pack;
+    if (tt) tt.textContent = (r.passages || []).length + ' / ' + (r.packTotal || (r.passages || []).length);
+    if (nx && r.prochaine) nx.textContent = frDate(r.prochaine);
+  }
+  function ensureAdmin() {
+    if (document.getElementById('admin')) return;
+    var ref = document.getElementById('solde');
+    if (!ref || !ref.parentNode) return;
+    var d = document.createElement('div');
+    d.id = 'admin';
+    d.className = 'screen';
+    d.innerHTML = '<div class="ngj-admin"><div class="ngj-adm-h">'
+      + '<button type="button" id="ngj-adm-back">← Retour</button>'
+      + '<div style="font-size:16px;font-weight:800">Journal — admin</div></div>'
+      + '<div id="ngj-adm-body"></div></div>';
+    ref.parentNode.insertBefore(d, ref.nextSibling);
+    var b = document.getElementById('ngj-adm-back');
+    if (b) b.addEventListener('click', function () {
+      if (location.hash === '#admin') { history.replaceState(null, '', location.pathname); }
+      if (typeof navTo === 'function') navTo('home');
+    });
+  }
+  function renderAdmin() {
+    var box = document.getElementById('ngj-adm-body');
+    if (!box) return;
+    if (!J) { box.innerHTML = '<div class="ngj-empty">Journal indisponible</div>'; return; }
+    var cl = J.clients || {}, codes = Object.keys(cl);
+    var h = '<div class="ngj-sub" style="margin-bottom:12px">Mise à jour : ' + esc(J.maj || '—')
+      + ' · ' + codes.length + ' client(s)</div>';
+    if (!codes.length) h += '<div class="ngj-empty">Aucun client dans le journal</div>';
+    codes.sort();
+    for (var i = 0; i < codes.length; i++) {
+      var c = codes[i], r = cl[c], pas = r.passages || [];
+      h += '<div class="ngj-card"><div class="ngj-head">'
+        + '<div class="ngj-pack">' + esc(c) + ' <span class="ngj-badge">' + esc(r.pack || '—') + '</span></div>'
+        + '<div class="ngj-count">' + pas.length + ' / ' + (r.packTotal || pas.length) + '</div></div>'
+        + '<div class="ngj-sub">Avoir : ' + money(r.avoir || 0)
+        + ' · Prochaine : ' + frDate(r.prochaine) + '</div>';
+      for (var k = pas.length - 1; k >= 0; k--) {
+        h += '<div class="ngj-sub">• ' + frDate(pas[k].date)
+          + (pas[k].note ? ' — ' + esc(pas[k].note) : '')
+          + (pas[k].montant != null ? ' — ' + money(pas[k].montant) : '') + '</div>';
+      }
+      h += '</div>';
+    }
+    box.innerHTML = h;
+  }
+  function renderAll() {
+    try { renderSolde(); } catch (e) {}
+    try { renderNotifs(); } catch (e) {}
+    try { renderProfil(); } catch (e) {}
+    try { ensureAdmin(); renderAdmin(); } catch (e) {}
+  }
+  window.ngjRefresh = renderAll;
+  function load() {
+    fetch(JOURNAL_URL + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { J = d; renderAll(); if (location.hash === '#admin' && typeof navTo === 'function') navTo('admin'); })
+      .catch(function () { J = null; });
+  }
+  function hookup() {
+    var names = ['refreshSolde', 'updateAuthUI'];
+    for (var i = 0; i < names.length; i++) {
+      (function (n) {
+        if (typeof window[n] === 'function' && !window[n].__ngj) {
+          var orig = window[n];
+          var wrapped = function () {
+            var out = orig.apply(this, arguments);
+            try { renderAll(); } catch (e) {}
+            return out;
+          };
+          wrapped.__ngj = true;
+          window[n] = wrapped;
+        }
+      })(names[i]);
+    }
+    if (typeof window.markAllRead === 'function' && !window.markAllRead.__ngj) {
+      var om = window.markAllRead;
+      var wm = function () { try { om.apply(this, arguments); } catch (e) {} window.ngjMarkAllRead(); };
+      wm.__ngj = true;
+      window.markAllRead = wm;
+    }
+    window.addEventListener('hashchange', function () {
+      if (location.hash === '#admin' && typeof navTo === 'function') { ensureAdmin(); renderAdmin(); navTo('admin'); }
+    });
+  }
+  function boot() { hookup(); ensureAdmin(); load(); }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); }
+  else { boot(); }
+})();
+</script>
+<!-- =============== FIN JOURNAL CLIENT =============== -->
 </body>
 </html>
