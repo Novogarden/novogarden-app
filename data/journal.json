@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "maj": "2026-08-27",
+  "annonces": [
+    {
+      "id": "g-2026-08-27-suivi",
+      "date": "2026-08-27",
+      "titre": "Nouveau : le suivi de vos tontes",
+      "message": "Retrouvez désormais dans l'onglet Solde l'historique de tous vos passages ainsi que le décompte de votre pack."
+    }
+  ],
+  "clients": {}
+}
