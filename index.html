@@ -1616,5 +1616,247 @@ document.addEventListener('click',function(e){
 })();
 </script>
 <!-- =============== FIN JOURNAL CLIENT =============== -->
+
+<!-- ================= NOVOGARDEN — VOLETS / SERVICES v1 ================= -->
+<style>
+.ngv-wrap{padding:16px 14px 24px}
+.ngv-h{font-size:20px;font-weight:800;margin-bottom:4px}
+.ngv-hs{font-size:12px;color:var(--grey);font-weight:600;margin-bottom:16px}
+.ngv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ngv-tile{background:#fff;border-radius:16px;padding:14px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;border:none;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:112px;transition:transform .15s ease,box-shadow .15s ease}
+.ngv-tile:active{transform:scale(.97);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.ngv-ico{width:38px;height:38px;border-radius:12px;background:#eef3e6;display:flex;align-items:center;justify-content:center;font-size:19px}
+.ngv-t{font-size:13px;font-weight:800;line-height:1.25}
+.ngv-s{font-size:11px;color:var(--grey);font-weight:500;line-height:1.3}
+.ngv-tag{margin-top:auto;font-size:10px;font-weight:800;color:var(--green);letter-spacing:.03em}
+.ngv-back{border:none;background:#eef3e6;color:var(--green);font-weight:800;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:12px}
+.ngv-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ngv-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.ngv-desc{font-size:13px;color:#444;font-weight:500;line-height:1.55}
+.ngv-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+.ngv-row:last-child{border-bottom:none}
+.ngv-k{color:var(--grey);font-weight:700}
+.ngv-v{font-weight:800;text-align:right}
+.ngv-cta{width:100%;border:none;background:var(--green);color:#fff;font-weight:800;font-size:14px;border-radius:12px;padding:14px;cursor:pointer}
+.ngv-cta:active{opacity:.85}
+.ngv-note{font-size:11px;color:var(--grey);text-align:center;margin-top:10px;font-weight:500}
+.ngv-field{margin-bottom:12px}
+.ngv-label{display:block;font-size:11px;font-weight:800;color:var(--grey);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.ngv-input,.ngv-select,.ngv-area{width:100%;border:1.5px solid #e6e6e6;border-radius:12px;padding:11px 12px;font-size:13px;font-family:inherit;font-weight:600;background:#fff;box-sizing:border-box}
+.ngv-input:focus,.ngv-select:focus,.ngv-area:focus{outline:none;border-color:var(--green)}
+.ngv-area{min-height:96px;resize:vertical}
+.ngv-err{color:#d32f2f;font-size:12px;font-weight:700;margin-bottom:10px;display:none}
+.ngv-ok{text-align:center;padding:28px 14px}
+.ngv-ok .ic{font-size:44px;margin-bottom:12px}
+.ngv-ok .ti{font-size:17px;font-weight:800;margin-bottom:6px}
+.ngv-ok .su{font-size:13px;color:var(--grey);font-weight:500;line-height:1.5}
+</style>
+<script>
+/* Novogarden — grille de volets + fiches services + demande de devis.
+   Le contenu vient de data/services.json : aucun texte ni tarif n'est
+   code en dur ici, tout se modifie dans le JSON. */
+(function () {
+  "use strict";
+  var URL_SERVICES = 'data/services.json';
+  var S = null;
+  var courant = null;
+  var SECOURS = { services: [
+    { id: 'tonte', titre: 'Tonte robotisée', sousTitre: 'De 100 à 7000 m²', icone: '🌿', cible: 'home' },
+    { id: 'reservation', titre: 'Réserver un créneau', sousTitre: 'Choisissez votre date', icone: '📅', cible: 'booking' },
+    { id: 'contact', titre: 'Devis & contact', sousTitre: 'Parlez-nous de votre projet', icone: '✉️', cible: 'devis' }
+  ]};
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function liste() { return (S && S.services) || SECOURS.services; }
+  function parId(id) { var l = liste(); for (var i = 0; i < l.length; i++) { if (l[i].id === id) return l[i]; } return null; }
+  function moi() {
+    try { if (typeof currentUser !== 'undefined' && currentUser) return currentUser; } catch (e) {}
+    try { return JSON.parse(localStorage.getItem('ng_user') || 'null'); } catch (e) { return null; }
+  }
+  function ecran(id) {
+    var ex = document.getElementById(id);
+    if (ex) return ex;
+    var ref = document.getElementById('home');
+    if (!ref || !ref.parentNode) return null;
+    var d = document.createElement('div');
+    d.id = id; d.className = 'screen';
+    ref.parentNode.insertBefore(d, ref);
+    return d;
+  }
+  function aller(id) {
+    if (typeof navTo === 'function') navTo(id);
+    var nav = { volets: 'nav-home', service: 'nav-home', devis: 'nav-home' }[id];
+    if (nav) {
+      var items = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+      var el = document.getElementById(nav);
+      if (el) el.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+  }
+  function rendreVolets() {
+    var w = ecran('volets');
+    if (!w) return;
+    var l = liste();
+    var h = '<div class="ngv-wrap"><div class="ngv-h">Nos prestations</div>'
+      + '<div class="ngv-hs">Choisissez votre volet</div><div class="ngv-grid">';
+    for (var i = 0; i < l.length; i++) {
+      var s = l[i];
+      var tag = s.prix ? esc(s.prix) : (s.devis ? 'Sur devis' : '');
+      h += '<button type="button" class="ngv-tile" data-ngv="' + esc(s.id) + '">'
+        + '<div class="ngv-ico">' + esc(s.icone || '•') + '</div>'
+        + '<div class="ngv-t">' + esc(s.titre) + '</div>'
+        + '<div class="ngv-s">' + esc(s.sousTitre || '') + '</div>'
+        + (tag ? '<div class="ngv-tag">' + tag + '</div>' : '')
+        + '</button>';
+    }
+    h += '</div></div>';
+    w.innerHTML = h;
+    var b = w.querySelectorAll('.ngv-tile[data-ngv]');
+    for (var k = 0; k < b.length; k++) {
+      b[k].addEventListener('click', function () { ouvrir(this.getAttribute('data-ngv')); });
+    }
+  }
+  function ouvrir(id) {
+    var s = parId(id);
+    if (!s) return;
+    if (s.cible === 'devis') { rendreDevis(null); aller('devis'); return; }
+    if (s.cible) { aller(s.cible); return; }
+    rendreFiche(s); aller('service');
+  }
+  function rendreFiche(s) {
+    var w = ecran('service');
+    if (!w) return;
+    courant = s.id;
+    var lignes = '';
+    var champs = [['livrable','Livrable'],['delai','Délai'],['zone','Zone'],['prerequis','Prérequis'],['prix','Tarif']];
+    for (var i = 0; i < champs.length; i++) {
+      var v = s[champs[i][0]];
+      if (v) lignes += '<div class="ngv-row"><span class="ngv-k">' + champs[i][1]
+        + '</span><span class="ngv-v">' + esc(v) + '</span></div>';
+    }
+    var h = '<div class="ngv-wrap"><div class="ngv-head">'
+      + '<button type="button" class="ngv-back" id="ngv-b1">← Retour</button>'
+      + '<div style="font-size:16px;font-weight:800">' + esc(s.titre) + '</div></div>'
+      + '<div class="ngv-card">'
+      + '<div class="ngv-ico" style="width:46px;height:46px;font-size:23px;margin-bottom:12px">' + esc(s.icone || '•') + '</div>'
+      + '<div class="ngv-desc">' + esc(s.description || s.sousTitre || '') + '</div></div>';
+    if (lignes) h += '<div class="ngv-card">' + lignes + '</div>';
+    h += '<button type="button" class="ngv-cta" id="ngv-devis">Demander un devis</button>'
+      + '<div class="ngv-note">Réponse sous 48h ouvrées · Devis gratuit et sans engagement</div></div>';
+    w.innerHTML = h;
+    document.getElementById('ngv-b1').addEventListener('click', function () { aller('volets'); });
+    document.getElementById('ngv-devis').addEventListener('click', function () { rendreDevis(s.id); aller('devis'); });
+  }
+  function rendreDevis(preselect) {
+    var w = ecran('devis');
+    if (!w) return;
+    var u = moi();
+    var l = liste();
+    var opts = '<option value="">— Choisissez une prestation —</option>';
+    for (var i = 0; i < l.length; i++) {
+      if (l[i].id === 'reservation' || l[i].id === 'contact') continue;
+      opts += '<option value="' + esc(l[i].titre) + '"' + (l[i].id === preselect ? ' selected' : '') + '>' + esc(l[i].titre) + '</option>';
+    }
+    w.innerHTML = '<div class="ngv-wrap"><div class="ngv-head">'
+      + '<button type="button" class="ngv-back" id="ngv-b2">← Retour</button>'
+      + '<div style="font-size:16px;font-weight:800">Demande de devis</div></div>'
+      + '<div class="ngv-card">'
+      + '<div class="ngv-err" id="ngv-err"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-svc">Prestation *</label>'
+      + '<select class="ngv-select" id="ngv-svc">' + opts + '</select></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-nom">Nom complet *</label>'
+      + '<input class="ngv-input" id="ngv-nom" type="text" value="' + esc(u ? (u.prenom + ' ' + u.nom) : '') + '"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-mail">Email *</label>'
+      + '<input class="ngv-input" id="ngv-mail" type="email" value="' + esc(u ? u.email : '') + '"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-tel">Téléphone</label>'
+      + '<input class="ngv-input" id="ngv-tel" type="tel" value="' + esc(u && u.tel ? u.tel : '') + '"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-cp">Commune / code postal</label>'
+      + '<input class="ngv-input" id="ngv-cp" type="text"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-msg">Votre projet *</label>'
+      + '<textarea class="ngv-area" id="ngv-msg" placeholder="Décrivez votre besoin : surface, délai souhaité, contraintes…"></textarea></div>'
+      + '</div>'
+      + '<button type="button" class="ngv-cta" id="ngv-send">Envoyer ma demande</button>'
+      + '<div class="ngv-note">Vos données servent uniquement à établir votre devis. Réponse sous 48h ouvrées.</div></div>';
+    document.getElementById('ngv-b2').addEventListener('click', function () {
+      if (courant && parId(courant)) { rendreFiche(parId(courant)); aller('service'); } else aller('volets');
+    });
+    document.getElementById('ngv-send').addEventListener('click', envoyer);
+  }
+  function envoyer() {
+    var err = document.getElementById('ngv-err');
+    var svc = document.getElementById('ngv-svc').value;
+    var nom = document.getElementById('ngv-nom').value.trim();
+    var mail = document.getElementById('ngv-mail').value.trim();
+    var tel = document.getElementById('ngv-tel').value.trim();
+    var cp = document.getElementById('ngv-cp').value.trim();
+    var msg = document.getElementById('ngv-msg').value.trim();
+    err.style.display = 'none';
+    if (!svc || !nom || !mail || !msg) {
+      err.textContent = 'Merci de remplir la prestation, votre nom, votre email et votre projet.';
+      err.style.display = 'block'; return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+      err.textContent = 'Adresse email invalide.'; err.style.display = 'block'; return;
+    }
+    var btn = document.getElementById('ngv-send');
+    btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '[Devis Novogarden] ' + svc + ' — ' + nom,
+        Prestation: svc, Nom: nom, Email: mail,
+        Telephone: tel || '—', Commune: cp || '—', Projet: msg
+      })
+    }).then(function () { succes(svc); })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = 'Envoyer ma demande';
+        err.textContent = "L'envoi a échoué. Réessayez ou appelez le 06 35 58 47 00.";
+        err.style.display = 'block';
+      });
+  }
+  function succes(svc) {
+    var w = document.getElementById('devis');
+    if (!w) return;
+    w.innerHTML = '<div class="ngv-wrap"><div class="ngv-ok"><div class="ic">✅</div>'
+      + '<div class="ti">Demande envoyée</div>'
+      + '<div class="su">Votre demande de devis pour « ' + esc(svc) + ' » nous est bien parvenue.<br>'
+      + 'Nous revenons vers vous sous 48h ouvrées.</div></div>'
+      + '<button type="button" class="ngv-cta" id="ngv-retour">Retour aux prestations</button></div>';
+    document.getElementById('ngv-retour').addEventListener('click', function () { rendreDevis(null); aller('volets'); });
+  }
+  function brancher() {
+    var home = document.getElementById('nav-home');
+    if (home && !home.__ngv) {
+      home.__ngv = true;
+      home.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); aller('volets'); }, true);
+    }
+    var logo = document.querySelector('.topbar .logo, .topbar img');
+    if (logo && !logo.__ngv) {
+      logo.__ngv = true; logo.style.cursor = 'pointer';
+      logo.addEventListener('click', function () { aller('volets'); });
+    }
+    window.addEventListener('hashchange', function () { if (location.hash === '#volets') aller('volets'); });
+  }
+  function charger() {
+    fetch(URL_SERVICES + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) S = d; rendreVolets(); })
+      .catch(function () { rendreVolets(); });
+  }
+  function demarrer() {
+    rendreVolets(); brancher(); charger();
+    var actif = document.querySelector('.screen.active');
+    if (!location.hash && (!actif || actif.id === 'home')) aller('volets');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer);
+  else demarrer();
+})();
+</script>
+<!-- =============== FIN VOLETS / SERVICES =============== -->
 </body>
 </html>
