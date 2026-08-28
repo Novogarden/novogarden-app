@@ -1666,14 +1666,30 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
   var LOGO = 'https://static.wixstatic.com/media/8950bf_e56fc3d2946242d296a61410f542e343~mv2.png/v1/crop/x_27,y_535,w_722,h_139/fill/w_831,h_160,al_c,lg_1,q_85,enc_avif,quality_auto/ChatGPT%20Image%2013%20d%C3%A9c_%202025%2C%2017_42_38%20(1).png';
   var S = null, courant = null;
   var VERT = '#7DB532';
+  var SECTIONS = {
+    volets: '#7DB532', home: '#7DB532', admin: '#7DB532',
+    booking: '#26648E', success: '#26648E',
+    tontes: '#5A8E1E', solde: '#4A7C2F',
+    compte: '#37474F', notifs: '#37474F'
+  };
+  function couleurEcran(id) {
+    if (id === 'service' || id === 'devis') {
+      var s = parId(courant);
+      if (s && s.couleur) return s.couleur;
+    }
+    return SECTIONS[id] || VERT;
+  }
   function teinter(c) {
+    c = c || VERT;
     var tb = document.querySelector('.topbar');
-    if (tb) tb.style.background = c || '';
-    var m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute('content', c || VERT);
+    if (tb) tb.style.background = '';
     var re = document.documentElement;
-    if (c) re.style.setProperty('--svc', c); else re.style.removeProperty('--svc');
-    document.body.classList.toggle('ngv-teinte', !!c);
+    re.style.setProperty('--green', c);
+    re.style.setProperty('--dark-green', 'color-mix(in srgb, ' + c + ' 74%, #000)');
+    re.style.setProperty('--svc', c);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', c);
+    document.body.classList.toggle('ngv-teinte', c !== VERT);
   }
   var ICONES = {
     tonte: '<path d="M3 20c0-6 3.5-10.5 8-12"/><path d="M9 20c0-7 3.5-12 9-13.5"/><path d="M15 20c0-4.5 2-8 5-9.5"/><path d="M2 20.5h20"/>',
@@ -1712,8 +1728,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
   }
   function aller(id) {
     if (typeof navTo === 'function') navTo(id);
-    if (id === 'service' || id === 'devis') { var sc = parId(courant); teinter(sc && sc.couleur ? sc.couleur : null); }
-    else teinter(null);
+    teinter(couleurEcran(id));
     document.body.classList.toggle('ngv-onvolets', id === 'volets');
     var nav = { volets: 'nav-home', service: 'nav-home', devis: 'nav-home' }[id];
     if (nav) {
@@ -1877,7 +1892,12 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     }
     if (typeof window.navTo === 'function' && !window.navTo.__ngv) {
       var orig = window.navTo;
-      var enrobe = function (id) { var o = orig.apply(this, arguments); document.body.classList.toggle('ngv-onvolets', id === 'volets'); return o; };
+      var enrobe = function (id) {
+        var o = orig.apply(this, arguments);
+        document.body.classList.toggle('ngv-onvolets', id === 'volets');
+        try { teinter(couleurEcran(id)); } catch (e) {}
+        return o;
+      };
       enrobe.__ngv = true;
       window.navTo = enrobe;
     }
