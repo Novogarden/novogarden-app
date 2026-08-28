@@ -1833,25 +1833,26 @@ document.addEventListener('click',function(e){
     }
     var btn = document.getElementById('ngv-send');
     btn.disabled = true; btn.textContent = 'Envoi en cours…';
-    var fd = new FormData();
-    fd.append('_subject', '[Devis Novogarden] ' + svc + ' — ' + nom);
-    fd.append('Prestation', svc);
-    fd.append('Nom', nom);
-    fd.append('Email', mail);
-    fd.append('Telephone', tel || '—');
-    fd.append('Commune', cp || '—');
-    fd.append('Projet', msg);
-    if (fichier) fd.append('Piece_jointe', fichier, fichier.name);
-    fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: fd
-    }).then(function () { succes(svc); })
-      .catch(function () {
-        btn.disabled = false; btn.textContent = 'Envoyer ma demande';
-        err.textContent = "L'envoi a échoué. Réessayez ou appelez le 06 35 58 47 00.";
-        err.style.display = 'block';
-      });
+    var retour = location.origin + location.pathname + '?devis=ok&p=' + encodeURIComponent(svc);
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/contact@novogardenhub.com';
+    form.enctype = 'multipart/form-data';
+    form.style.display = 'none';
+    function champ(n, v) { var i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; form.appendChild(i); }
+    champ('_subject', '[Devis Novogarden] ' + svc + ' — ' + nom);
+    champ('_captcha', 'false');
+    champ('_template', 'table');
+    champ('_next', retour);
+    champ('Prestation', svc);
+    champ('Nom', nom);
+    champ('Email', mail);
+    champ('Telephone', tel || '—');
+    champ('Commune', cp || '—');
+    champ('Projet', msg);
+    if (fichier && chp) { chp.name = 'Piece_jointe'; form.appendChild(chp); }
+    document.body.appendChild(form);
+    form.submit();
   }
   function succes(svc) {
     var w = document.getElementById('devis');
@@ -1885,6 +1886,14 @@ document.addEventListener('click',function(e){
   }
   function demarrer() {
     rendreVolets(); brancher(); charger();
+    if (location.search.indexOf('devis=ok') > -1) {
+      var q = new URLSearchParams(location.search);
+      rendreDevis(null);
+      succes(q.get('p') || 'votre demande');
+      aller('devis');
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
+      return;
+    }
     var actif = document.querySelector('.screen.active');
     if (!location.hash && (!actif || actif.id === 'home')) aller('volets');
   }
