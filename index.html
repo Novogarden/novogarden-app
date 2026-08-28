@@ -1663,6 +1663,13 @@ document.addEventListener('click',function(e){
   var URL_SERVICES = 'data/services.json';
   var LOGO = 'https://static.wixstatic.com/media/8950bf_e56fc3d2946242d296a61410f542e343~mv2.png/v1/crop/x_27,y_535,w_722,h_139/fill/w_831,h_160,al_c,lg_1,q_85,enc_avif,quality_auto/ChatGPT%20Image%2013%20d%C3%A9c_%202025%2C%2017_42_38%20(1).png';
   var S = null, courant = null;
+  var VERT = '#7DB532';
+  function teinter(c) {
+    var tb = document.querySelector('.topbar');
+    if (tb) tb.style.background = c || '';
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', c || VERT);
+  }
   var ICONES = {
     tonte: '<path d="M3 20c0-6 3.5-10.5 8-12"/><path d="M9 20c0-7 3.5-12 9-13.5"/><path d="M15 20c0-4.5 2-8 5-9.5"/><path d="M2 20.5h20"/>',
     topographie: '<path d="M2 18.5l6.5-10 4.2 5.5L16 9l6 9.5z"/><path d="M2 21.5h20"/>',
@@ -1700,6 +1707,8 @@ document.addEventListener('click',function(e){
   }
   function aller(id) {
     if (typeof navTo === 'function') navTo(id);
+    if (id === 'service' || id === 'devis') { var sc = parId(courant); teinter(sc && sc.couleur ? sc.couleur : null); }
+    else teinter(null);
     document.body.classList.toggle('ngv-onvolets', id === 'volets');
     var nav = { volets: 'nav-home', service: 'nav-home', devis: 'nav-home' }[id];
     if (nav) {
@@ -1738,7 +1747,7 @@ document.addEventListener('click',function(e){
   function ouvrir(id) {
     var s = parId(id);
     if (!s) return;
-    if (s.cible === 'devis') { rendreDevis(null); aller('devis'); return; }
+    if (s.cible === 'devis') { courant = null; rendreDevis(null); aller('devis'); return; }
     if (s.cible) { aller(s.cible); return; }
     rendreFiche(s); aller('service');
   }
@@ -1788,6 +1797,9 @@ document.addEventListener('click',function(e){
       + '<input class="ngv-input" id="ngv-tel" type="tel" value="' + esc(u && u.tel ? u.tel : '') + '"></div>'
       + '<div class="ngv-field"><label class="ngv-label" for="ngv-cp">Commune / code postal</label>'
       + '<input class="ngv-input" id="ngv-cp" type="text"></div>'
+      + '<div class="ngv-field"><label class="ngv-label" for="ngv-fichier">Fichier (facultatif)</label>'
+      + '<input class="ngv-input" id="ngv-fichier" type="file" accept=".stl,.step,.stp,.3mf,.obj,.pdf,.jpg,.jpeg,.png,.webp,.heic">'
+      + '<div style="font-size:10.5px;color:var(--grey);margin-top:5px;font-weight:500">Plan, photo, modèle 3D… 10 Mo maximum</div></div>'
       + '<div class="ngv-field"><label class="ngv-label" for="ngv-msg">Votre projet *</label>'
       + '<textarea class="ngv-area" id="ngv-msg" placeholder="Décrivez votre besoin : surface, délai souhaité, contraintes…"></textarea></div>'
       + '</div><button type="button" class="ngv-cta" id="ngv-send">Envoyer ma demande</button>'
@@ -1813,16 +1825,27 @@ document.addEventListener('click',function(e){
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
       err.textContent = 'Adresse email invalide.'; err.style.display = 'block'; return;
     }
+    var chp = document.getElementById('ngv-fichier');
+    var fichier = (chp && chp.files && chp.files[0]) ? chp.files[0] : null;
+    if (fichier && fichier.size > 10 * 1024 * 1024) {
+      err.textContent = 'Fichier trop volumineux (' + Math.round(fichier.size / 1048576) + ' Mo). Maximum 10 Mo — envoyez-le par email si besoin.';
+      err.style.display = 'block'; return;
+    }
     var btn = document.getElementById('ngv-send');
     btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    var fd = new FormData();
+    fd.append('_subject', '[Devis Novogarden] ' + svc + ' — ' + nom);
+    fd.append('Prestation', svc);
+    fd.append('Nom', nom);
+    fd.append('Email', mail);
+    fd.append('Telephone', tel || '—');
+    fd.append('Commune', cp || '—');
+    fd.append('Projet', msg);
+    if (fichier) fd.append('Piece_jointe', fichier, fichier.name);
     fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: '[Devis Novogarden] ' + svc + ' — ' + nom,
-        Prestation: svc, Nom: nom, Email: mail,
-        Telephone: tel || '—', Commune: cp || '—', Projet: msg
-      })
+      headers: { 'Accept': 'application/json' },
+      body: fd
     }).then(function () { succes(svc); })
       .catch(function () {
         btn.disabled = false; btn.textContent = 'Envoyer ma demande';
