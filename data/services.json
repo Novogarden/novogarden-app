@@ -1,12 +1,15 @@
 {
-  "version": 1,
+  "version": 2,
   "maj": "2026-08-28",
   "services": [
     {
       "id": "tonte",
       "titre": "Tonte robotisée",
       "sousTitre": "De 100 à 7000 m², sans abonnement",
-      "icone": "🌿",
+      "couleur": "#7DB532",
+      "photo": "assets/robot_flotte.jpg",
+      "photoPos": "center 45%",
+      "large": true,
       "cible": "home",
       "prix": "Dès 29,90 €",
       "devis": false
@@ -15,7 +18,9 @@
       "id": "topographie",
       "titre": "Topographie 3D",
       "sousTitre": "Relevé de terrain par drone",
-      "icone": "🗺️",
+      "couleur": "#4A7C2F",
+      "photo": "assets/topo_vege.jpg",
+      "photoPos": "center",
       "description": "Relevé aérien de votre terrain et restitution en modèle 3D géoréférencé. Utile pour un projet d'aménagement, un calcul de surface ou de volume, ou un état des lieux avant travaux.",
       "devis": true
     },
@@ -23,7 +28,10 @@
       "id": "modelisation",
       "titre": "Modélisation 3D",
       "sousTitre": "Conception et CAO",
-      "icone": "📐",
+      "couleur": "#26648E",
+      "photo": "assets/image%20(1).png",
+      "photoZoom": "145%",
+      "photoPos": "55% 50%",
       "description": "Conception de pièces et d'ensembles en 3D, à partir d'un croquis, de cotes relevées ou d'une pièce existante. Fichiers exploitables pour la fabrication ou la visualisation.",
       "devis": true
     },
@@ -31,7 +39,9 @@
       "id": "impression",
       "titre": "Impression prototype",
       "sousTitre": "Fabrication additive",
-      "icone": "🖨️",
+      "couleur": "#C25E1B",
+      "photo": "assets/_impr_test.png",
+      "photoPos": "center",
       "description": "Impression 3D de prototypes et de pièces unitaires à partir de vos fichiers ou d'une modélisation réalisée par nos soins. Idéal pour valider une forme avant industrialisation.",
       "devis": true
     },
@@ -39,7 +49,9 @@
       "id": "drone",
       "titre": "Prestation drone",
       "sousTitre": "Photo et vidéo aérienne",
-      "icone": "🚁",
+      "couleur": "#37474F",
+      "photo": "assets/drone.jpg",
+      "photoPos": "center",
       "description": "Prises de vue aériennes photo et vidéo : valorisation d'un bien, suivi de chantier, communication, inspection visuelle de toiture ou de structure.",
       "devis": true
     },
@@ -47,23 +59,18 @@
       "id": "flux",
       "titre": "Étude flux / ingénierie",
       "sousTitre": "Analyse et optimisation",
-      "icone": "📊",
+      "couleur": "#6A4C93",
+      "photo": "assets/etude_flux.jpg",
+      "photoPos": "center",
       "description": "Analyse de vos flux et de votre organisation, identification des points de blocage et propositions d'amélioration chiffrées.",
       "devis": true
-    },
-    {
-      "id": "reservation",
-      "titre": "Réserver un créneau",
-      "sousTitre": "Tonte : choisissez votre date",
-      "icone": "📅",
-      "cible": "booking",
-      "devis": false
     },
     {
       "id": "contact",
       "titre": "Devis & contact",
       "sousTitre": "Parlez-nous de votre projet",
-      "icone": "✉️",
+      "couleur": "#5a8e1e",
+      "photo": null,
       "cible": "devis",
       "devis": false
     }
