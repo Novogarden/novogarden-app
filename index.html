@@ -1765,6 +1765,34 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
       b[k].addEventListener('click', function () { ouvrir(this.getAttribute('data-ngv')); });
     }
   }
+  function reservationMetier() {
+    var s = metier ? parId(metier) : null;
+    if (!s || s.id === 'tonte') return false;
+    var w = ecran('resa');
+    if (!w) return false;
+    var f = s.formules || [];
+    var h = '<div class="ngv-wrap"><div class="ngv-head">'
+      + '<button type="button" class="ngv-back" id="ngv-r1">← Retour</button>'
+      + '<div style="font-size:16px;font-weight:800">' + esc(s.titre) + '</div></div>';
+    if (f.length) {
+      h += '<p class="sect">Nos formules</p>';
+      for (var i = 0; i < f.length; i++) {
+        h += '<div class="ngv-card"><div class="ngv-head" style="margin-bottom:6px">'
+          + '<div style="font-size:14px;font-weight:800">' + esc(f[i].titre) + '</div>'
+          + (f[i].prix ? '<div style="font-size:12px;font-weight:800;color:var(--green)">' + esc(f[i].prix) + '</div>' : '')
+          + '</div><div class="ngv-desc">' + esc(f[i].description || '') + '</div></div>';
+      }
+    } else {
+      h += '<div class="ngv-card"><div class="ngv-desc">Cette prestation est \u00e9tablie sur devis : chaque projet a sa surface, ses contraintes et son d\u00e9lai. D\u00e9crivez-nous le v\u00f4tre, nous revenons vers vous sous 48h ouvr\u00e9es.</div></div>';
+    }
+    h += '<button type="button" class="ngv-cta" id="ngv-r2">Demander un devis</button>'
+      + '<div class="ngv-note">Devis gratuit et sans engagement</div></div>';
+    w.innerHTML = h;
+    aller('resa');
+    document.getElementById('ngv-r1').addEventListener('click', function () { aller('volets'); });
+    document.getElementById('ngv-r2').addEventListener('click', function () { courant = s.id; rendreDevis(s.id); aller('devis'); });
+    return true;
+  }
   function ouvrir(id) {
     var s = parId(id);
     if (!s) return;
@@ -1895,6 +1923,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     if (typeof window.navTo === 'function' && !window.navTo.__ngv) {
       var orig = window.navTo;
       var enrobe = function (id) {
+        if (id === 'booking' && reservationMetier()) return;
         var o = orig.apply(this, arguments);
         document.body.classList.toggle('ngv-onvolets', id === 'volets');
         try { teinter(couleurMetier()); } catch (e) {}
