@@ -1617,21 +1617,27 @@ document.addEventListener('click',function(e){
 </script>
 <!-- =============== FIN JOURNAL CLIENT =============== -->
 
-<!-- ================= NOVOGARDEN — VOLETS / SERVICES v1 ================= -->
+<!-- ================= NOVOGARDEN — VOLETS / SERVICES v2 ================= -->
 <style>
+#volets{background:#f2f2f2}
+.ngv-hero{background:var(--green);padding:18px 14px 16px;text-align:center}
+.ngv-hero img{width:170px;max-width:60%;height:auto;display:block;margin:0 auto 6px}
+.ngv-hero .sub{color:rgba(255,255,255,.92);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+body.ngv-onvolets .topbar .logo-row{visibility:hidden}
+.ngv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px}
+.ngv-tile{position:relative;border:none;cursor:pointer;text-align:left;padding:12px;color:#fff;overflow:hidden;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;transition:transform .12s ease}
+.ngv-tile.large{grid-column:span 2;aspect-ratio:2/1}
+.ngv-tile:active{transform:scale(.96)}
+.ngv-tile svg.ico{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ngv-tile .lab{font-size:14px;font-weight:700;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.ngv-tile .sub2{font-size:10.5px;font-weight:500;opacity:.88;line-height:1.3;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.ngv-tile .tag{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.38);padding:3px 7px}
 .ngv-wrap{padding:16px 14px 24px}
-.ngv-h{font-size:20px;font-weight:800;margin-bottom:4px}
-.ngv-hs{font-size:12px;color:var(--grey);font-weight:600;margin-bottom:16px}
-.ngv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ngv-tile{background:#fff;border-radius:16px;padding:14px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;border:none;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:112px;transition:transform .15s ease,box-shadow .15s ease}
-.ngv-tile:active{transform:scale(.97);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.ngv-ico{width:38px;height:38px;border-radius:12px;background:#eef3e6;display:flex;align-items:center;justify-content:center;font-size:19px}
-.ngv-t{font-size:13px;font-weight:800;line-height:1.25}
-.ngv-s{font-size:11px;color:var(--grey);font-weight:500;line-height:1.3}
-.ngv-tag{margin-top:auto;font-size:10px;font-weight:800;color:var(--green);letter-spacing:.03em}
 .ngv-back{border:none;background:#eef3e6;color:var(--green);font-weight:800;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:12px}
 .ngv-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .ngv-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.ngv-ico2{width:46px;height:46px;border-radius:12px;background:#eef3e6;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.ngv-ico2 svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ngv-desc{font-size:13px;color:#444;font-weight:500;line-height:1.55}
 .ngv-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
 .ngv-row:last-child{border-bottom:none}
@@ -1652,24 +1658,33 @@ document.addEventListener('click',function(e){
 .ngv-ok .su{font-size:13px;color:var(--grey);font-weight:500;line-height:1.5}
 </style>
 <script>
-/* Novogarden — grille de volets + fiches services + demande de devis.
-   Le contenu vient de data/services.json : aucun texte ni tarif n'est
-   code en dur ici, tout se modifie dans le JSON. */
+/* Novogarden — grille de volets (tuiles), fiches services et demande de devis.
+   Tout le contenu vient de data/services.json : titres, couleurs, photos,
+   cadrages et tarifs se modifient sans toucher au code. */
 (function () {
   "use strict";
   var URL_SERVICES = 'data/services.json';
-  var S = null;
-  var courant = null;
+  var LOGO = 'https://static.wixstatic.com/media/8950bf_e56fc3d2946242d296a61410f542e343~mv2.png/v1/crop/x_27,y_535,w_722,h_139/fill/w_831,h_160,al_c,lg_1,q_85,enc_avif,quality_auto/ChatGPT%20Image%2013%20d%C3%A9c_%202025%2C%2017_42_38%20(1).png';
+  var S = null, courant = null;
+  var ICONES = {
+    tonte: '<path d="M3 20c0-6 3.5-10.5 8-12"/><path d="M9 20c0-7 3.5-12 9-13.5"/><path d="M15 20c0-4.5 2-8 5-9.5"/><path d="M2 20.5h20"/>',
+    topographie: '<path d="M2 18.5l6.5-10 4.2 5.5L16 9l6 9.5z"/><path d="M2 21.5h20"/>',
+    modelisation: '<path d="M12 2.6l8.5 4.9v9.8L12 22.2 3.5 17.3V7.5z"/><path d="M12 12.3l8.5-4.8M12 12.3v9.9M12 12.3L3.5 7.5"/>',
+    impression: '<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="7" rx="1"/><path d="M6 16h12v5H6z"/>',
+    drone: '<circle cx="6" cy="6" r="3.1"/><circle cx="18" cy="6" r="3.1"/><circle cx="6" cy="18" r="3.1"/><circle cx="18" cy="18" r="3.1"/><path d="M8.2 8.2l2.2 2.2M15.8 8.2l-2.2 2.2M8.2 15.8l2.2-2.2M15.8 15.8l-2.2-2.2"/><rect x="10.2" y="10.2" width="3.6" height="3.6" rx=".8"/>',
+    flux: '<path d="M3 21h18"/><rect x="4" y="12" width="4" height="7"/><rect x="10" y="7" width="4" height="12"/><rect x="16" y="3" width="4" height="16"/>',
+    contact: '<rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M3 6.5l9 6.5 9-6.5"/>'
+  };
   var SECOURS = { services: [
-    { id: 'tonte', titre: 'Tonte robotisée', sousTitre: 'De 100 à 7000 m²', icone: '🌿', cible: 'home' },
-    { id: 'reservation', titre: 'Réserver un créneau', sousTitre: 'Choisissez votre date', icone: '📅', cible: 'booking' },
-    { id: 'contact', titre: 'Devis & contact', sousTitre: 'Parlez-nous de votre projet', icone: '✉️', cible: 'devis' }
+    { id: 'tonte', titre: 'Tonte robotisée', sousTitre: 'De 100 à 7000 m²', couleur: '#7DB532', large: true, cible: 'home' },
+    { id: 'contact', titre: 'Devis & contact', sousTitre: 'Parlez-nous de votre projet', couleur: '#5a8e1e', cible: 'devis' }
   ]};
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  function ico(id) { return '<svg class="ico" viewBox="0 0 24 24">' + (ICONES[id] || '') + '</svg>'; }
   function liste() { return (S && S.services) || SECOURS.services; }
   function parId(id) { var l = liste(); for (var i = 0; i < l.length; i++) { if (l[i].id === id) return l[i]; } return null; }
   function moi() {
@@ -1688,6 +1703,7 @@ document.addEventListener('click',function(e){
   }
   function aller(id) {
     if (typeof navTo === 'function') navTo(id);
+    document.body.classList.toggle('ngv-onvolets', id === 'volets');
     var nav = { volets: 'nav-home', service: 'nav-home', devis: 'nav-home' }[id];
     if (nav) {
       var items = document.querySelectorAll('.nav-item');
@@ -1701,19 +1717,22 @@ document.addEventListener('click',function(e){
     var w = ecran('volets');
     if (!w) return;
     var l = liste();
-    var h = '<div class="ngv-wrap"><div class="ngv-h">Nos prestations</div>'
-      + '<div class="ngv-hs">Choisissez votre volet</div><div class="ngv-grid">';
+    var h = '<div class="ngv-hero"><img src="' + LOGO + '" alt="Novogarden">'
+      + '<div class="sub">Nos prestations</div></div><div class="ngv-grid">';
     for (var i = 0; i < l.length; i++) {
       var s = l[i];
+      var col = s.couleur || '#7DB532';
+      var fond = s.photo
+        ? "background-image:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,0) 40%," + col + "e0 100%),url('" + s.photo + "');background-size:" + (s.photoZoom || 'cover') + ";background-position:" + (s.photoPos || 'center')
+        : 'background:' + col;
       var tag = s.prix ? esc(s.prix) : (s.devis ? 'Sur devis' : '');
-      h += '<button type="button" class="ngv-tile" data-ngv="' + esc(s.id) + '">'
-        + '<div class="ngv-ico">' + esc(s.icone || '•') + '</div>'
-        + '<div class="ngv-t">' + esc(s.titre) + '</div>'
-        + '<div class="ngv-s">' + esc(s.sousTitre || '') + '</div>'
-        + (tag ? '<div class="ngv-tag">' + tag + '</div>' : '')
-        + '</button>';
+      h += '<button type="button" class="ngv-tile' + (s.large ? ' large' : '') + '" data-ngv="' + esc(s.id) + '" style="' + fond + '">'
+        + (tag ? '<div class="tag">' + tag + '</div>' : '')
+        + ico(s.id)
+        + '<div><div class="lab">' + esc(s.titre) + '</div>'
+        + '<div class="sub2">' + esc(s.sousTitre || '') + '</div></div></button>';
     }
-    h += '</div></div>';
+    h += '</div>';
     w.innerHTML = h;
     var b = w.querySelectorAll('.ngv-tile[data-ngv]');
     for (var k = 0; k < b.length; k++) {
@@ -1741,8 +1760,7 @@ document.addEventListener('click',function(e){
     var h = '<div class="ngv-wrap"><div class="ngv-head">'
       + '<button type="button" class="ngv-back" id="ngv-b1">← Retour</button>'
       + '<div style="font-size:16px;font-weight:800">' + esc(s.titre) + '</div></div>'
-      + '<div class="ngv-card">'
-      + '<div class="ngv-ico" style="width:46px;height:46px;font-size:23px;margin-bottom:12px">' + esc(s.icone || '•') + '</div>'
+      + '<div class="ngv-card"><div class="ngv-ico2">' + ico(s.id).replace('class="ico" ','') + '</div>'
       + '<div class="ngv-desc">' + esc(s.description || s.sousTitre || '') + '</div></div>';
     if (lignes) h += '<div class="ngv-card">' + lignes + '</div>';
     h += '<button type="button" class="ngv-cta" id="ngv-devis">Demander un devis</button>'
@@ -1754,18 +1772,16 @@ document.addEventListener('click',function(e){
   function rendreDevis(preselect) {
     var w = ecran('devis');
     if (!w) return;
-    var u = moi();
-    var l = liste();
+    var u = moi(), l = liste();
     var opts = '<option value="">— Choisissez une prestation —</option>';
     for (var i = 0; i < l.length; i++) {
-      if (l[i].id === 'reservation' || l[i].id === 'contact') continue;
+      if (l[i].id === 'contact') continue;
       opts += '<option value="' + esc(l[i].titre) + '"' + (l[i].id === preselect ? ' selected' : '') + '>' + esc(l[i].titre) + '</option>';
     }
     w.innerHTML = '<div class="ngv-wrap"><div class="ngv-head">'
       + '<button type="button" class="ngv-back" id="ngv-b2">← Retour</button>'
       + '<div style="font-size:16px;font-weight:800">Demande de devis</div></div>'
-      + '<div class="ngv-card">'
-      + '<div class="ngv-err" id="ngv-err"></div>'
+      + '<div class="ngv-card"><div class="ngv-err" id="ngv-err"></div>'
       + '<div class="ngv-field"><label class="ngv-label" for="ngv-svc">Prestation *</label>'
       + '<select class="ngv-select" id="ngv-svc">' + opts + '</select></div>'
       + '<div class="ngv-field"><label class="ngv-label" for="ngv-nom">Nom complet *</label>'
@@ -1778,8 +1794,7 @@ document.addEventListener('click',function(e){
       + '<input class="ngv-input" id="ngv-cp" type="text"></div>'
       + '<div class="ngv-field"><label class="ngv-label" for="ngv-msg">Votre projet *</label>'
       + '<textarea class="ngv-area" id="ngv-msg" placeholder="Décrivez votre besoin : surface, délai souhaité, contraintes…"></textarea></div>'
-      + '</div>'
-      + '<button type="button" class="ngv-cta" id="ngv-send">Envoyer ma demande</button>'
+      + '</div><button type="button" class="ngv-cta" id="ngv-send">Envoyer ma demande</button>'
       + '<div class="ngv-note">Vos données servent uniquement à établir votre devis. Réponse sous 48h ouvrées.</div></div>';
     document.getElementById('ngv-b2').addEventListener('click', function () {
       if (courant && parId(courant)) { rendreFiche(parId(courant)); aller('service'); } else aller('volets');
@@ -1835,10 +1850,11 @@ document.addEventListener('click',function(e){
       home.__ngv = true;
       home.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); aller('volets'); }, true);
     }
-    var logo = document.querySelector('.topbar .logo, .topbar img');
-    if (logo && !logo.__ngv) {
-      logo.__ngv = true; logo.style.cursor = 'pointer';
-      logo.addEventListener('click', function () { aller('volets'); });
+    if (typeof window.navTo === 'function' && !window.navTo.__ngv) {
+      var orig = window.navTo;
+      var enrobe = function (id) { var o = orig.apply(this, arguments); document.body.classList.toggle('ngv-onvolets', id === 'volets'); return o; };
+      enrobe.__ngv = true;
+      window.navTo = enrobe;
     }
     window.addEventListener('hashchange', function () { if (location.hash === '#volets') aller('volets'); });
   }
