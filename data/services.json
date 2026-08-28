@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "maj": "2026-08-28",
+  "services": [
+    {
+      "id": "tonte",
+      "titre": "Tonte robotisée",
+      "sousTitre": "De 100 à 7000 m², sans abonnement",
+      "icone": "🌿",
+      "cible": "home",
+      "prix": "Dès 29,90 €",
+      "devis": false
+    },
+    {
+      "id": "topographie",
+      "titre": "Topographie 3D",
+      "sousTitre": "Relevé de terrain par drone",
+      "icone": "🗺️",
+      "description": "Relevé aérien de votre terrain et restitution en modèle 3D géoréférencé. Utile pour un projet d'aménagement, un calcul de surface ou de volume, ou un état des lieux avant travaux.",
+      "devis": true
+    },
+    {
+      "id": "modelisation",
+      "titre": "Modélisation 3D",
+      "sousTitre": "Conception et CAO",
+      "icone": "📐",
+      "description": "Conception de pièces et d'ensembles en 3D, à partir d'un croquis, de cotes relevées ou d'une pièce existante. Fichiers exploitables pour la fabrication ou la visualisation.",
+      "devis": true
+    },
+    {
+      "id": "impression",
+      "titre": "Impression prototype",
+      "sousTitre": "Fabrication additive",
+      "icone": "🖨️",
+      "description": "Impression 3D de prototypes et de pièces unitaires à partir de vos fichiers ou d'une modélisation réalisée par nos soins. Idéal pour valider une forme avant industrialisation.",
+      "devis": true
+    },
+    {
+      "id": "drone",
+      "titre": "Prestation drone",
+      "sousTitre": "Photo et vidéo aérienne",
+      "icone": "🚁",
+      "description": "Prises de vue aériennes photo et vidéo : valorisation d'un bien, suivi de chantier, communication, inspection visuelle de toiture ou de structure.",
+      "devis": true
+    },
+    {
+      "id": "flux",
+      "titre": "Étude flux / ingénierie",
+      "sousTitre": "Analyse et optimisation",
+      "icone": "📊",
+      "description": "Analyse de vos flux et de votre organisation, identification des points de blocage et propositions d'amélioration chiffrées.",
+      "devis": true
+    },
+    {
+      "id": "reservation",
+      "titre": "Réserver un créneau",
+      "sousTitre": "Tonte : choisissez votre date",
+      "icone": "📅",
+      "cible": "booking",
+      "devis": false
+    },
+    {
+      "id": "contact",
+      "titre": "Devis & contact",
+      "sousTitre": "Parlez-nous de votre projet",
+      "icone": "✉️",
+      "cible": "devis",
+      "devis": false
+    }
+  ]
+}
