@@ -66,7 +66,9 @@ html, body {
 /* ===== HOME ===== */
 #home { overflow-y:auto; }
 .home-header { background:var(--green); padding:24px 20px 40px; color:white; position:relative; flex-shrink:0; }
-.home-header::after { content:''; position:absolute; bottom:-18px; left:0; right:0; height:36px; background:var(--cream); border-radius:22px 22px 0 0; }
+.home-header::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:url('assets/robot_flotte.jpg') center/cover no-repeat; opacity:0.20; pointer-events:none; z-index:0; }
+.home-header > * { position:relative; z-index:1; }
+.home-header::after { content:''; position:absolute; bottom:-18px; left:0; right:0; height:36px; background:var(--cream); border-radius:22px 22px 0 0; z-index:2; }
 .home-header h1 { font-size:24px; font-weight:800; line-height:1.3; margin-bottom:6px; }
 .home-header .sub-txt { font-size:12px; opacity:0.85; font-weight:500; margin-bottom:4px; }
 .hero-badge { display:inline-block; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-bottom:18px; }
@@ -93,7 +95,7 @@ html, body {
 .card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
 .card-name { font-size:14px; font-weight:800; margin-bottom:2px; }
 .card-desc { font-size:11px; color:var(--grey); font-weight:500; }
-.card-price { display:inline-flex; align-items:center; justify-content:center; width:90px; height:90px; border-radius:50%; background:white; color:var(--green); border:2.5px solid var(--green); font-size:11px; font-weight:800; text-align:center; line-height:1.25; flex-direction:column; padding:6px; word-break:break-word; overflow:hidden; box-sizing:border-box; }
+.card-price { display:inline-flex; align-items:center; justify-content:center; width:90px; height:90px; border-radius:50%; background:white; color:var(--green); border:2.5px solid var(--green); font-size:11px; font-weight:800; text-align:center; line-height:1.25; flex-direction:column; padding:6px; word-break:normal; overflow-wrap:break-word; hyphens:none; overflow:hidden; box-sizing:border-box; }
 .card-tag { font-size:10px; color:var(--grey); font-weight:500; }
 .price-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:20px; }
 .price-table th { background:var(--green); color:white; padding:8px 6px; text-align:center; font-size:11px; font-weight:700; }
@@ -394,14 +396,14 @@ html, body {
             <div class="card-img-wrap"><img src="assets/essentiel.png" alt="Pack Essentiel"></div>
             <div class="card-name">Pack Essentiel — 5 tontes</div>
             <div class="card-desc">5 passages planifiés · 1 tonte / 6 semaines</div>
-            <div class="card-price">À partir de 26€/tonte</div>
+            <div class="card-price">À partir de 26€ / tonte</div>
             <div class="card-tag">Paiement au prorata · Jusqu'à 53€/tonte</div>
           </div>
           <div class="card c3" onclick="startBooking(3)">
             <div class="card-img-wrap"><img src="assets/serenite.png" alt="Pack Sérénité"></div>
             <div class="card-name">Pack Sérénité — 10 tontes</div>
             <div class="card-desc">La formule complète · Meilleur tarif garanti</div>
-            <div class="card-price">À partir de 23,20€/tonte</div>
+            <div class="card-price">À partir de 23,20€ / tonte</div>
             <div class="card-tag">⭐ Paiement au prorata · Jusqu'à 47€/tonte</div>
           </div>
         </div>
