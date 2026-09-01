@@ -696,14 +696,52 @@
 
   /* ---------- démarrage ---------- */
 
+  /* Les tuiles sont rendues par le module volets/services, qui termine
+     souvent avant que data/pricing.json soit charge : les badges seraient
+     alors restes sur « Sur devis ». On repasse donc dessus une fois la
+     grille disponible, et on observe le conteneur pour survivre a un
+     re-rendu (changement de metier, retour a l'accueil...). */
+  function rafraichirBadges() {
+    var tuiles = document.querySelectorAll('.ngv-tile[data-ngv]');
+    for (var i = 0; i < tuiles.length; i++) {
+      var b = badgeFor(tuiles[i].getAttribute('data-ngv'));
+      if (!b) continue;
+      var tag = tuiles[i].querySelector('.tag');
+      if (!tag) {
+        tag = document.createElement('div');
+        tag.className = 'tag';
+        tuiles[i].insertBefore(tag, tuiles[i].firstChild);
+      }
+      /* Test d'egalite indispensable : sans lui, l'observateur se
+         redeclencherait en boucle sur sa propre modification. */
+      if (tag.textContent !== b) tag.textContent = b;
+    }
+  }
+
+  var observateur = null;
+  function observerVolets() {
+    if (observateur) return true;
+    var w = document.getElementById('volets');
+    if (!w) return false;
+    observateur = new MutationObserver(rafraichirBadges);
+    observateur.observe(w, { childList: true, subtree: true });
+    return true;
+  }
+
   function demarrer() {
     P = global.NGPricing;
     if (!P) { console.error('[NGBooking] NGPricing absent'); return; }
     P.load().then(function () {
       if (!P.isReady()) return;
       hydraterTonte();
-      /* Le module volets/services relit les badges au prochain rendu. */
-      if (typeof global.__ngvRefresh === 'function') global.__ngvRefresh();
+      rafraichirBadges();
+      /* L'ecran des tuiles peut ne pas exister encore : on reessaie
+         brievement, puis on laisse l'observateur prendre le relais. */
+      var essais = 0;
+      var minuteur = setInterval(function () {
+        rafraichirBadges();
+        if (observerVolets() || ++essais > 20) clearInterval(minuteur);
+      }, 250);
     });
     /* Délégation globale : les liens « grille » et « réserver » posés
        par les fiches services fonctionnent sans re-brancher à chaque rendu. */
