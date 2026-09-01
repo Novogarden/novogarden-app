@@ -211,6 +211,7 @@
       "badge": "DÈS 49 €",
       "unite": "pièce ou assemblage",
       "critere_tranche": "complexité",
+      "note_packs": "Les packs correspondent au nombre de pièces à modéliser : 5 ou 10 pièces distinctes, à commander au fil de l'eau.",
       "tranches": [
         {
           "label": "Pièce simple",
@@ -385,6 +386,7 @@
       "badge": "DÈS 79 €",
       "unite": "intervention",
       "critere_tranche": "durée",
+      "note_packs": "Les packs correspondent au nombre de prestations photo : 5 ou 10 interventions, à programmer quand vous le souhaitez.",
       "tranches": [
         {
           "label": "Découverte — 1 h, 15 photos",
