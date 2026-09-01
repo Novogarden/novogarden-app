@@ -286,7 +286,8 @@
       "sous_titre": "Fabrication additive",
       "badge": "DÈS 9 €",
       "unite": "pièce",
-      "critere_tranche": "volume",
+      "critere_tranche": "masse",
+      "note_tranche": "Indiquez la masse annoncée par votre logiciel de découpe (slicer). Si vous ne la connaissez pas, choisissez « Je ne sais pas » : nous l'estimons à partir de votre fichier.",
       "matieres_standard": [
         "PLA",
         "PETG"
@@ -294,41 +295,48 @@
       "note_packs": "Les packs correspondent à une série d'exemplaires identiques.",
       "tranches": [
         {
-          "label": "< 50 cm³",
+          "label": "Jusqu'à 20 g",
           "min": 0,
-          "max": 50,
+          "max": 20,
           "solo": 9,
           "essentiel": 39,
           "serenite": 70
         },
         {
-          "label": "50–200 cm³",
-          "min": 50,
-          "max": 200,
+          "label": "20–80 g",
+          "min": 20,
+          "max": 80,
           "solo": 19,
           "essentiel": 83,
           "serenite": 150
         },
         {
-          "label": "200–600 cm³",
-          "min": 200,
-          "max": 600,
+          "label": "80–240 g",
+          "min": 80,
+          "max": 240,
           "solo": 39,
           "essentiel": 170,
           "serenite": 305
         },
         {
-          "label": "600–1500 cm³",
-          "min": 600,
-          "max": 1500,
+          "label": "240–600 g",
+          "min": 240,
+          "max": 600,
           "solo": 79,
           "essentiel": 345,
           "serenite": 615
         },
         {
-          "label": "+1500 cm³ ou multi-pièces",
-          "min": 1500,
+          "label": "Plus de 600 g ou multi-pièces",
+          "min": 600,
           "max": null,
+          "solo": null,
+          "essentiel": null,
+          "serenite": null,
+          "devis": true
+        },
+        {
+          "label": "Je ne sais pas",
           "solo": null,
           "essentiel": null,
           "serenite": null,
