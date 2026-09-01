@@ -389,26 +389,26 @@ html, body {
             <div class="card-img-wrap"><img src="assets/solo.png" alt="Pack Solo"></div>
             <div class="card-name">Pack Solo — 1 tonte</div>
             <div class="card-desc">Tonte ponctuelle, sans engagement</div>
-            <div class="card-price">À partir de 29,90€</div>
-            <div class="card-tag">Sans abonnement · Jusqu'à 67€/7000m²</div>
+            <div class="card-price" data-ngb-prix="solo">À partir de 29,90€</div>
+            <div class="card-tag" data-ngb-tag="solo">Sans abonnement · Jusqu'à 67€/7000m²</div>
           </div>
           <div class="card c2" onclick="startBooking(2)">
             <div class="card-img-wrap"><img src="assets/essentiel.png" alt="Pack Essentiel"></div>
             <div class="card-name">Pack Essentiel — 5 tontes</div>
             <div class="card-desc">5 passages planifiés · 1 tonte / 6 semaines</div>
-            <div class="card-price">À partir de 26€ / tonte</div>
-            <div class="card-tag">Paiement au prorata · Jusqu'à 53€/tonte</div>
+            <div class="card-price" data-ngb-prix="essentiel">À partir de 26€ / tonte</div>
+            <div class="card-tag" data-ngb-tag="essentiel">Paiement au prorata · Jusqu'à 53€/tonte</div>
           </div>
           <div class="card c3" onclick="startBooking(3)">
             <div class="card-img-wrap"><img src="assets/serenite.png" alt="Pack Sérénité"></div>
             <div class="card-name">Pack Sérénité — 10 tontes</div>
             <div class="card-desc">La formule complète · Meilleur tarif garanti</div>
-            <div class="card-price">À partir de 23,20€ / tonte</div>
-            <div class="card-tag">⭐ Paiement au prorata · Jusqu'à 47€/tonte</div>
+            <div class="card-price" data-ngb-prix="serenite">À partir de 23,20€ / tonte</div>
+            <div class="card-tag" data-ngb-tag="serenite">⭐ Paiement au prorata · Jusqu'à 47€/tonte</div>
           </div>
         </div>
         <p class="sect">Tarifs TTC par surface</p>
-        <table class="price-table">
+        <table class="price-table" id="tbl-tonte">
           <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
           <tbody>
             <tr><td>0–500 m²</td><td>29,90€</td><td>130€</td><td>232€</td></tr>
@@ -441,17 +441,17 @@ html, body {
           <div class="opts">
             <div class="opt sel" id="o1" onclick="selSvc(1)">
               <div class="opt-icon g1"><img src="assets/solo.png" alt="Solo"></div>
-              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price">À partir de 29,90€</div></div>
+              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price" data-ngb-opt-prix="solo">À partir de 29,90€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o2" onclick="selSvc(2)">
               <div class="opt-icon g2"><img src="assets/essentiel.png" alt="Essentiel"></div>
-              <div><div class="opt-name">Pack Essentiel — 5 tontes</div><div class="opt-price">À partir de 130€</div></div>
+              <div><div class="opt-name">Pack Essentiel — 5 tontes</div><div class="opt-price" data-ngb-opt-prix="essentiel">À partir de 130€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o3" onclick="selSvc(3)">
               <div class="opt-icon g3"><img src="assets/serenite.png" alt="Sérénité"></div>
-              <div><div class="opt-name">Pack Sérénité — 10 tontes</div><div class="opt-price">À partir de 232€</div></div>
+              <div><div class="opt-name">Pack Sérénité — 10 tontes</div><div class="opt-price" data-ngb-opt-prix="serenite">À partir de 232€</div></div>
               <div class="opt-check"></div>
             </div>
           </div>
@@ -787,7 +787,11 @@ html, body {
    CONSTANTES
    ================================================================ */
 const SVCS=['','Pack Solo – 1 tonte','Pack Essentiel – 5 tontes','Pack Sérénité – 10 tontes'];
-const PRICES={1:{'0-500':'29,90€','500-1500':'39€','1500-3000':'49€','3000-7000':'67€'},2:{'0-500':'130€','500-1500':'175€','1500-3000':'220€','3000-7000':'265€'},3:{'0-500':'232€','500-1500':'312€','1500-3000':'392€','3000-7000':'472€'}};
+/* Les tarifs ne sont plus dupliques ici : ils viennent de data/pricing.json
+   via NGPricing (voir js/pricing.js). SURF_IDX fait le lien entre les
+   valeurs de chips historiques et l'index de tranche de la grille. */
+const SURF_IDX={'0-500':0,'500-1500':1,'1500-3000':2,'3000-7000':3};
+const PALIER_IDX=['solo','essentiel','serenite'];
 const WIX='https://script.google.com/macros/s/AKfycbxxLCUppjc8Sgyx2U3I5Ds30vJT4DEKsmDC_cXCiQGygbsVvvluNSOF1c8UDPrIf1XlbQ/exec';
 const SESSIONS={1:1,2:5,3:10};
 const MFR=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -1004,7 +1008,20 @@ function showStep(n){
   if(n===3){initCal();checkS3();}
   if(n===4){prefillBooking();buildRecap();checkS4();}
 }
-function getPrice(){return bk.surf?(PRICES[bk.svc][bk.surf]||'Sur devis'):'À partir de 29,90€';}
+function getPrice(){
+  /* Lecture directe de la grille tarifaire : source unique de verite. */
+  if(!window.NGPricing||!NGPricing.isReady())return '—';
+  const cle=PALIER_IDX[bk.svc-1], tr=NGPricing.getTranches('tonte');
+  if(!bk.surf){
+    let min=null;
+    tr.forEach(t=>{const v=t[cle];if(!t.devis&&v!=null&&(min==null||v<min))min=v;});
+    return 'À partir de '+NGPricing.formatEUR(min);
+  }
+  const t=tr[SURF_IDX[bk.surf]];
+  if(!t)return 'Sur devis';
+  const v=t[cle];
+  return (t.devis||v==null)?'Sur devis':NGPricing.formatEUR(v);
+}
 
 function checkS2(){const a=document.getElementById('addr').value.trim();const c=document.getElementById('city').value.trim();const z=document.getElementById('zip').value.trim();const btn=document.getElementById('btn-s2');if(btn)btn.disabled=!(bk.surf&&a&&c&&/^\d{5}$/.test(z));}
 function goS2(){
@@ -1753,7 +1770,10 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
       var fond = s.photo
         ? "background-image:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,0) 40%," + col + "e0 100%),url('" + s.photo + "');background-size:" + (s.photoZoom || 'cover') + ";background-position:" + (s.photoPos || 'center')
         : 'background:' + col;
-      var tag = s.prix ? esc(s.prix) : (s.devis ? 'Sur devis' : '');
+      /* Le badge vient de la grille tarifaire ; data/services.json ne sert
+         plus que de repli si la grille n'est pas encore chargee. */
+      var badge = (window.NGBooking && NGBooking.badgeFor) ? NGBooking.badgeFor(s.id) : null;
+      var tag = badge ? esc(badge) : (s.prix ? esc(s.prix) : (s.devis ? 'Sur devis' : ''));
       h += '<button type="button" class="ngv-tile' + (s.large ? ' large' : '') + '" data-ngv="' + esc(s.id) + '" style="' + fond + '">'
         + (tag ? '<div class="tag">' + tag + '</div>' : '')
         + ico(s.id)
@@ -1770,6 +1790,8 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
   function reservationMetier() {
     var s = metier ? parId(metier) : null;
     if (!s || s.id === 'tonte') return false;
+    /* Les 5 autres services passent par le tunnel de reservation generique. */
+    if (window.NGBooking && s.id !== 'contact') { NGBooking.open(s.id); return true; }
     var w = ecran('resa');
     if (!w) return false;
     var f = s.formules || [];
@@ -1820,6 +1842,9 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
       + '<div class="ngv-card"><div class="ngv-ico2">' + ico(s.id).replace('class="ico" ','') + '</div>'
       + '<div class="ngv-desc">' + esc(s.description || s.sousTitre || '') + '</div></div>';
     if (lignes) h += '<div class="ngv-card">' + lignes + '</div>';
+    /* Delai, livrables inclus, grille tarifaire et bouton de reservation,
+       tous alimentes par data/pricing.json. */
+    if (window.NGBooking && NGBooking.ficheExtras) h += NGBooking.ficheExtras(s.id);
     h += '<button type="button" class="ngv-cta" id="ngv-devis">Demander un devis</button>'
       + '<div class="ngv-note">Réponse sous 48h ouvrées · Devis gratuit et sans engagement</div></div>';
     w.innerHTML = h;
@@ -1960,5 +1985,37 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
 })();
 </script>
 <!-- =============== FIN VOLETS / SERVICES =============== -->
+
+<!-- ================= NOVOGARDEN — TARIFICATION MULTI-SERVICES ================= -->
+<style>
+/* Styles du tunnel generique et de la grille consultable.
+   Reprend la charte existante : vert --green, fond --cream, radius 12px. */
+.ngb-lien{display:block;width:100%;background:none;border:none;color:var(--svc,var(--green));
+  font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:800;text-decoration:underline;
+  cursor:pointer;padding:10px 0;margin-bottom:10px;text-align:center}
+.ngb-note{font-size:11px;color:var(--grey);font-weight:500;line-height:1.5;margin:8px 0 14px}
+.ngb-h3{font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;
+  letter-spacing:0.05em;margin-bottom:8px}
+.ngb-ul{margin:0;padding-left:18px;font-size:12.5px;font-weight:500;color:#444;line-height:1.6}
+.ngb-legal{background:#fff;border-left:3px solid var(--svc,var(--green));border-radius:10px;
+  padding:12px 14px;margin-bottom:14px}
+.ngb-legal strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+  color:var(--grey);margin-bottom:6px}
+.ngb-legal p{font-size:12px;line-height:1.55;font-weight:500;color:#333}
+.ngb-check{display:flex;gap:8px;align-items:flex-start;font-size:12px;font-weight:600;
+  margin-top:10px;cursor:pointer;line-height:1.4}
+.ngb-check input{margin-top:2px;flex-shrink:0}
+.ngb-opt{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--grey-light);
+  border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer}
+.ngb-opt:has(input:checked){border-color:var(--svc,var(--green));
+  background:color-mix(in srgb, var(--svc,var(--green)) 9%, #fff)}
+.ngb-opt input{flex-shrink:0}
+.ngb-opt-l{flex:1;font-size:12.5px;font-weight:700;line-height:1.35}
+.ngb-opt-p{font-size:11.5px;font-weight:800;color:var(--svc,var(--green));white-space:nowrap}
+@media (max-width:380px){.ngb-opt{padding:10px 11px}.ngb-opt-l{font-size:12px}}
+</style>
+<script src="js/pricing.js"></script>
+<script src="js/booking.js"></script>
+<!-- =============== FIN TARIFICATION MULTI-SERVICES =============== -->
 </body>
 </html>
