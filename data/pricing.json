@@ -1,0 +1,497 @@
+{
+  "version": "2.0",
+  "date": "2026-09-01",
+  "devise": "EUR",
+  "tva": "non applicable - art. 293 B du CGI",
+  "prix_ttc": true,
+  "positionnement": "Tarifs placés volontairement sous le marché pour rendre les prestations accessibles aux particuliers, artisans et petits chantiers.",
+  "regles_globales": {
+    "paliers": [
+      {
+        "id": "solo",
+        "nom": "Solo",
+        "quantite": 1,
+        "remise": 0,
+        "couleur": "#2E7BC4"
+      },
+      {
+        "id": "essentiel",
+        "nom": "Essentiel",
+        "quantite": 5,
+        "remise": 0.13,
+        "couleur": "#7DB532"
+      },
+      {
+        "id": "serenite",
+        "nom": "Sérénité",
+        "quantite": 10,
+        "remise": 0.22,
+        "couleur": "#E8892B"
+      }
+    ],
+    "nature_pack": "token (crédits de prestations, pas un abonnement)",
+    "validite_pack_mois": 12,
+    "zone_intervention": [
+      "Orne (61)",
+      "Mayenne (53)",
+      "Calvados (14)"
+    ],
+    "deplacement_inclus_km": 25,
+    "deplacement_prix_km_supplementaire": 0.4,
+    "devis_valide_jours": 30,
+    "acompte_seuil": 500,
+    "acompte_taux": 0.3,
+    "annulation_gratuite_heures": 48
+  },
+  "services": [
+    {
+      "id": "tonte",
+      "nom": "Tonte robotisée",
+      "sous_titre": "De 100 à 7000 m², sans abonnement",
+      "badge": "DÈS 29,90 €",
+      "unite": "tonte",
+      "critere_tranche": "surface",
+      "tranches": [
+        {
+          "label": "0–500 m²",
+          "min": 0,
+          "max": 500,
+          "solo": 29.9,
+          "essentiel": 130,
+          "serenite": 232
+        },
+        {
+          "label": "500–1500 m²",
+          "min": 500,
+          "max": 1500,
+          "solo": 39,
+          "essentiel": 175,
+          "serenite": 312
+        },
+        {
+          "label": "1500–3000 m²",
+          "min": 1500,
+          "max": 3000,
+          "solo": 49,
+          "essentiel": 220,
+          "serenite": 392
+        },
+        {
+          "label": "3000–7000 m²",
+          "min": 3000,
+          "max": 7000,
+          "solo": 67,
+          "essentiel": 265,
+          "serenite": 472
+        },
+        {
+          "label": "+7000 m²",
+          "min": 7000,
+          "max": null,
+          "solo": null,
+          "essentiel": null,
+          "serenite": null,
+          "devis": true
+        }
+      ],
+      "options": [
+        {
+          "label": "Remise en état terrain non entretenu",
+          "prix": 20,
+          "unite": "500 m²"
+        },
+        {
+          "label": "Finition manuelle des bordures",
+          "prix": 12,
+          "unite": "passage"
+        },
+        {
+          "label": "Urgence sous 48 h",
+          "majoration": 0.2
+        }
+      ],
+      "inclus": [
+        "Transport et mise en place du robot",
+        "Tonte mulching zéro déchet vert",
+        "Reprise du matériel"
+      ],
+      "delai": "5 à 10 jours ouvrés selon météo"
+    },
+    {
+      "id": "topographie",
+      "nom": "Topographie 3D",
+      "sous_titre": "Relevé de terrain par drone",
+      "badge": "DÈS 79 €",
+      "unite": "passage",
+      "critere_tranche": "surface",
+      "note_packs": "Les packs 5 et 10 correspondent à un suivi de chantier (passages répartis).",
+      "note_surfaces": "Surfaces calibrées sur ce qui est couvrable en vue directe et sur une autonomie de batterie. Au-delà de 5 ha, vol fractionné sur devis.",
+      "tranches": [
+        {
+          "label": "0–2500 m²",
+          "min": 0,
+          "max": 2500,
+          "solo": 79,
+          "essentiel": 345,
+          "serenite": 615
+        },
+        {
+          "label": "2500 m² – 1 ha",
+          "min": 2500,
+          "max": 10000,
+          "solo": 119,
+          "essentiel": 520,
+          "serenite": 930
+        },
+        {
+          "label": "1–2 ha",
+          "min": 10000,
+          "max": 20000,
+          "solo": 179,
+          "essentiel": 780,
+          "serenite": 1395
+        },
+        {
+          "label": "2–5 ha",
+          "min": 20000,
+          "max": 50000,
+          "solo": 279,
+          "essentiel": 1215,
+          "serenite": 2175
+        },
+        {
+          "label": "+5 ha",
+          "min": 50000,
+          "max": null,
+          "solo": null,
+          "essentiel": null,
+          "serenite": null,
+          "devis": true
+        }
+      ],
+      "livrables_inclus": [
+        "Orthophoto géoréférencée",
+        "MNT / MNS",
+        "Courbes de niveau",
+        "Export PNG / GeoTIFF"
+      ],
+      "options": [
+        {
+          "label": "Orthophoto seule, sans modèle",
+          "prix": 49
+        },
+        {
+          "label": "Calcul de cubature / volume de stock",
+          "prix": 39
+        },
+        {
+          "label": "Export DXF / DWG",
+          "prix": 29
+        },
+        {
+          "label": "Modèle 3D maillé texturé",
+          "prix": 69
+        },
+        {
+          "label": "Rapport PDF commenté",
+          "prix": 39
+        },
+        {
+          "label": "Comparatif entre deux passages",
+          "prix": 35
+        }
+      ],
+      "delai": "5 jours ouvrés après le vol",
+      "mention_legale": "Relevé à vocation d'aide à l'aménagement et au suivi de chantier. Précision décimétrique relative. Ne constitue pas un document de bornage ou de délimitation de propriété, acte réservé au géomètre-expert."
+    },
+    {
+      "id": "modelisation",
+      "nom": "Modélisation 3D",
+      "sous_titre": "Conception et CAO",
+      "badge": "DÈS 49 €",
+      "unite": "pièce ou assemblage",
+      "critere_tranche": "complexité",
+      "tranches": [
+        {
+          "label": "Pièce simple",
+          "solo": 49,
+          "essentiel": 215,
+          "serenite": 385
+        },
+        {
+          "label": "Pièce technique",
+          "solo": 99,
+          "essentiel": 430,
+          "serenite": 770
+        },
+        {
+          "label": "Assemblage ≤ 10 pièces",
+          "solo": 199,
+          "essentiel": 865,
+          "serenite": 1550
+        },
+        {
+          "label": "Projet complet + mises en plan",
+          "solo": 390,
+          "essentiel": 1695,
+          "serenite": 3040
+        }
+      ],
+      "livrables_inclus": [
+        "Fichiers natifs CAO",
+        "Export STEP",
+        "Export STL",
+        "2 séries de modifications"
+      ],
+      "prestations_unitaires": [
+        {
+          "label": "Rétro-ingénierie pièce simple",
+          "prix": 79
+        },
+        {
+          "label": "Rétro-ingénierie pièce technique",
+          "prix": 149
+        },
+        {
+          "label": "Mise en plan cotée supplémentaire",
+          "prix": 25,
+          "unite": "plan"
+        },
+        {
+          "label": "Rendu photoréaliste",
+          "prix": 19,
+          "unite": "vue"
+        },
+        {
+          "label": "Modification d'un modèle fourni",
+          "prix": 39,
+          "unite": "heure"
+        },
+        {
+          "label": "Réparation / préparation STL",
+          "prix": 15
+        },
+        {
+          "label": "Taux horaire hors forfait",
+          "prix": 39,
+          "unite": "heure"
+        }
+      ],
+      "delai": "3 à 7 jours ouvrés"
+    },
+    {
+      "id": "impression",
+      "nom": "Impression prototype",
+      "sous_titre": "Fabrication additive",
+      "badge": "DÈS 9 €",
+      "unite": "pièce",
+      "critere_tranche": "volume",
+      "matieres_standard": [
+        "PLA",
+        "PETG"
+      ],
+      "note_packs": "Les packs correspondent à une série d'exemplaires identiques.",
+      "tranches": [
+        {
+          "label": "< 50 cm³",
+          "min": 0,
+          "max": 50,
+          "solo": 9,
+          "essentiel": 39,
+          "serenite": 70
+        },
+        {
+          "label": "50–200 cm³",
+          "min": 50,
+          "max": 200,
+          "solo": 19,
+          "essentiel": 83,
+          "serenite": 150
+        },
+        {
+          "label": "200–600 cm³",
+          "min": 200,
+          "max": 600,
+          "solo": 39,
+          "essentiel": 170,
+          "serenite": 305
+        },
+        {
+          "label": "600–1500 cm³",
+          "min": 600,
+          "max": 1500,
+          "solo": 79,
+          "essentiel": 345,
+          "serenite": 615
+        },
+        {
+          "label": "+1500 cm³ ou multi-pièces",
+          "min": 1500,
+          "max": null,
+          "solo": null,
+          "essentiel": null,
+          "serenite": null,
+          "devis": true
+        }
+      ],
+      "options": [
+        {
+          "label": "Matière technique (TPU, ABS, ASA)",
+          "majoration": 0.25
+        },
+        {
+          "label": "Matière chargée fibre (PA-CF, PET-CF)",
+          "devis": true
+        },
+        {
+          "label": "Impression multicolore",
+          "majoration": 0.2
+        },
+        {
+          "label": "Ponçage / lissage",
+          "prix": 9,
+          "unite": "pièce"
+        },
+        {
+          "label": "Apprêt + peinture",
+          "prix": 15,
+          "unite": "pièce"
+        },
+        {
+          "label": "Pose d'insert laiton",
+          "prix": 1,
+          "unite": "insert"
+        },
+        {
+          "label": "Urgence sous 48 h",
+          "majoration": 0.2
+        },
+        {
+          "label": "Envoi suivi",
+          "prix": 6
+        },
+        {
+          "label": "Retrait sur place",
+          "prix": 0
+        }
+      ],
+      "note_fichier": "Prix de la grille si le fichier 3D est fourni. Sans fichier, ajouter la prestation Modélisation 3D.",
+      "delai": "48 à 72 h après validation du fichier"
+    },
+    {
+      "id": "drone",
+      "nom": "Prestation drone",
+      "sous_titre": "Photo et vidéo aérienne",
+      "badge": "DÈS 79 €",
+      "unite": "intervention",
+      "critere_tranche": "durée",
+      "tranches": [
+        {
+          "label": "Découverte — 1 h, 15 photos",
+          "solo": 79,
+          "essentiel": 345,
+          "serenite": 615
+        },
+        {
+          "label": "Standard — 2 h, 30 photos + clip 1 min",
+          "solo": 129,
+          "essentiel": 560,
+          "serenite": 1005
+        },
+        {
+          "label": "Demi-journée — photos + clip 3 min",
+          "solo": 229,
+          "essentiel": 995,
+          "serenite": 1785
+        },
+        {
+          "label": "Journée complète",
+          "solo": 390,
+          "essentiel": 1695,
+          "serenite": 3040
+        }
+      ],
+      "catalogue_usages": [
+        {
+          "label": "Annonce immobilière",
+          "prix": 79
+        },
+        {
+          "label": "Bien de prestige, gîte, chambre d'hôtes",
+          "prix": 129
+        },
+        {
+          "label": "Mariage — rushs bruts",
+          "prix": 179
+        },
+        {
+          "label": "Mariage — clip 3 min monté",
+          "prix": 290
+        },
+        {
+          "label": "Événement, inauguration (demi-journée)",
+          "prix": 229
+        },
+        {
+          "label": "Inspection visuelle toiture / façade",
+          "prix": 89
+        },
+        {
+          "label": "Rapport photo d'inspection commenté",
+          "prix": 39,
+          "supplement": true
+        }
+      ],
+      "options": [
+        {
+          "label": "Minute de vidéo montée supplémentaire",
+          "prix": 45,
+          "unite": "minute"
+        },
+        {
+          "label": "Livraison des rushs bruts",
+          "prix": 0
+        }
+      ],
+      "delai": "5 jours ouvrés",
+      "contraintes_reglementaires": [
+        "Vols réalisés en catégorie Open, conformément à la réglementation européenne",
+        "Pas de survol de rassemblement de personnes",
+        "Accord écrit du propriétaire du lieu obligatoire",
+        "Vol impossible en zone interdite ou restreinte sans dérogation préalable"
+      ]
+    },
+    {
+      "id": "etude-flux",
+      "nom": "Étude de flux",
+      "sous_titre": "Analyse de chaîne et de coûts",
+      "badge": "DÈS 89 €",
+      "unite": "étude",
+      "paliers_applicables": false,
+      "prestations": [
+        {
+          "label": "Diagnostic express — 1 chaîne, restitution 1 page",
+          "prix": 89
+        },
+        {
+          "label": "Étude standard — jusqu'à 3 chaînes, coûts et seuil de rentabilité",
+          "prix": 249
+        },
+        {
+          "label": "Étude complète — multi-activités, scénarios, calculateur paramétré remis",
+          "prix": 490
+        },
+        {
+          "label": "Accompagnement mensuel — mise à jour + point 1 h",
+          "prix": 69,
+          "unite": "mois"
+        },
+        {
+          "label": "Licence de l'outil calculateur",
+          "devis": true
+        }
+      ],
+      "delai": "7 à 10 jours ouvrés"
+    }
+  ]
+}
