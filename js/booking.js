@@ -148,7 +148,7 @@
     h += '</tbody></table>';
 
     /* Notes propres au service, telles qu'écrites dans la grille. */
-    ['note_packs', 'note_surfaces', 'note_fichier'].forEach(function (cle) {
+    ['note_packs', 'note_surfaces', 'note_tranche', 'note_fichier'].forEach(function (cle) {
       if (s[cle]) h += '<p class="ngb-note">' + esc(s[cle]) + '</p>';
     });
 
@@ -365,7 +365,9 @@
   /* --- étape 2 : tranche (+ adresse si prestation sur site) --- */
   function corpsTranche(s) {
     var lignes = P.getTranches(s.id);
-    var h = '<div class="ss">' + esc(P.labelCritere(s.id)) + '</div>'
+    /* Si la grille fournit une note explicative pour ce critere, elle
+       remplace le simple rappel du libelle. */
+    var h = '<div class="ss">' + esc(s.note_tranche || P.labelCritere(s.id)) + '</div>'
       + '<label class="flabel">' + esc(P.labelCritere(s.id)) + ' <span class="req">*</span></label>'
       + '<div class="opts">';
     for (var i = 0; i < lignes.length; i++) {
