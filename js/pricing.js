@@ -112,6 +112,7 @@
     'complexité': 'Niveau de complexité',
     'complexite': 'Niveau de complexité',
     'volume':     'Volume de la pièce',
+    'masse':      'Masse de la pièce',
     'durée':      'Durée d’intervention',
     'duree':      'Durée d’intervention'
   };
