@@ -15,7 +15,6 @@
   'use strict';
 
   var P = null;
-  var bareme = null;
 
   function init() { P = global.NGP; return P && P.estConfigure() && P.client(); }
 
@@ -31,13 +30,14 @@
 
   function charger() {
     var sb = P.client();
+    /* Un taux unique remplace le barème par pack : la commission ne
+       dépend plus de la formule, mais du montant de la prestation. */
     return Promise.all([
       sb.from('leads_apporteur').select('*').order('created_at', { ascending: false }),
-      bareme ? Promise.resolve({ data: bareme })
-             : sb.from('bareme_commissions').select('*').order('montant')
+      sb.from('reglages').select('valeur').eq('cle', 'taux_commission').maybeSingle()
     ]).then(function (r) {
-      if (r[1] && r[1].data) bareme = r[1].data;
-      return { filleuls: (r[0] && r[0].data) || [], bareme: bareme || [] };
+      var t = (r[1] && r[1].data && r[1].data.valeur);
+      return { filleuls: (r[0] && r[0].data) || [], taux: t == null ? null : Number(t) };
     });
   }
 
@@ -73,7 +73,7 @@
         h += '<div class="ngp-filleul' + (i ? ' ngp-sep' : '') + '">'
           + '<div><div class="ngp-filleul-nom">' + P.esc(f.filleul || '—') + '</div>'
           + '<div class="ngp-note" style="margin:2px 0 0">'
-          + P.esc(f.commune || '—') + ' · ' + P.esc(libellePack(f.pack, d.bareme)) + '</div></div>'
+          + P.esc(f.commune || '—') + ' · ' + P.esc(f.service_libelle || SERVICES[f.service] || '—') + '</div></div>'
           + '<span class="ngp-badge ' + classeStatut(f.statut) + '">'
           + P.esc(f.statut_affiche) + '</span></div>';
       });
@@ -97,13 +97,8 @@
     /* ---- 4. Comment ca marche ---- */
     h += '<details class="ngp-details"><summary>Comment ça marche</summary>'
       + '<div class="ngp-carte" style="margin-top:10px">';
-    if (d.bareme.length) {
-      h += '<p class="ngp-h3">Barème</p>';
-      d.bareme.forEach(function (b) {
-        h += '<div class="ngp-ligne"><span class="ngp-k">' + P.esc(b.libelle) + '</span>'
-          + '<span class="ngp-v">' + P.eur(b.montant) + '</span></div>';
-      });
-    }
+    h += '<div class="ngp-ligne"><span class="ngp-k">Toutes prestations</span>'
+      + '<span class="ngp-v">' + P.esc(tauxTexte(d.taux)) + ' du montant TTC</span></div>';
     h += '<p class="ngp-note" style="margin-top:12px">'
       + '<strong>Versement après encaissement.</strong> La commission est calculée dès que '
       + 'la commande est confirmée, et vous est versée une fois le client réglé.</p>'
@@ -158,10 +153,20 @@
     } catch (e) { P.toast('Copie impossible : ' + txt); }
   }
 
-  function libellePack(pack, bareme) {
-    var b = (bareme || []).filter(function (x) { return x.pack === pack; })[0];
-    if (b) return b.libelle.split('—')[0].trim();
-    return pack || '—';
+  var SERVICES = {
+    'tonte':        'Tonte robotisée',
+    'topographie':  'Topographie 3D',
+    'modelisation': 'Modélisation 3D',
+    'impression':   'Impression prototype',
+    'drone':        'Prestation drone',
+    'etude-flux':   'Étude de flux'
+  };
+
+  /* Le taux vient de la base, jamais du code : le modifier ne demande
+     aucun déploiement. */
+  function tauxTexte(t) {
+    if (t == null) return '—';
+    return String(Math.round(t * 1000) / 10).replace('.', ',') + ' %';
   }
 
   function classeStatut(s) {
