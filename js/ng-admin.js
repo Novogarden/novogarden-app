@@ -20,7 +20,14 @@
     confirme: 'Confirmé', encaisse: 'Encaissé',
     commission_versee: 'Commission versée', perdu: 'Perdu'
   };
-  var TYPES = { tonte: 'Tonte', drone: 'Drone', impression_3d: 'Impression 3D', modelisation: 'Modélisation' };
+  var TYPES = {
+    'tonte':        'Tonte robotisée',
+    'topographie':  'Topographie 3D',
+    'modelisation': 'Modélisation 3D',
+    'impression':   'Impression prototype',
+    'drone':        'Prestation drone',
+    'etude-flux':   'Étude de flux'
+  };
   var PACKS = ['solo','essentiel','serenite','autre'];
 
   function init() { P = global.NGP; return P && P.estConfigure() && P.client(); }
@@ -89,6 +96,8 @@
                 + ' (' + (d.apporteur.code_apporteur || '—') + ')') : 'aucun')
             + (d.code_apporteur && !d.apporteur ? ' — code saisi : ' + P.esc(d.code_apporteur) : '')
             + '</div>'
+            + '<div class="ngp-note">Prestation : '
+            + P.esc(TYPES[d.service] || d.service || '—') + '</div>'
             + '<div class="ngp-grille2">'
             + '<div><label class="flabel">Pack</label>' + selectPack(d) + '</div>'
             + '<div><label class="flabel">Montant TTC</label>'
