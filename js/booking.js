@@ -466,12 +466,22 @@
       + '<input id="ngb-mail" class="finput" type="email" value="' + esc(etat.email) + '" placeholder="vous@email.com">'
       + '<label class="flabel">Précisions (optionnel)</label>'
       + '<textarea id="ngb-note" class="finput" rows="2" style="resize:none">' + esc(etat.note) + '</textarea>'
+      + '<label class="flabel">Code apporteur (optionnel)</label>'
+      + '<input id="ngb-code" class="finput" type="text" value="' + esc(codeApporteurInitial()) + '" placeholder="PRENOM-XXX" style="text-transform:uppercase">'
       + '<div class="cgv-row"><input type="checkbox" id="ngb-cgv">'
       + '<label for="ngb-cgv">J’accepte que ces informations soient transmises à Novogarden pour l’établissement d’un devis</label></div>'
       + '<div class="err-msg" id="ngb-err"></div>'
       + '<button class="btn-p" id="ngb-send">Envoyer ma demande de devis</button>'
       + '<button class="btn-s" id="ngb-prev">← Retour</button>';
     return h;
+  }
+
+  /* Un code peut venir du lien de parrainage (memorise 30 jours) ou etre
+     tape a la main sur le recapitulatif. On pre-remplit sans forcer : le
+     client reste libre de le corriger ou de l'effacer. */
+  function codeApporteurInitial() {
+    var G = window.NGP_PARRAINAGE;
+    try { return (G && G.memorise && G.memorise()) || ''; } catch (e) { return ''; }
   }
 
   function ligne(k, v) {
@@ -641,8 +651,42 @@
     champ('Nom', etat.nom); champ('Email', etat.email); champ('Telephone', etat.tel);
     champ('Precisions', etat.note || '—');
     champ('Grille_version', (P.getData() || {}).version || '—');
+    /* Le code peut avoir ete saisi ici, ou memorise depuis un lien de
+       parrainage ouvert plus tot. */
+    var codeApp = (function () {
+      var e = document.getElementById('ngb-code');
+      var v = e ? e.value : '';
+      var G = window.NGP_PARRAINAGE;
+      try { if (!v && G && G.memorise) v = G.memorise(); } catch (x) {}
+      return (v || '').toUpperCase().trim();
+    })();
+    if (codeApp) champ('Code_apporteur', codeApp);
+
     document.body.appendChild(form);
-    form.submit();
+
+    /* Le POST FormSubmit quitte la page : on laisse d'abord le lead
+       s'enregistrer, avec un garde-fou de 2,5 s pour que le devis parte
+       meme si la base ne repond pas. Le devis n'est jamais bloque par
+       le parrainage. */
+    var parti = false;
+    function partir() { if (!parti) { parti = true; form.submit(); } }
+    setTimeout(partir, 2500);
+
+    if (window.NGP_PARRAINAGE && NGP_PARRAINAGE.enregistrerLead) {
+      var mots = (etat.nom || '').trim().split(/\s+/);
+      NGP_PARRAINAGE.enregistrerLead({
+        code:      codeApp,
+        prenom:    mots[0] || '',
+        nom:       mots.slice(1).join(' '),
+        email:     etat.email,
+        telephone: etat.tel,
+        commune:   AVEC_ADRESSE[s.id] ? etat.ville : null,
+        surface:   null,
+        pack:      P.hasPaliers(s.id) ? etat.palier : 'autre',
+        montant:   r.devis ? null : r.total,
+        service:   s.id
+      }).then(partir, partir);
+    } else { partir(); }
   }
 
   /* ---------- alimentation des écrans tonte existants ---------- */
