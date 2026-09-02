@@ -118,7 +118,8 @@
       p_commune:   infos.commune || null,
       p_surface:   infos.surface || null,
       p_pack:      infos.pack || 'autre',
-      p_montant:   infos.montant == null ? null : infos.montant
+      p_montant:   infos.montant == null ? null : infos.montant,
+      p_service:   infos.service || 'tonte'
     }).then(function (r) {
       if (r.error) { console.warn('[NGP] lead non enregistré :', r.error.message); return null; }
       /* Une fois le lead cree, le code a joue son role. */
