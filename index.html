@@ -606,8 +606,20 @@ html, body {
             </div>
             <label class="flabel">Email</label>
             <input type="email" id="reg-email" class="finput" placeholder="vous@email.com">
+            <label class="flabel">Téléphone</label>
+            <input type="tel" id="reg-tel" class="finput" placeholder="06 12 34 56 78">
             <label class="flabel">Mot de passe</label>
             <input type="password" id="reg-pwd" class="finput" placeholder="Min. 8 caractères">
+            <!-- Roles partenaires : masques tant que Supabase n'est pas configure -->
+            <div id="ngp-roles-insc" style="display:none">
+              <label class="flabel" style="margin-top:14px">Que souhaitez-vous faire ?</label>
+              <label class="ngp-check"><input type="checkbox" id="reg-role-apporteur">
+                <span><strong>Recommander Novogarden</strong><br><span class="ngp-note">Partagez votre code, touchez une commission sur les clients apportés.</span></span></label>
+              <label class="ngp-check"><input type="checkbox" id="reg-role-prestataire">
+                <span><strong>Réaliser des prestations</strong><br><span class="ngp-note">Acceptez des missions. Ce rôle est soumis à validation.</span></span></label>
+              <label class="ngp-check"><input type="checkbox" id="reg-rgpd">
+                <span>J’accepte que mes données soient traitées par Novogarden pour la gestion de mon compte partenaire.</span></label>
+            </div>
             <button class="btn-p" onclick="doRegister()">Créer mon compte</button>
           </div>
         </div>
@@ -634,6 +646,7 @@ html, body {
           <div class="ps-row"><span class="ps-key">Tontes effectuées</span><span class="ps-val" id="pf-tontes">—</span></div>
           <div class="ps-row"><span class="ps-key">Prochaine tonte</span><span class="ps-val" id="pf-next">—</span></div>
         </div>
+        <div id="ngp-profil"></div>
         <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
         <button class="btn-logout" style="background:#fff3e0;color:#e65100;margin-top:8px" onclick="openBugReport()">🐛 Signaler un bug</button>
       </div>
@@ -2020,5 +2033,92 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
 <script src="js/pricing.js"></script>
 <script src="js/booking.js"></script>
 <!-- =============== FIN TARIFICATION MULTI-SERVICES =============== -->
+
+<!-- ================= NOVOGARDEN — ESPACES PARTENAIRES ================= -->
+<style>
+/* Onglets apporteur / prestataire / admin. Meme charte que le reste :
+   vert --green, fond --cream, radius 12px, Montserrat. */
+.ngp-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 32px}
+.ngp-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ngp-titre{font-size:16px;font-weight:800}
+.ngp-back{border:none;background:color-mix(in srgb,var(--green) 14%,#fff);color:var(--green);
+  font-family:'Montserrat',sans-serif;font-weight:800;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:12px}
+.ngp-carte{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.ngp-h3{font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.ngp-sous{font-size:12px;font-weight:800;color:var(--grey);margin:14px 0 8px}
+.ngp-note{font-size:11.5px;color:var(--grey);font-weight:500;line-height:1.55;margin:6px 0}
+.ngp-ligne{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:12.5px;align-items:flex-start}
+.ngp-k{color:var(--grey);font-weight:700;flex:1}
+.ngp-v{font-weight:800;text-align:right;white-space:nowrap}
+.ngp-sep{border-top:1px solid #f0f0f0}
+.ngp-lien{display:block;width:100%;background:none;border:none;color:var(--green);
+  font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:800;text-decoration:underline;
+  cursor:pointer;padding:10px 0;text-align:center}
+.ngp-danger{color:#c62828}
+.ngp-chargement{text-align:center;color:var(--grey);font-size:13px;font-weight:600;padding:40px 0}
+/* bloc code apporteur : action principale, visible sans scroller */
+.ngp-code-carte{text-align:center;border:2px solid var(--green)}
+.ngp-code{font-size:30px;font-weight:800;letter-spacing:.06em;color:var(--green);
+  margin:6px 0 14px;word-break:break-all;line-height:1.15}
+.ngp-filleul{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0}
+.ngp-filleul-nom{font-size:13px;font-weight:800}
+.ngp-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+.ngp-badge-encours{background:#eceff1;color:#546e7a}
+.ngp-badge-confirme{background:#e3f2fd;color:#1565c0}
+.ngp-badge-averser{background:#fff8e1;color:#e65100}
+.ngp-badge-verse{background:color-mix(in srgb,var(--green) 16%,#fff);color:var(--dark-green)}
+.ngp-badge-perdu{background:#fbe9e7;color:#c62828}
+.ngp-gains{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ngp-gain{background:#fff;border-radius:16px;padding:16px 10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ngp-gain-v{font-size:22px;font-weight:800;color:var(--green);line-height:1.1}
+.ngp-gain-l{font-size:11px;font-weight:700;color:var(--grey);margin-top:4px}
+.ngp-details{margin-bottom:14px}
+.ngp-details summary{cursor:pointer;font-size:12.5px;font-weight:800;color:var(--green);padding:8px 0}
+/* missions */
+.ngp-mission-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ngp-mission-t{font-size:14px;font-weight:800;line-height:1.25}
+.ngp-mission-s{font-size:12.5px;font-weight:600;margin-top:8px}
+.ngp-remu{font-size:18px;font-weight:800;color:var(--green);white-space:nowrap}
+.ngp-fini{font-size:11.5px;font-weight:700;color:var(--grey);text-align:center;padding:8px 0}
+.ngp-vignettes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ngp-vignette{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--grey-light)}
+.ngp-fig{margin:0;text-align:center}
+.ngp-fig figcaption{font-size:10px;font-weight:700;color:var(--grey);margin-top:3px}
+/* admin */
+.ngp-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.ngp-tab{flex:0 0 auto;border:2px solid var(--grey-light);background:#fff;border-radius:20px;
+  padding:7px 13px;font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:800;color:var(--grey);cursor:pointer}
+.ngp-tab.actif{border-color:var(--green);color:var(--dark-green);background:color-mix(in srgb,var(--green) 9%,#fff)}
+.ngp-select{width:100%;border:1.5px solid #e6e6e6;border-radius:12px;padding:11px 12px;font-size:13px;
+  font-family:inherit;font-weight:600;background:#fff;box-sizing:border-box;margin-bottom:10px}
+.ngp-grille2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ngp-check{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;font-weight:600;
+  margin:10px 0;cursor:pointer;line-height:1.4}
+.ngp-check input{margin-top:3px;flex-shrink:0}
+/* barre de navigation a 6 ou 7 entrees */
+.bottom-nav.ngp-nav-dense .nav-label{font-size:8px;letter-spacing:0}
+.bottom-nav.ngp-nav-dense .nav-item svg{width:19px;height:19px}
+.bottom-nav.ngp-nav-dense .nav-item{padding:4px 1px}
+@media (max-width:380px){.ngp-gain-v{font-size:19px}.ngp-code{font-size:26px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/ng-config.js"></script>
+<script src="js/ng-core.js"></script>
+<script src="js/ng-auth.js"></script>
+<script src="js/ng-parrainage.js"></script>
+<script src="js/ng-apporteur.js"></script>
+<script src="js/ng-prestataire.js"></script>
+<script src="js/ng-admin.js"></script>
+<script>
+/* Les cases de role ne s'affichent que si Supabase est configure. */
+(function(){
+  function maj(){
+    var z=document.getElementById('ngp-roles-insc');
+    if(z && window.NGP && window.NGP.estConfigure()) z.style.display='';
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',maj); else maj();
+})();
+</script>
+<!-- =============== FIN ESPACES PARTENAIRES =============== -->
 </body>
 </html>
