@@ -60,6 +60,12 @@
     if (!prenom || !nom || !email) return afficher(err, 'Prénom, nom et email sont requis.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return afficher(err, 'Adresse email invalide.');
     if (mdp.length < 8) return afficher(err, 'Mot de passe : 8 caractères minimum.');
+    /* Confirmation : evite qu'une faute de frappe enferme le partenaire
+       dehors de son compte des l'inscription. */
+    var mdp2 = $('reg-pwd2');
+    if (mdp2 && mdp !== mdp2.value) {
+      return afficher(err, 'Les deux mots de passe ne sont pas identiques.');
+    }
     if (rgpd && !rgpd.checked) return afficher(err, 'Merci d’accepter la politique de données personnelles.');
     if (apporteur && prestataire && !apporteur.checked && !prestataire.checked) {
       return afficher(err, 'Choisissez au moins un rôle.');
