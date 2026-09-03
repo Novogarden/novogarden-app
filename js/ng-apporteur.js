@@ -1,5 +1,5 @@
 /* =====================================================================
-   Novogarden — onglet Apporteur d'affaires (spec 7)
+   Novogarden — onglet Mon reseau — apporteur d'affaires (spec 7)
    ---------------------------------------------------------------------
    Une seule page scrollable, quatre blocs dans l'ordre :
      1. Mon code — action principale, visible sans scroller
@@ -46,27 +46,27 @@
     var code = p.code_apporteur || '';
 
     var h = '<div class="ngp-wrap">';
-    h += '<div class="ngp-head"><div class="ngp-titre">Parrainage</div></div>';
+    h += '<div class="ngp-head"><div class="ngp-titre">Mon réseau</div></div>';
 
     /* ---- 1. Mon code ---- */
     h += '<div class="ngp-carte ngp-code-carte">';
     if (code) {
-      h += '<p class="ngp-h3">Mon code</p>'
+      h += '<p class="ngp-h3">Mon code partenaire</p>'
         + '<div class="ngp-code">' + P.esc(code) + '</div>'
-        + '<button class="btn-p" id="ngp-partager">Partager mon code</button>'
+        + '<button class="btn-p" id="ngp-partager">Partager mon lien</button>'
         + '<button type="button" class="ngp-lien" id="ngp-copier">Copier le code</button>';
     } else {
-      h += '<p class="ngp-h3">Mon code</p>'
+      h += '<p class="ngp-h3">Mon code partenaire</p>'
         + '<p class="ngp-note">Votre code est en cours d’activation. '
         + 'Il apparaîtra ici dès que Novogarden l’aura généré.</p>';
     }
     h += '</div>';
 
-    /* ---- 2. Mes filleuls ---- */
-    h += '<p class="sect">Mes filleuls</p>';
+    /* ---- 2. Mon reseau ---- */
+    h += '<p class="sect">Mon réseau</p>';
     if (!d.filleuls.length) {
       h += '<div class="ngp-carte"><p class="ngp-note" style="margin:0">'
-        + 'Aucun filleul pour le moment. Partagez votre code pour commencer.</p></div>';
+        + 'Personne dans votre réseau pour le moment. Partagez votre lien pour commencer.</p></div>';
     } else {
       h += '<div class="ngp-carte">';
       d.filleuls.forEach(function (f, i) {
