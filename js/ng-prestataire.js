@@ -17,8 +17,12 @@
 
   var P = null;
   var TYPES = {
-    tonte: 'Tonte', drone: 'Prestation drone',
-    impression_3d: 'Impression 3D', modelisation: 'Modélisation 3D'
+    'tonte':        'Tonte robotisée',
+    'topographie':  'Topographie 3D',
+    'modelisation': 'Modélisation 3D',
+    'impression':   'Impression prototype',
+    'drone':        'Prestation drone',
+    'etude-flux':   'Étude de flux'
   };
 
   function init() { P = global.NGP; return P && P.estConfigure() && P.client(); }
