@@ -75,7 +75,7 @@
 
     var bloc = document.createElement('div');
     bloc.innerHTML =
-      '<label class="flabel">Code apporteur (optionnel)</label>'
+      '<label class="flabel">Code partenaire (optionnel)</label>'
       + '<input id="ng-code-apporteur" class="finput" type="text" autocomplete="off"'
       + ' placeholder="Ex. ROMAIN-4K2" style="text-transform:uppercase">'
       + '<div class="ngp-note" id="ng-code-info" style="margin-top:-6px">'
