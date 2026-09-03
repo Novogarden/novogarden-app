@@ -2148,6 +2148,32 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
 <script src="js/ng-prestataire.js"></script>
 <script src="js/ng-admin.js"></script>
 <script>
+/* Un lien venu de partenaire.html demande directement l'ecran d'inscription.
+   Sans cela le visiteur atterrit sur l'accueil et doit trouver seul Connexion,
+   puis l'onglet Inscription, puis la case du role : trois clics de perdition. */
+(function () {
+  function ouvrirDepuisHash() {
+    var h = (location.hash || '').replace('#', '').toLowerCase();
+    if (h !== 'inscription' && h !== 'partenaire') return;
+    try {
+      navTo('compte');
+      switchTab('in');
+      if (h === 'partenaire') {
+        var c = document.getElementById('reg-role-apporteur');
+        if (c && !c.checked) c.checked = true;
+      }
+      var p = document.getElementById('reg-prenom');
+      if (p) p.focus({ preventScroll: true });
+    } catch (e) {}
+  }
+  var lancer = function () { setTimeout(ouvrirDepuisHash, 450); };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', lancer);
+  } else { lancer(); }
+  window.addEventListener('hashchange', ouvrirDepuisHash);
+})();
+</script>
+<script>
 /* Les cases de role ne s'affichent que si Supabase est configure. */
 (function(){
   function maj(){
