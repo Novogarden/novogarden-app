@@ -466,7 +466,7 @@
       + '<input id="ngb-mail" class="finput" type="email" value="' + esc(etat.email) + '" placeholder="vous@email.com">'
       + '<label class="flabel">Précisions (optionnel)</label>'
       + '<textarea id="ngb-note" class="finput" rows="2" style="resize:none">' + esc(etat.note) + '</textarea>'
-      + '<label class="flabel">Code apporteur (optionnel)</label>'
+      + '<label class="flabel">Code partenaire (optionnel)</label>'
       + '<input id="ngb-code" class="finput" type="text" value="' + esc(codeApporteurInitial()) + '" placeholder="PRENOM-XXX" style="text-transform:uppercase">'
       + '<div class="cgv-row"><input type="checkbox" id="ngb-cgv">'
       + '<label for="ngb-cgv">J’accepte que ces informations soient transmises à Novogarden pour l’établissement d’un devis</label></div>'
