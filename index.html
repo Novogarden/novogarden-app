@@ -1653,8 +1653,17 @@ document.addEventListener('click',function(e){
 #volets{background:#f2f2f2;overflow-y:auto}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
 .topbar .logo-row .logo-name{display:none}
-.ngv-hero{background:var(--green);padding:4px 14px 9px;text-align:center}
+.ngv-hero{background:var(--green);padding:10px 16px 15px;text-align:center}
 .ngv-hero .sub{color:rgba(255,255,255,.92);font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.ngv-hero h2{color:#fff;font-size:17px;font-weight:800;line-height:1.25;margin:5px 0 5px}
+.ngv-hero .intro{color:rgba(255,255,255,.9);font-size:11.5px;line-height:1.45;font-weight:500;margin:0 auto;max-width:33em}
+.ngv-hero .zones{display:inline-block;margin-top:9px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 11px;font-size:10px;font-weight:700;color:#fff}
+/* Bandeau photo en tete de fiche : le client retrouve le visuel de la
+   tuile sur laquelle il vient de cliquer. La source reste data/services.json,
+   donc les photos se remplacent sans toucher au code. */
+.ngv-photo{position:relative;height:150px;border-radius:16px;overflow:hidden;margin-bottom:14px;background-color:var(--svc,var(--green));background-size:cover;background-position:center;background-repeat:no-repeat;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.ngv-photo .voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,0) 45%,rgba(0,0,0,.58) 100%)}
+.ngv-photo .txt{position:absolute;left:14px;right:14px;bottom:11px;color:#fff;font-size:12px;font-weight:600;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.55)}
 .ngv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 6px 88px}
 .ngv-tile{position:relative;border:none;cursor:pointer;text-align:left;padding:12px;color:#fff;overflow:hidden;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;transition:transform .12s ease}
 .ngv-tile.large{grid-column:span 2;aspect-ratio:2/1}
@@ -1781,7 +1790,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     var w = ecran('volets');
     if (!w) return;
     var l = liste();
-    var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div></div><div class="ngv-grid">';
+    var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div><h2>Six métiers, un seul interlocuteur</h2><p class="intro">Tonte robotisée, relevé de terrain par drone, modélisation et impression 3D, photo aérienne, étude de flux. Chaque prestation se chiffre et se réserve directement ici.</p><p class="zones">🌿 Orne (61) · Mayenne (53) · Cher (18)</p></div><div class="ngv-grid">';
     for (var i = 0; i < l.length; i++) {
       var s = l[i];
       var col = s.couleur || '#7DB532';
@@ -1857,6 +1866,13 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     var h = '<div class="ngv-wrap"><div class="ngv-head">'
       + '<button type="button" class="ngv-back" id="ngv-b1">← Retour</button>'
       + '<div style="font-size:16px;font-weight:800">' + esc(s.titre) + '</div></div>'
+      + (s.photo
+          ? '<div class="ngv-photo" style="background-image:url(&quot;' + s.photo + '&quot;)'
+            + (s.photoPos ? ';background-position:' + s.photoPos : '')
+            + (s.photoZoom ? ';background-size:' + s.photoZoom : '')
+            + '"><div class="voile"></div>'
+            + '<div class="txt">' + esc(s.sousTitre || '') + '</div></div>'
+          : '')
       + '<div class="ngv-card"><div class="ngv-ico2">' + ico(s.id).replace('class="ico" ','') + '</div>'
       + '<div class="ngv-desc">' + esc(s.description || s.sousTitre || '') + '</div></div>';
     if (lignes) h += '<div class="ngv-card">' + lignes + '</div>';
