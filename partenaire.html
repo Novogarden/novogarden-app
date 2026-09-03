@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7DB532">
+<title>Testez Novogarden et touchez 15 % — devenir partenaire</title>
+<meta name="description" content="L’application Novogarden ouvre ses portes aux premiers testeurs. Essayez-la, dites-nous ce qui manque, et touchez 15 % du montant TTC sur chaque client que vous nous amenez.">
+<link rel="canonical" href="https://novogarden.github.io/novogarden-app/partenaire.html">
+
+<!-- Cette page est faite pour etre partagee : sans ces balises, le lien
+     colle dans WhatsApp ou Facebook n'afficherait qu'une adresse nue. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Novogarden">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Testez Novogarden et touchez 15 %">
+<meta property="og:description" content="L’application ouvre ses portes aux premiers testeurs. Essayez-la, et touchez 15 % du montant TTC sur chaque client que vous nous amenez.">
+<meta property="og:url" content="https://novogarden.github.io/novogarden-app/partenaire.html">
+<meta property="og:image" content="https://novogarden.github.io/novogarden-app/assets/robot_flotte.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Testez Novogarden et touchez 15 %">
+<meta name="twitter:description" content="Essayez l’application, et touchez 15 % du montant TTC sur chaque client que vous nous amenez.">
+<meta name="twitter:image" content="https://novogarden.github.io/novogarden-app/assets/robot_flotte.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Charte Novogarden : memes couleurs et meme typo que l'application. */
+:root{
+  --green:#7DB532; --dark-green:#5a8e1e; --forest:#2C5F2D;
+  --cream:#FAF9F5; --ink:#14140F; --grey:#808080; --grey-light:#E8E8E6;
+  --orange:#E8892B; --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Montserrat,system-ui,sans-serif;background:var(--cream);color:var(--ink);
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+a{color:var(--dark-green)}
+
+/* ---------- en-tete ---------- */
+header{background:var(--forest);color:#fff;padding:26px 0 64px;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;
+  background:url('assets/robot_flotte.jpg') center/cover no-repeat;opacity:.18}
+header::after{content:'';position:absolute;bottom:-24px;left:0;right:0;height:48px;
+  background:var(--cream);border-radius:50% 50% 0 0}
+header .wrap{position:relative;z-index:1}
+.marque{font-size:20px;font-weight:800;letter-spacing:.04em;margin-bottom:26px}
+.marque span{border-bottom:2px solid var(--green);padding-bottom:2px}
+.chapeau{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
+  border-radius:999px;padding:5px 14px;font-size:11.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:16px}
+h1{font-size:clamp(27px,6.2vw,40px);font-weight:800;line-height:1.18;margin-bottom:14px}
+h1 em{font-style:normal;color:#A8D96B}
+.sous{font-size:16px;color:#DCE9CC;max-width:34em}
+
+/* ---------- sections ---------- */
+section{padding:38px 0}
+h2{font-size:23px;font-weight:800;color:var(--forest);margin-bottom:8px}
+.intro{color:#5c5f58;margin-bottom:22px;font-size:15px}
+.carte{background:#fff;border:1px solid var(--grey-light);border-radius:16px;padding:22px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.carte + .carte{margin-top:14px}
+
+/* ---------- le chiffre ---------- */
+.taux{background:var(--forest);color:#fff;border-radius:18px;padding:26px 22px;text-align:center}
+.taux .n{font-size:60px;font-weight:800;line-height:1;color:#A8D96B}
+.taux .l{font-size:14px;color:#DCE9CC;margin-top:8px}
+.exemples{margin-top:18px}
+.exemples .ligne{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:11px 0;border-top:1px solid var(--grey-light);font-size:14.5px}
+.exemples .ligne:first-child{border-top:0}
+.exemples .ligne b{font-size:17px;color:var(--forest);white-space:nowrap}
+.exemples .ligne span{color:#5c5f58}
+
+/* ---------- etapes ---------- */
+.etape{display:flex;gap:15px;padding:13px 0;border-top:1px solid var(--grey-light)}
+.etape:first-of-type{border-top:0}
+.puce{flex:0 0 34px;height:34px;border-radius:50%;background:var(--green);color:#fff;
+  font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+.etape h3{font-size:16px;font-weight:700;margin-bottom:2px}
+.etape p{font-size:14px;color:#5c5f58}
+
+/* ---------- prestations ---------- */
+.presta{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px}
+.presta div{background:#fff;border:1px solid var(--grey-light);border-radius:12px;padding:13px 14px}
+.presta .nom{font-size:14px;font-weight:700;line-height:1.3}
+.presta .prix{font-size:15px;font-weight:800;margin-top:5px}
+
+/* ---------- regles ---------- */
+.regle{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--grey-light);font-size:14.5px}
+.regle:first-of-type{border-top:0}
+.regle .pt{flex:0 0 9px;height:9px;border-radius:50%;background:var(--green);margin-top:8px}
+.regle b{display:block;margin-bottom:1px}
+.regle span{color:#5c5f58}
+
+/* ---------- appel a l'action ---------- */
+.cta{display:block;background:var(--green);color:#fff;text-align:center;text-decoration:none;
+  font-weight:800;font-size:16.5px;padding:17px 20px;border-radius:var(--radius);
+  box-shadow:0 4px 14px rgba(125,181,50,.35)}
+.cta:active{transform:scale(.985)}
+.cta.secondaire{background:#fff;color:var(--forest);border:2px solid var(--green);box-shadow:none}
+.apres{font-size:13px;color:var(--grey);text-align:center;margin-top:11px}
+
+footer{background:var(--forest);color:#9FBF7F;padding:26px 0 32px;font-size:13px;margin-top:34px}
+footer a{color:#DCE9CC}
+footer .haut{color:#fff;font-weight:700;margin-bottom:7px;font-size:15px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="marque">Novo<span>garden</span></div>
+    <p class="chapeau">Ouverture aux premiers testeurs</p>
+    <h1>Testez l’application.<br>Et touchez <em>15 %</em> sur ce que vous nous apportez.</h1>
+    <p class="sous">Novogarden vient d’ouvrir son application à un premier cercle. On cherche des
+      gens qui l’essaient pour de vrai, qui nous disent ce qui coince — et qui, au passage,
+      nous envoient du monde et se font payer pour ça.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Pourquoi on cherche des testeurs</h2>
+    <p class="intro">L’application est neuve. Elle chiffre et réserve six prestations, sans devis
+      d’attente. On veut savoir ce qu’elle vaut entre les mains de gens qui ne l’ont pas écrite.</p>
+    <div class="presta">
+      <div><div class="nom">Tonte robotisée</div><div class="prix" style="color:#7DB532">dès 29,90 €</div></div>
+      <div><div class="nom">Topographie 3D</div><div class="prix" style="color:#4A7C2F">dès 79 €</div></div>
+      <div><div class="nom">Modélisation 3D</div><div class="prix" style="color:#26648E">dès 49 €</div></div>
+      <div><div class="nom">Impression prototype</div><div class="prix" style="color:#C25E1B">dès 9 €</div></div>
+      <div><div class="nom">Prestation drone</div><div class="prix" style="color:#37474F">dès 79 €</div></div>
+      <div><div class="nom">Étude de flux</div><div class="prix" style="color:#6A4C93">sur devis</div></div>
+    </div>
+    <p class="apres" style="text-align:left;margin-top:12px">Tarifs TTC pour une prestation seule,
+      hors options. Interventions dans l’Orne (61) et la Mayenne (53) ; la 3D se traite à distance.</p>
+  </div>
+</section>
+
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>Ce que vous gagnez</h2>
+    <p class="intro">Un taux unique, sur les six prestations. Pas de palier, pas de condition de volume.</p>
+    <div class="taux">
+      <div class="n">15 %</div>
+      <div class="l">du montant TTC de la commande</div>
+    </div>
+    <div class="carte exemples" style="margin-top:14px">
+      <div class="ligne"><span>Relevé topographique d’un terrain de 2 hectares<br><small style="color:#9a9a95">prestation seule, 179 €</small></span><b>26,85 €</b></div>
+      <div class="ligne"><span>Carnet de 10 tontes, jardin de 800 m²<br><small style="color:#9a9a95">pack Sérénité, 312 €</small></span><b>46,80 €</b></div>
+      <div class="ligne"><span>Journée complète de prises de vue par drone<br><small style="color:#9a9a95">prestation seule, 390 €</small></span><b>58,50 €</b></div>
+      <div class="ligne"><span>Carnet de 5 relevés topographiques, 2 hectares<br><small style="color:#9a9a95">pack Essentiel, 780 €</small></span><b>117 €</b></div>
+    </div>
+    <p class="apres" style="text-align:left">Montants calculés sur la grille tarifaire en vigueur,
+      consultable dans l’application.</p>
+  </div>
+</section>
+
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>Comment ça marche</h2>
+    <p class="intro">Quatre étapes. Aucun papier à remplir pour commencer.</p>
+    <div class="carte">
+      <div class="etape"><div class="puce">1</div><div>
+        <h3>Vous créez votre compte</h3>
+        <p>Trois minutes. Vous cochez « Recommander Novogarden » à l’inscription.</p></div></div>
+      <div class="etape"><div class="puce">2</div><div>
+        <h3>Vous recevez votre code</h3>
+        <p>Un code à votre nom, du type PRÉNOM-XYZ, et un lien qui le transporte tout seul.</p></div></div>
+      <div class="etape"><div class="puce">3</div><div>
+        <h3>Vous en parlez autour de vous</h3>
+        <p>Votre contact ouvre le lien, ou tape votre code au moment d’envoyer sa demande.</p></div></div>
+      <div class="etape"><div class="puce">4</div><div>
+        <h3>Vous êtes payé</h3>
+        <p>Votre commission apparaît dès la commande confirmée, et vous est versée une fois
+          que le client a réglé.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>Les règles, sans petites lignes</h2>
+    <p class="intro">Elles sont écrites une fois, elles valent pour tout le monde.</p>
+    <div class="carte">
+      <div class="regle"><div class="pt"></div><div>
+        <b>Première commande du client uniquement</b>
+        <span>Un renouvellement chez un client déjà connu de Novogarden ne génère pas de
+          nouvelle commission.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Trente jours d’attribution</b>
+        <span>Votre code reste attaché à un client pendant trente jours après sa première
+          saisie.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Versement après encaissement</b>
+        <span>La commission se calcule dès que la commande est confirmée, et se verse quand
+          le client a payé. Vous voyez les deux montants dans votre espace.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Vous ne voyez pas les coordonnées</b>
+        <span>Dans votre espace, un client apporté apparaît en prénom, initiale et commune.
+          Ni e-mail, ni téléphone : l’application ne vous les transmet pas.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Aucun objectif, aucun engagement</b>
+        <span>Vous n’avez rien à vendre, rien à avancer, et rien à résilier. Si vous n’apportez
+          personne, il ne se passe rien.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:6px">
+  <div class="wrap">
+    <h2>Ce qu’on attend de vous, comme testeur</h2>
+    <p class="intro">C’est la partie qui nous rend service, et elle ne coûte que quelques minutes.</p>
+    <div class="carte">
+      <div class="regle"><div class="pt"></div><div>
+        <b>Essayez le parcours en entier</b>
+        <span>Choisissez une prestation, allez jusqu’au récapitulatif, regardez si le prix
+          annoncé vous paraît juste.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Dites-nous ce qui manque</b>
+        <span>Un mot qui n’est pas clair, une étape de trop, une prestation qu’on ne propose
+          pas encore : c’est exactement ce qu’on cherche.</span></div></div>
+      <div class="regle"><div class="pt"></div><div>
+        <b>Signalez ce qui casse</b>
+        <span>Le bouton de signalement est dans l’application. Un bug remonté est un bug
+          corrigé dans la semaine.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:6px;padding-bottom:10px">
+  <div class="wrap">
+    <a class="cta" href="index.html#partenaire">Créer mon compte partenaire</a>
+    <p class="apres">Cochez « Recommander Novogarden » à l’inscription. Votre code est activé
+      manuellement, sous vingt-quatre heures ouvrées.</p>
+    <a class="cta secondaire" style="margin-top:16px" href="index.html">Juste regarder l’application</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="haut">Novogarden</p>
+    <p>Une question avant de vous lancer : <a href="mailto:contact@novogardenhub.com">contact@novogardenhub.com</a></p>
+    <p style="margin-top:6px"><a href="https://novogardenhub.com">novogardenhub.com</a>
+      · <a href="index.html">l’application</a>
+      · <a href="crowdfunding.html">la waitlist tonte</a></p>
+    <p style="margin-top:12px;font-size:12px">Les commissions versées à un apporteur d’affaires
+      sont des revenus imposables. Selon votre situation, une déclaration ou un statut peut
+      être nécessaire : parlons-en avant votre première commission.</p>
+  </div>
+</footer>
+
+</body>
+</html>
