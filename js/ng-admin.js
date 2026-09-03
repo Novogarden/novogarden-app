@@ -91,7 +91,7 @@
             + P.esc(d.commune || '—') + (d.surface_m2 ? ' · ' + d.surface_m2 + ' m²' : '')
             + ' · ' + P.dateFr(d.created_at) + '</div></div>'
             + '<div class="ngp-remu">' + P.eur(d.commission_montant) + '</div></div>'
-            + '<div class="ngp-note">Apporteur : '
+            + '<div class="ngp-note">Partenaire : '
             + P.esc(d.apporteur ? (d.apporteur.prenom + ' ' + d.apporteur.nom
                 + ' (' + (d.apporteur.code_apporteur || '—') + ')') : 'aucun')
             + (d.code_apporteur && !d.apporteur ? ' — code saisi : ' + P.esc(d.code_apporteur) : '')
@@ -247,7 +247,7 @@
             + (p.code_apporteur ? '<br>Code : <strong>' + P.esc(p.code_apporteur) + '</strong>' : '')
             + '</div>'
             + '<label class="ngp-check"><input type="checkbox" data-adm-app="' + p.id + '"'
-            + (p.is_apporteur ? ' checked' : '') + '> <span>Apporteur d’affaires</span></label>'
+            + (p.is_apporteur ? ' checked' : '') + '> <span>Partenaire du réseau</span></label>'
             + '<label class="ngp-check"><input type="checkbox" data-adm-pre="' + p.id + '"'
             + (p.is_prestataire ? ' checked' : '') + '> <span>Prestataire</span></label>'
             + '<label class="ngp-check"><input type="checkbox" data-adm-val="' + p.id + '"'
