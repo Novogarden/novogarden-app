@@ -97,11 +97,20 @@
      prestataire_valide reste a false : c'est l'admin qui l'ouvre. */
   function enregistrerRoles(apporteur, prestataire) {
     if (!P.session) return Promise.resolve();
-    return P.client().from('profiles').update({
+    var maj = {
       is_apporteur: !!apporteur,
       is_prestataire: !!prestataire,
       rgpd_accepte_le: new Date().toISOString()
-    }).eq('id', P.session.user.id);
+    };
+    /* Le departement decide de ce que l'apporteur peut proposer autour de
+       lui : la tonte et le drone demandent un deplacement, la 3D non. On
+       le relit dans le formulaire ouvert plutot que de changer la
+       signature, appelee depuis deux endroits. */
+    var champ = document.getElementById('reg-departement')
+             || document.getElementById('ngp-r-dep');
+    var d = champ ? champ.value.toUpperCase().trim() : '';
+    if (/^(0[1-9]|[1-8][0-9]|9[0-5]|2A|2B|97[1-6])$/.test(d)) maj.departement = d;
+    return P.client().from('profiles').update(maj).eq('id', P.session.user.id);
   }
 
   /* ---------- deconnexion ---------- */
@@ -164,8 +173,12 @@
       + '<button type="button" class="ngp-back" id="ngp-r-back">← Retour</button>'
       + '<div class="ngp-titre">Que souhaitez-vous faire ?</div></div>'
       + '<div class="ngp-carte">'
+      + '<label class="flabel" style="margin:0 0 4px">Votre département</label>'
+      + '<input type="text" id="ngp-r-dep" class="finput" maxlength="3" inputmode="numeric"'
+      + ' autocomplete="off" placeholder="61" value="' + P.esc(p.departement || '') + '">'
+      + '<span class="ngp-note" style="display:block;margin:4px 0 12px">Il détermine les prestations que vous pouvez proposer autour de vous.</span>'
       + '<label class="ngp-check"><input type="checkbox" id="ngp-r-app"'
-      + (p.is_apporteur ? ' checked' : '') + '> <span><strong>Recommander Novogarden</strong><br>'
+      + (p.is_apporteur ? ' checked' : '') + '> <span><strong>Rejoindre le réseau</strong><br>'
       + '<span class="ngp-note">Vous partagez votre code et touchez une commission sur les clients que vous apportez.</span></span></label>'
       + '<label class="ngp-check"><input type="checkbox" id="ngp-r-pre"'
       + (p.is_prestataire ? ' checked' : '') + '> <span><strong>Réaliser des prestations</strong><br>'
