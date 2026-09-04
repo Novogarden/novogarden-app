@@ -183,49 +183,163 @@
       });
   }
 
+  /* ---------- Creation d'une mission ---------- */
+
+  /* Tout ce qui decrit la prestation vient de la grille tarifaire. On ne
+     tape plus « tonte 2000 m² » a la main : on choisit une tranche qui
+     existe, et le titre comme la description s'en deduisent. Une mission
+     ne peut donc pas decrire une prestation que Novogarden ne vend pas. */
+  function GR() { return global.NGPricing; }
+
   function formulaireMission() {
-    var h = '<details class="ngp-details" open><summary>Créer une mission</summary>'
+    return '<details class="ngp-details" open><summary>Créer une mission</summary>'
       + '<div class="ngp-carte" style="margin-top:10px">'
-      + '<label class="flabel">Titre</label><input class="finput" id="mi-titre" type="text">'
-      + '<label class="flabel">Type</label><select class="ngp-select" id="mi-type">';
-    Object.keys(TYPES).forEach(function (t) { h += '<option value="' + t + '">' + TYPES[t] + '</option>'; });
-    h += '</select>'
+      + '<label class="flabel">Prestation</label>'
+      + '<select class="finput" id="mi-type">'
+      + ORDRE_SVC.map(function (id) {
+          return '<option value="' + id + '">' + P.esc(TYPES[id] || id) + '</option>';
+        }).join('')
+      + '</select>'
+      + '<div id="mi-zone"></div>'
       + '<div class="ngp-grille2">'
       + '<div><label class="flabel">Commune</label><input class="finput" id="mi-commune" type="text"></div>'
       + '<div><label class="flabel">Code postal</label><input class="finput" id="mi-cp" type="text" maxlength="5"></div>'
       + '</div>'
-      + '<div class="ngp-grille2">'
-      + '<div><label class="flabel">Surface (m²)</label><input class="finput" id="mi-surface" type="number"></div>'
-      + '<div><label class="flabel">Rémunération (€)</label><input class="finput" id="mi-remu" type="number" step="0.01"></div>'
-      + '</div>'
       + '<label class="flabel">Date souhaitée</label><input class="finput" id="mi-date" type="date">'
-      + '<label class="flabel">Description</label><textarea class="finput" id="mi-desc" rows="3" style="resize:none"></textarea>'
+      + '<label class="flabel">Précisions pour le prestataire (optionnel)</label>'
+      + '<textarea class="finput" id="mi-desc" rows="2" style="resize:none"></textarea>'
       + '<div class="err-msg" id="mi-err"></div>'
       + '<button class="btn-p" id="mi-creer">Créer la mission</button>'
       + '</div></details>';
-    return h;
+  }
+
+  /* Les champs qui dependent de la prestation choisie sont reconstruits a
+     chaque changement : formule, tranche et options n'ont pas le meme sens
+     d'un metier a l'autre. */
+  function majZoneMission(z) {
+    var zone = z.querySelector('#mi-zone'); if (!zone) return;
+    var id = z.querySelector('#mi-type').value;
+    var G = GR();
+    if (!G || !G.isReady()) { zone.innerHTML = '<p class="ngp-note">Grille tarifaire indisponible.</p>'; return; }
+    var s = G.getService(id) || {};
+    var tranches = G.getTranches(id) || [];
+    var h = '';
+
+    if (G.hasPaliers(id)) {
+      h += '<label class="flabel">Formule</label><select class="finput" id="mi-palier">'
+        + G.getPaliers().map(function (p) {
+            return '<option value="' + p.id + '">' + P.esc(p.nom) + '</option>';
+          }).join('') + '</select>';
+    }
+
+    if (tranches.length) {
+      h += '<label class="flabel">' + P.esc(G.labelCritere(id)) + '</label>'
+        + '<select class="finput" id="mi-tranche">'
+        + tranches.map(function (t, k) {
+            return '<option value="' + k + '">' + P.esc(t.label) + '</option>';
+          }).join('') + '</select>';
+    }
+
+    if ((s.options || []).length) {
+      h += '<label class="flabel">Options</label><div style="margin:2px 0 10px">';
+      s.options.forEach(function (o, k) {
+        h += '<label class="ngp-check" style="margin:0 0 4px"><input type="checkbox" data-mi-opt="' + k + '">'
+          + ' <span style="font-size:13px">' + P.esc(o.label) + '</span></label>';
+      });
+      h += '</div>';
+    }
+
+    h += '<div class="ngp-ligne" style="margin:6px 0 2px">'
+      + '<span class="ngp-k">Prix client indicatif</span>'
+      + '<span class="ngp-v" id="mi-prix">—</span></div>'
+      + '<label class="flabel">Rémunération du prestataire (€)</label>'
+      + '<input class="finput" id="mi-remu" type="number" step="0.01" min="0">'
+      + '<p class="ngp-note" style="margin:4px 0 0">Le prix client vient de la grille. '
+      + 'La rémunération se fixe librement : c\'est votre marge.</p>';
+
+    zone.innerHTML = h;
+    zone.querySelectorAll('select, [data-mi-opt]').forEach(function (e) {
+      e.addEventListener('change', function () { majPrixMission(z); });
+    });
+    majPrixMission(z);
+  }
+
+  function lectureMission(z) {
+    var id = z.querySelector('#mi-type').value;
+    var G = GR();
+    var pal = z.querySelector('#mi-palier');
+    var tr = z.querySelector('#mi-tranche');
+    var opts = [];
+    z.querySelectorAll('[data-mi-opt]').forEach(function (c) {
+      if (c.checked) opts.push(parseInt(c.getAttribute('data-mi-opt'), 10));
+    });
+    return {
+      id: id,
+      palier: pal ? pal.value : 'solo',
+      trancheIndex: tr ? parseInt(tr.value, 10) : null,
+      tranche: tr ? (G.getTranches(id)[parseInt(tr.value, 10)] || null) : null,
+      options: opts,
+      service: G.getService(id) || {}
+    };
+  }
+
+  function majPrixMission(z) {
+    var e = z.querySelector('#mi-prix'); if (!e) return;
+    var d = lectureMission(z);
+    var r = GR().computePrice({ serviceId: d.id, trancheIndex: d.trancheIndex,
+                                palier: d.palier, options: d.options });
+    e.textContent = r.devis ? 'Sur devis' : GR().formatEUR(r.total);
   }
 
   function brancherFormulaireMission(z) {
+    var sel = z.querySelector('#mi-type');
+    if (sel) sel.addEventListener('change', function () { majZoneMission(z); });
+    majZoneMission(z);
+
     var b = z.querySelector('#mi-creer');
     if (!b) return;
     b.addEventListener('click', function () {
       var err = z.querySelector('#mi-err');
-      var remu = parseFloat(z.querySelector('#mi-remu').value);
-      if (isNaN(remu)) { err.textContent = 'La rémunération est obligatoire.'; return; }
-      err.textContent = '';
+      var d = lectureMission(z);
+      var remuChamp = z.querySelector('#mi-remu');
+      var remu = remuChamp ? parseFloat(remuChamp.value) : NaN;
+      if (isNaN(remu) || remu < 0) {
+        if (err) err.textContent = 'Indiquez la rémunération du prestataire.';
+        return;
+      }
+      if (err) err.textContent = '';
+
+      /* Le titre reprend la prestation et la tranche : un prestataire doit
+         comprendre ce qu'on lui propose sans ouvrir la fiche. */
+      var titre = (TYPES[d.id] || d.id) + (d.tranche ? ' — ' + d.tranche.label : '');
+      var detail = [];
+      if (GR().hasPaliers(d.id)) detail.push('Formule : ' + d.palier);
+      if (d.tranche) detail.push(GR().labelCritere(d.id) + ' : ' + d.tranche.label);
+      d.options.forEach(function (k) {
+        var o = (d.service.options || [])[k];
+        if (o) detail.push('Option : ' + o.label);
+      });
+      var saisie = z.querySelector('#mi-desc').value.trim();
+      if (saisie) detail.push(saisie);
+
+      /* surface_m2 n'a de sens que si le critere est une surface. */
+      var surface = null;
+      if (d.tranche && /surface/i.test(GR().labelCritere(d.id) || '')) {
+        surface = d.tranche.max || d.tranche.min || null;
+      }
+
       P.client().from('missions').insert({
-        titre: z.querySelector('#mi-titre').value.trim(),
-        type_prestation: z.querySelector('#mi-type').value,
+        titre: titre,
+        type_prestation: d.id,
         commune: z.querySelector('#mi-commune').value.trim() || null,
         code_postal: z.querySelector('#mi-cp').value.trim() || null,
-        surface_m2: parseInt(z.querySelector('#mi-surface').value, 10) || null,
+        surface_m2: surface,
         remuneration_prestataire: remu,
         date_souhaitee: z.querySelector('#mi-date').value || null,
-        description: z.querySelector('#mi-desc').value.trim() || null,
+        description: detail.join(' · ') || null,
         statut: 'ouverte'
       }).then(function (r) {
-        if (r.error) { err.textContent = r.error.message; return; }
+        if (r.error) { if (err) err.textContent = r.error.message; return; }
         P.toast('Mission créée.');
         sectionMissions();
       });
