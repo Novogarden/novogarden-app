@@ -50,6 +50,7 @@
       + '<div class="ngp-tabs">'
       + tab('leads', 'Leads') + tab('missions', 'Missions')
       + tab('partenaires', 'Partenaires') + tab('cr', 'Comptes-rendus')
+      + tab('couverture', 'Couverture')
       + '</div><div id="adm-corps"><div class="ngp-chargement">Chargement…</div></div></div>';
     w.innerHTML = h;
     w.querySelectorAll('[data-adm-tab]').forEach(function (b) {
@@ -61,7 +62,8 @@
     if (onglet === 'leads') sectionLeads();
     else if (onglet === 'missions') sectionMissions();
     else if (onglet === 'partenaires') sectionPartenaires();
-    else sectionCR();
+    else if (onglet === 'cr') sectionCR();
+    else sectionCouverture();
   }
 
   function tab(id, libelle) {
@@ -273,6 +275,105 @@
             });
           });
         });
+      });
+  }
+
+
+  /* ---------- Couverture geographique ---------- */
+
+  /* Un apporteur ne voit que les prestations desservies chez lui. La tonte
+     et le drone demandent un deplacement ; la modelisation et l'impression
+     se traitent a distance, donc partout. */
+  var ORDRE_SVC = ['tonte', 'topographie', 'modelisation', 'impression', 'drone', 'etude-flux'];
+
+  function sectionCouverture() {
+    var c = corps(); if (!c) return;
+    c.innerHTML = '<p class="ngp-note">Chargement…</p>';
+    P.client().from('couverture').select('*').order('service').order('departement')
+      .then(function (r) {
+        if (r.error) { c.innerHTML = '<p class="ngp-note">' + P.esc(r.error.message) + '</p>'; return; }
+        var par = {};
+        ORDRE_SVC.forEach(function (s) { par[s] = []; });
+        (r.data || []).forEach(function (l) { if (par[l.service]) par[l.service].push(l); });
+
+        var h = '<p class="ngp-note" style="margin:0 0 12px">Un apporteur ne peut proposer que les '
+              + 'prestations desservies dans son département. « Partout » couvre la France entière.</p>';
+        ORDRE_SVC.forEach(function (s) {
+          var lignes = par[s];
+          var partout = lignes.some(function (l) { return l.departement === 'FR' && l.actif; });
+          var deps = lignes.filter(function (l) { return l.actif && l.departement !== 'FR'; })
+                           .map(function (l) { return l.departement; });
+          h += '<div class="ngp-carte" style="margin-bottom:10px">'
+            + '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'
+            + '<span style="font-weight:800;font-size:14px">' + P.esc(TYPES[s] || s) + '</span>'
+            + '<label class="ngp-check" style="margin:0;font-size:12px">'
+            + '<input type="checkbox" data-cv-fr="' + s + '"' + (partout ? ' checked' : '') + '>'
+            + ' <span>Partout en France</span></label></div>';
+          if (!partout) {
+            h += '<div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">';
+            if (deps.length) {
+              deps.forEach(function (d) {
+                h += '<button type="button" data-cv-off="' + s + '|' + d + '"'
+                  + ' style="border:1px solid #D6E5C4;background:#EDF4E5;color:#2C5F2D;'
+                  + 'border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer">'
+                  + d + ' ✕</button>';
+              });
+            } else {
+              h += '<span class="ngp-note">Aucun département : cette prestation n’est proposée nulle part.</span>';
+            }
+            h += '</div><div style="display:flex;gap:8px;margin-top:10px">'
+              + '<input class="finput" style="max-width:92px" maxlength="3" inputmode="numeric"'
+              + ' placeholder="51" data-cv-in="' + s + '">'
+              + '<button type="button" class="ngp-lien" data-cv-add="' + s + '">Ajouter</button></div>';
+          }
+          h += '</div>';
+        });
+        c.innerHTML = h;
+        brancherCouverture();
+      });
+  }
+
+  function brancherCouverture() {
+    var c = corps(); if (!c) return;
+
+    c.querySelectorAll('[data-cv-fr]').forEach(function (b) {
+      b.addEventListener('change', function () {
+        var s = b.getAttribute('data-cv-fr');
+        majZone(s, 'FR', b.checked);
+      });
+    });
+
+    c.querySelectorAll('[data-cv-off]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var p = b.getAttribute('data-cv-off').split('|');
+        majZone(p[0], p[1], false);
+      });
+    });
+
+    c.querySelectorAll('[data-cv-add]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var s = b.getAttribute('data-cv-add');
+        var champ = c.querySelector('[data-cv-in="' + s + '"]');
+        var d = (champ.value || '').toUpperCase().trim();
+        if (!/^(0[1-9]|[1-8][0-9]|9[0-5]|2A|2B|97[1-6])$/.test(d)) {
+          P.toast('Département invalide : deux chiffres, ou 2A / 2B.');
+          return;
+        }
+        majZone(s, d, true);
+      });
+    });
+  }
+
+  /* Une zone se cree ou se reactive ; la desactiver conserve la ligne,
+     ce qui evite de perdre l'historique des reglages. */
+  function majZone(service, departement, actif) {
+    P.client().from('couverture')
+      .upsert({ service: service, departement: departement, actif: actif, maj: new Date().toISOString() },
+              { onConflict: 'service,departement' })
+      .then(function (r) {
+        if (r.error) { P.toast('Refusé : ' + r.error.message); return; }
+        P.toast(actif ? 'Zone activée.' : 'Zone retirée.');
+        sectionCouverture();
       });
   }
 
