@@ -28,14 +28,22 @@
     charger().then(function (d) { rendre(w, d); });
   }
 
+  var d_couverts = [], d_departement = null;
+
   function charger() {
     var sb = P.client();
     /* Un taux unique remplace le barème par pack : la commission ne
        dépend plus de la formule, mais du montant de la prestation. */
+    var dep = (P.profil && P.profil.departement) || null;
     return Promise.all([
       sb.from('leads_apporteur').select('*').order('created_at', { ascending: false }),
-      sb.from('reglages').select('valeur').eq('cle', 'taux_commission').maybeSingle()
+      sb.from('reglages').select('valeur').eq('cle', 'taux_commission').maybeSingle(),
+      sb.rpc('services_couverts', { p_departement: dep })
     ]).then(function (r) {
+      /* Ce que Novogarden dessert dans ce departement : la tonte et le
+         drone demandent un deplacement, la 3D se traite a distance. */
+      d_couverts = (r[2] && r[2].data) || [];
+      d_departement = dep;
       var t = (r[1] && r[1].data && r[1].data.valeur);
       return { filleuls: (r[0] && r[0].data) || [], taux: t == null ? null : Number(t) };
     });
@@ -63,6 +71,31 @@
     h += '</div>';
 
     /* ---- 2. Mon reseau ---- */
+    /* ---- Ce que ce partenaire peut proposer ---- */
+    h += '<p class="sect">Ce que vous pouvez proposer</p>';
+    if (!d_departement) {
+      h += '<div class="ngp-carte"><p class="ngp-note" style="margin:0">'
+        + 'Renseignez votre département dans « Que souhaitez-vous faire ? » : '
+        + 'il détermine les prestations disponibles autour de vous.</p></div>';
+    } else {
+      h += '<div class="ngp-carte">'
+        + '<p class="ngp-note" style="margin:0 0 10px">Département ' + P.esc(d_departement) + '</p>';
+      var ordre = ['tonte', 'topographie', 'modelisation', 'impression', 'drone', 'etude-flux'];
+      ordre.forEach(function (id, i) {
+        var ok = d_couverts.indexOf(id) >= 0;
+        h += '<div class="ngp-ligne"' + (i ? ' style="border-top:1px solid #EFEFED"' : '') + '>'
+          + '<span class="ngp-k" style="' + (ok ? '' : 'opacity:.45') + '">'
+          + P.esc(SERVICES[id] || id) + '</span>'
+          + '<span class="ngp-v" style="color:' + (ok ? '#4A7C2F' : '#9AA0A6') + '">'
+          + (ok ? 'disponible' : 'hors zone') + '</span></div>';
+      });
+      if (d_couverts.length === 0) {
+        h += '<p class="ngp-note" style="margin:10px 0 0">Aucune prestation n’est '
+          + 'desservie dans ce département pour le moment.</p>';
+      }
+      h += '</div>';
+    }
+
     h += '<p class="sect">Mon réseau</p>';
     if (!d.filleuls.length) {
       h += '<div class="ngp-carte"><p class="ngp-note" style="margin:0">'
