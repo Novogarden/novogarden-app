@@ -634,7 +634,10 @@ html, body {
             <input type="password" id="reg-pwd2" class="finput" placeholder="Retapez le même mot de passe">
             <!-- Roles partenaires : masques tant que Supabase n'est pas configure -->
             <div id="ngp-roles-insc" style="display:none">
-              <label class="flabel" style="margin-top:14px">Que souhaitez-vous faire ?</label>
+              <label class="flabel" style="margin-top:14px">Votre département</label>
+          <input type="text" id="reg-departement" class="finput" placeholder="61" maxlength="3" inputmode="numeric" autocomplete="off">
+          <span class="ngp-note" style="display:block;margin:4px 0 0">Deux chiffres. Il détermine les prestations que vous pouvez proposer autour de vous.</span>
+          <label class="flabel" style="margin-top:14px">Que souhaitez-vous faire ?</label>
               <label class="ngp-check"><input type="checkbox" id="reg-role-apporteur">
                 <span><strong>Rejoindre le réseau</strong><br><span class="ngp-note">Partagez votre code, touchez une commission sur les clients apportés.</span></span></label>
               <label class="ngp-check"><input type="checkbox" id="reg-role-prestataire">
