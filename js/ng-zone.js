@@ -151,15 +151,79 @@
     if (c) c.addEventListener('click', saisieManuelle);
   }
 
+  /* Le prompt du navigateur affiche l'adresse du site en en-tete, ce qui
+     expose une URL technique au milieu du parcours. On dessine donc notre
+     propre boite, aux couleurs de l'application. */
   function saisieManuelle() {
-    var v = global.prompt('Votre département (deux chiffres, ou 2A / 2B) :', dept || '');
-    if (v === null) return;
-    var d = v.toUpperCase().trim();
-    if (!valide(d)) {
-      if (P && P.toast) P.toast('Département invalide.');
-      return;
+    if (document.getElementById('ngz-ov')) return;
+
+    var ov = document.createElement('div');
+    ov.id = 'ngz-ov';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);'
+      + 'display:flex;align-items:center;justify-content:center;padding:22px';
+
+    ov.innerHTML =
+        '<div style="background:#fff;border-radius:18px;padding:22px 20px;width:100%;'
+      + 'max-width:330px;box-shadow:0 12px 40px rgba(0,0,0,.28);'
+      + 'font-family:inherit;text-align:left">'
+      + '<p style="margin:0 0 4px;font-size:17px;font-weight:800;color:#22271F">Votre département</p>'
+      + '<p style="margin:0 0 14px;font-size:12.5px;color:#6B7280;line-height:1.45">'
+      + 'Il détermine les prestations disponibles autour de vous.</p>'
+      + '<input id="ngz-in" type="text" inputmode="numeric" maxlength="3" placeholder="61" '
+      + 'style="width:100%;box-sizing:border-box;border:1.5px solid #E2E5DE;border-radius:10px;'
+      + 'padding:12px 14px;font-size:19px;font-weight:700;font-family:inherit;text-align:center;'
+      + 'letter-spacing:.12em;color:#2C5F2D;outline:none">'
+      + '<p id="ngz-err" style="margin:8px 0 0;font-size:12px;color:#C0392B;min-height:15px"></p>'
+      + '<button id="ngz-ok" style="width:100%;margin-top:8px;background:#7DB532;color:#fff;'
+      + 'border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;'
+      + 'font-family:inherit;cursor:pointer">Valider</button>'
+      + '<button id="ngz-geo" style="width:100%;margin-top:8px;background:#fff;color:#2C5F2D;'
+      + 'border:1.5px solid #7DB532;border-radius:12px;padding:11px;font-size:13.5px;'
+      + 'font-weight:700;font-family:inherit;cursor:pointer">Me localiser à la place</button>'
+      + '<button id="ngz-non" style="width:100%;margin-top:6px;background:none;color:#6B7280;'
+      + 'border:none;padding:9px;font-size:13px;font-family:inherit;cursor:pointer">Annuler</button>'
+      + '</div>';
+
+    document.body.appendChild(ov);
+
+    var champ = ov.querySelector('#ngz-in');
+    var err = ov.querySelector('#ngz-err');
+    champ.value = dept || '';
+    setTimeout(function () { champ.focus(); champ.select(); }, 60);
+
+    function fermer() { if (ov.parentNode) ov.parentNode.removeChild(ov); }
+
+    function valider() {
+      var d = (champ.value || '').toUpperCase().trim();
+      if (!valide(d)) {
+        err.textContent = 'Deux chiffres, ou 2A / 2B.';
+        champ.style.borderColor = '#C0392B';
+        return;
+      }
+      fermer();
+      poser(d);
     }
-    poser(d);
+
+    ov.querySelector('#ngz-ok').addEventListener('click', valider);
+    ov.querySelector('#ngz-non').addEventListener('click', fermer);
+    ov.querySelector('#ngz-geo').addEventListener('click', function () {
+      fermer();
+      position().then(deptDesCoordonnees).then(function (d) {
+        if (valide(d)) poser(d);
+        else if (P && P.toast) P.toast('Position introuvable. Saisissez votre département.');
+      }).catch(function () {
+        if (P && P.toast) P.toast('Position refusée. Saisissez votre département.');
+      });
+    });
+    champ.addEventListener('input', function () {
+      err.textContent = ''; champ.style.borderColor = '#E2E5DE';
+    });
+    champ.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') valider();
+      if (e.key === 'Escape') fermer();
+    });
+    /* Un clic hors de la carte referme, comme partout ailleurs. */
+    ov.addEventListener('click', function (e) { if (e.target === ov) fermer(); });
   }
 
   function poser(d) {
