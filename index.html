@@ -1673,13 +1673,13 @@ document.addEventListener('click',function(e){
 
 <!-- ================= NOVOGARDEN — VOLETS / SERVICES v2 ================= -->
 <style>
-#volets{background:#f2f2f2;overflow-y:auto}
+#volets{background:#f2f2f2;display:flex;flex-direction:column;overflow:hidden}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
 .topbar .logo-row .logo-name{display:none}
-.ngv-hero{background:var(--green);padding:10px 16px 15px;text-align:center}
+.ngv-hero{background:var(--green);padding:8px 16px 10px;text-align:center;flex-shrink:0}
 .ngv-hero .sub{color:rgba(255,255,255,.92);font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.ngv-hero h2{color:#fff;font-size:17px;font-weight:800;line-height:1.25;margin:5px 0 5px}
-.ngv-hero .intro{color:rgba(255,255,255,.9);font-size:11.5px;line-height:1.45;font-weight:500;margin:0 auto;max-width:33em}
+.ngv-hero h2{color:#fff;font-size:13.5px;font-weight:700;line-height:1.3;margin:3px 0 0}
+.ngv-hero .intro{display:none}
 .ngv-hero .zones{display:inline-block;margin-top:9px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 11px;font-size:10px;font-weight:700;color:#fff}
 /* Bandeau photo en tete de fiche : le client retrouve le visuel de la
    tuile sur laquelle il vient de cliquer. La source reste data/services.json,
@@ -1687,9 +1687,17 @@ document.addEventListener('click',function(e){
 .ngv-photo{position:relative;height:150px;border-radius:16px;overflow:hidden;margin-bottom:14px;background-color:var(--svc,var(--green));background-size:cover;background-position:center;background-repeat:no-repeat;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .ngv-photo .voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,0) 45%,rgba(0,0,0,.58) 100%)}
 .ngv-photo .txt{position:absolute;left:14px;right:14px;bottom:11px;color:#fff;font-size:12px;font-weight:600;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.55)}
-.ngv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 6px 88px}
-.ngv-tile{position:relative;border:none;cursor:pointer;text-align:left;padding:12px;color:#fff;overflow:hidden;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;transition:transform .12s ease}
-.ngv-tile.large{grid-column:span 2;aspect-ratio:2/1}
+/* Les tuiles se divisent l'espace : une seule prestation occupe tout
+   l'ecran, deux le partagent en deux, et ainsi de suite. Le nombre est
+   pose par js/ng-zone.js, qui seul sait combien restent visibles. */
+.ngv-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:6px;padding:6px;flex:1;min-height:0}
+.ngv-grid[data-n="1"],.ngv-grid[data-n="2"],.ngv-grid[data-n="3"]{grid-template-columns:1fr}
+/* Nombre impair : la premiere occupe la largeur, pour ne pas laisser de trou. */
+.ngv-grid[data-n="5"]>.ngv-tile:first-child,
+.ngv-grid[data-n="7"]>.ngv-tile:first-child{grid-column:span 2}
+.ngv-tile{position:relative;border:none;cursor:pointer;text-align:left;padding:12px;color:#fff;overflow:hidden;min-height:0;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;transition:transform .12s ease}
+/* .large vient de data/services.json ; la repartition prime desormais. */
+.ngv-tile.large{grid-column:auto}
 .ngv-tile:active{transform:scale(.96)}
 .ngv-tile svg.ico{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ngv-tile .lab{font-size:14px;font-weight:700;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.35)}
@@ -1697,10 +1705,9 @@ document.addEventListener('click',function(e){
 .ngv-tile .tag{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.38);padding:3px 7px}
 /* Une prestation hors zone reste visible : la masquer ferait croire que
    Novogarden ne l'exerce pas du tout. Elle est seulement rendue inerte. */
-.ngv-tile.ngv-hors-zone{filter:grayscale(.85) brightness(.9);cursor:default}
-.ngv-tile.ngv-hors-zone .tag{opacity:.35}
+.ngv-tile.ngv-hors-zone{display:none}
 .ngv-zone-note{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:4px 6px}
-.ngv-zone{margin-top:9px;font-size:10.5px;color:rgba(255,255,255,.9);font-weight:600}
+.ngv-zone{margin-top:5px;font-size:10.5px;color:rgba(255,255,255,.9);font-weight:600}
 .ngv-zone-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:999px;padding:5px 13px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer}
 .ngv-zone-lien{background:none;border:none;color:#fff;text-decoration:underline;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;padding:0 2px}
 .ngv-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 32px}
@@ -1821,7 +1828,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     var w = ecran('volets');
     if (!w) return;
     var l = liste();
-    var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div><h2>Six métiers, un seul interlocuteur</h2><p class="intro">Tonte robotisée, relevé de terrain par drone, modélisation et impression 3D, photo aérienne, étude de flux. Chaque prestation se chiffre et se réserve directement ici.</p><p class="zones">🌿 Orne (61) · Mayenne (53) · Calvados (14)</p></div><div class="ngv-grid">';
+    var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div><h2>Votre prix tout de suite, sans attendre de devis</h2></div><div class="ngv-grid">';
     for (var i = 0; i < l.length; i++) {
       var s = l[i];
       var col = s.couleur || '#7DB532';
