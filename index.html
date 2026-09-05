@@ -847,7 +847,13 @@ function navTo(id){
   const map={home:'nav-home',booking:'nav-booking',tontes:'nav-tontes',solde:'nav-solde',compte:'nav-compte',notifs:'nav-compte'};
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const nid=map[id]; if(nid) document.getElementById(nid).classList.add('active');
-}
+
+      /* Chaque onglet s'ouvre en haut : sans cela on garde la position de
+         defilement de l'ecran precedent et on arrive au milieu du contenu. */
+      const zone = document.querySelector('.content');
+      if (zone) { zone.scrollTop = 0; }
+      window.scrollTo(0, 0);
+    }
 
 /* ================================================================
    AUTH
@@ -1673,7 +1679,7 @@ document.addEventListener('click',function(e){
 
 <!-- ================= NOVOGARDEN — VOLETS / SERVICES v2 ================= -->
 <style>
-#volets{background:#f2f2f2;display:flex;flex-direction:column;overflow:hidden}
+#volets{background:#f2f2f2;flex-direction:column;overflow:hidden}#volets.active{display:flex}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
 .topbar .logo-row .logo-name{display:none}
 .ngv-hero{background:var(--green);padding:8px 16px 10px;text-align:center;flex-shrink:0}
