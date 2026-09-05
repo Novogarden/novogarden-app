@@ -120,35 +120,50 @@
      il en reste. Une seule prestation occupe tout l'ecran, deux le coupent
      en deux, et ainsi de suite. */
   function repartir(n) {
+    /* Les tuiles visibles se partagent la hauteur disponible. Quand elles sont
+       en nombre impair, la premiere prend toute la largeur pour eviter une
+       case vide en bas de grille. */
     var g = document.querySelector('.ngv-grid');
-    if (!g) return;
-    if (!n) n = g.querySelectorAll('[data-ngv]:not(.ngv-hors-zone)').length;
+    if (!g) { return; }
+    var vis = [].slice.call(g.querySelectorAll('[data-ngv]')).filter(function (e) {
+      return !e.classList.contains('ngv-hors-zone');
+    });
+    if (!n) { n = vis.length; }
     g.setAttribute('data-n', String(Math.max(1, Math.min(n, 7))));
+    vis.forEach(function (e) { e.classList.remove('ngv-large'); });
+    if (n >= 5 && n % 2 === 1 && vis[0]) { vis[0].classList.add('ngv-large'); }
   }
 
   /* Le visiteur doit pouvoir corriger : une geolocalisation se trompe. */
   function majBandeau() {
+    /* Deux etats. Zone connue : on la rappelle, avec un lien pour en changer.
+       Zone inconnue : rien n'est masque, et on propose la geolocalisation pour
+       n'afficher que ce qui est reellement disponible sur place. Aucun
+       decompte : le nombre de tuiles est deja visible a l'ecran. */
     var hero = document.querySelector('.ngv-hero');
-    if (!hero) return;
-    var b = hero.querySelector('.ngv-zone');
-    if (!b) {
-      b = document.createElement('p');
-      b.className = 'ngv-zone';
-      hero.appendChild(b);
+    if (!hero) { return; }
+    var p = hero.querySelector('.ngv-zone');
+    if (!p) {
+      p = document.createElement('p');
+      p.className = 'ngv-zone';
+      hero.appendChild(p);
     }
-    if (!dept) {
-      b.innerHTML = '<button type="button" class="ngv-zone-btn" id="ngv-ou">'
-                  + '\u25CE Voir ce qui est disponible chez moi</button>';
-      var bt = b.querySelector('#ngv-ou');
-      if (bt) bt.addEventListener('click', function () { demander(true); });
-      return;
+    p.textContent = '';
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ngv-zone-lien';
+    b.id = 'ngv-chg';
+    if (dept) {
+      var nom = (typeof NOMS === 'object' && NOMS) ? NOMS[dept] : null;
+      p.appendChild(document.createTextNode(nom ? (nom + ' (' + dept + ') ') : ('Département ' + dept + ' ')));
+      b.textContent = 'changer';
+      b.addEventListener('click', function () { saisieManuelle(); });
+    } else {
+      p.appendChild(document.createTextNode('Voir ce qui est disponible chez vous '));
+      b.textContent = 'me localiser';
+      b.addEventListener('click', function () { demander(true); });
     }
-    var n = couverts ? couverts.length : 6;
-    b.innerHTML = 'Département ' + dept + ' \u00b7 ' + n + ' prestation' + (n > 1 ? 's' : '')
-                + ' disponible' + (n > 1 ? 's' : '')
-                + ' <button type="button" class="ngv-zone-lien" id="ngv-chg">changer</button>';
-    var c = b.querySelector('#ngv-chg');
-    if (c) c.addEventListener('click', saisieManuelle);
+    p.appendChild(b);
   }
 
   /* Le prompt du navigateur affiche l'adresse du site en en-tete, ce qui
