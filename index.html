@@ -1695,6 +1695,14 @@ document.addEventListener('click',function(e){
 .ngv-tile .lab{font-size:14px;font-weight:700;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.35)}
 .ngv-tile .sub2{font-size:10.5px;font-weight:500;opacity:.88;line-height:1.3;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
 .ngv-tile .tag{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.38);padding:3px 7px}
+/* Une prestation hors zone reste visible : la masquer ferait croire que
+   Novogarden ne l'exerce pas du tout. Elle est seulement rendue inerte. */
+.ngv-tile.ngv-hors-zone{filter:grayscale(.85) brightness(.9);cursor:default}
+.ngv-tile.ngv-hors-zone .tag{opacity:.35}
+.ngv-zone-note{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:4px 6px}
+.ngv-zone{margin-top:9px;font-size:10.5px;color:rgba(255,255,255,.9);font-weight:600}
+.ngv-zone-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:999px;padding:5px 13px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer}
+.ngv-zone-lien{background:none;border:none;color:#fff;text-decoration:underline;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;padding:0 2px}
 .ngv-wrap{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 32px}
 /* .screen est un conteneur flex en overflow:hidden : sans overflow-y sur
    .ngv-wrap, tout le contenu depassant la hauteur de l'ecran etait
@@ -2150,6 +2158,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
 <script src="js/ng-apporteur.js"></script>
 <script src="js/ng-prestataire.js"></script>
 <script src="js/ng-admin.js"></script>
+<script src="js/ng-zone.js"></script>
 <script>
 /* Un lien venu de partenaire.html demande directement l'ecran d'inscription.
    Sans cela le visiteur atterrit sur l'accueil et doit trouver seul Connexion,
