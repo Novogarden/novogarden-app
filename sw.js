@@ -1,4 +1,4 @@
-const CACHE = 'ng-v13';
+const CACHE = 'ng-v14';
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(k => Promise.all(k.map(n => caches.delete(n)))));
