@@ -1308,22 +1308,29 @@ function saveEdit(){
    OVERLAYS
    ================================================================ */
 function closeOverlay(id){document.getElementById(id).style.display='none';}
-/* Version de l'application. A remonter avec le cache du service worker :
-               NG_VERSION vaut vXX quand sw.js cache ng-vXX. Elle accompagne chaque
-               signalement pour savoir sur quelle build le probleme est apparu. */
-            const NG_VERSION = 'v17';
-            let versionTracee = NG_VERSION;
+/* Version de l'application. Elle est lue dans sw.js plutot que recopiee ici :
+               un numero ecrit a deux endroits finit toujours par diverger, et une
+               version fausse dans un rapport de bug est pire que pas de version. */
+            let versionTracee = '?';
       
-            /* Le service worker garde parfois une version plus ancienne que celle
-               publiee. On compare les deux : un ecart explique a lui seul beaucoup
-               de bugs qui ne se reproduisent pas de notre cote. */
             async function versionComplete() {
-              let texte = NG_VERSION;
+              let publiee = null;
+              let installee = null;
+              try {
+                const src = await fetch('sw.js', { cache: 'no-store' }).then(function (r) { return r.text(); });
+                const m = src.match(/ng-v\d+/);
+                if (m) { publiee = m[0]; }
+              } catch (e) { /* hors ligne : on se rabat sur le cache local */ }
               try {
                 const noms = await caches.keys();
-                const cache = noms.filter(function (n) { return /^ng-v\d+$/.test(n); })[0];
-                if (cache && cache !== 'ng-' + NG_VERSION) { texte += ' · cache ' + cache; }
-              } catch (e) { /* caches indisponible : on garde la version declaree */ }
+                installee = noms.filter(function (x) { return /^ng-v\d+$/.test(x); })[0] || null;
+              } catch (e) { /* caches indisponible */ }
+              let texte = publiee || installee || '?';
+              /* Un ecart entre la version publiee et celle que le navigateur a
+                 gardee explique a lui seul beaucoup de bugs introuvables. */
+              if (publiee && installee && publiee !== installee) {
+                texte = publiee + ' · en cache ' + installee;
+              }
               versionTracee = texte;
               return texte;
             }
@@ -1331,7 +1338,7 @@ function closeOverlay(id){document.getElementById(id).style.display='none';}
             function afficherVersion() {
               const el = document.getElementById('bug-version');
               if (!el) { return; }
-              el.textContent = 'Version ' + NG_VERSION;
+              el.textContent = 'Version ' + versionTracee;
               versionComplete().then(function (t) { el.textContent = 'Version ' + t; });
             }
       
