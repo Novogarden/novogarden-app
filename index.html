@@ -795,6 +795,7 @@ html, body {
     <div class="err-msg" id="err-bug" style="margin-bottom:6px"></div>
     <button class="sheet-btn green" id="btn-bug" onclick="doReportBug()">📤 Envoyer</button>
     <button class="sheet-btn outline" onclick="closeOverlay('bug-overlay')">Annuler</button>
+          <div id="bug-version" class="bug-version"></div>
   </div>
 </div>
 <div class="date-overlay" id="date-overlay">
@@ -1307,13 +1308,41 @@ function saveEdit(){
    OVERLAYS
    ================================================================ */
 function closeOverlay(id){document.getElementById(id).style.display='none';}
-function openBugReport(){
+/* Version de l'application. A remonter avec le cache du service worker :
+               NG_VERSION vaut vXX quand sw.js cache ng-vXX. Elle accompagne chaque
+               signalement pour savoir sur quelle build le probleme est apparu. */
+            const NG_VERSION = 'v17';
+            let versionTracee = NG_VERSION;
+      
+            /* Le service worker garde parfois une version plus ancienne que celle
+               publiee. On compare les deux : un ecart explique a lui seul beaucoup
+               de bugs qui ne se reproduisent pas de notre cote. */
+            async function versionComplete() {
+              let texte = NG_VERSION;
+              try {
+                const noms = await caches.keys();
+                const cache = noms.filter(function (n) { return /^ng-v\d+$/.test(n); })[0];
+                if (cache && cache !== 'ng-' + NG_VERSION) { texte += ' · cache ' + cache; }
+              } catch (e) { /* caches indisponible : on garde la version declaree */ }
+              versionTracee = texte;
+              return texte;
+            }
+      
+            function afficherVersion() {
+              const el = document.getElementById('bug-version');
+              if (!el) { return; }
+              el.textContent = 'Version ' + NG_VERSION;
+              versionComplete().then(function (t) { el.textContent = 'Version ' + t; });
+            }
+      
+            function openBugReport(){
   document.getElementById('bug-desc').value='';
   document.getElementById('err-bug').textContent='';
   const btn=document.getElementById('btn-bug');btn.disabled=false;btn.textContent='📤 Envoyer';
   document.getElementById('bug-overlay').style.display='flex';
   setTimeout(()=>document.getElementById('bug-desc').focus(),100);
-}
+  afficherVersion();
+      }
 async function doReportBug(){
   const desc=document.getElementById('bug-desc').value.trim();
   const screenshotFile=document.getElementById('bug-screenshot');
@@ -1331,7 +1360,8 @@ async function doReportBug(){
         _subject:'[Bug Novogarden] Signalement client',
         _captcha:'false',
         _template:'table',
-        source:'PWA Bug Report',
+version: versionTracee,
+                source:'PWA Bug Report',
         utilisateur:userInfo,
         description:desc+screenshotInfo,
         date:new Date().toLocaleString('fr-FR')
@@ -1679,7 +1709,7 @@ document.addEventListener('click',function(e){
 
 <!-- ================= NOVOGARDEN — VOLETS / SERVICES v2 ================= -->
 <style>
-#volets{background:#f2f2f2;flex-direction:column;overflow:hidden}#volets.active{display:flex}
+#volets{background:#f2f2f2;flex-direction:column;overflow:hidden}.bug-version{margin-top:10px;text-align:center;font-size:11px;color:#9a9a9a;letter-spacing:.3px}#volets.active{display:flex}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
 .topbar .logo-row .logo-name{display:none}
 .ngv-hero{background:var(--green);padding:8px 16px 10px;text-align:center;flex-shrink:0}
