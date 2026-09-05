@@ -102,22 +102,28 @@
   }
 
   function appliquer() {
+    var visibles = 0;
     document.querySelectorAll('[data-ngv]').forEach(function (t) {
       var id = t.getAttribute('data-ngv');
-      if (id === 'contact') return;
-      var ok = estCouvert(id);
+      var ok = (id === 'contact') || estCouvert(id);
       t.classList.toggle('ngv-hors-zone', !ok);
+      /* Vestige de la version grisee : on nettoie s'il en reste. */
       var marque = t.querySelector('.ngv-zone-note');
-      if (!ok && !marque) {
-        var s = document.createElement('span');
-        s.className = 'ngv-zone-note';
-        s.textContent = 'Pas encore chez vous';
-        t.appendChild(s);
-      } else if (ok && marque) {
-        marque.remove();
-      }
+      if (marque) marque.remove();
+      if (ok) visibles++;
     });
+    repartir(visibles);
     majBandeau();
+  }
+
+  /* Les tuiles se partagent la hauteur : le CSS a besoin de savoir combien
+     il en reste. Une seule prestation occupe tout l'ecran, deux le coupent
+     en deux, et ainsi de suite. */
+  function repartir(n) {
+    var g = document.querySelector('.ngv-grid');
+    if (!g) return;
+    if (!n) n = g.querySelectorAll('[data-ngv]:not(.ngv-hors-zone)').length;
+    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 7))));
   }
 
   /* Le visiteur doit pouvoir corriger : une geolocalisation se trompe. */
@@ -209,6 +215,7 @@
   }
 
   function init() {
+    repartir();
     demarrer();
     observer();
     intercepter();
@@ -222,6 +229,7 @@
     couverts: function () { return couverts; },
     estCouvert: estCouvert,
     definir: poser,
+    repartir: repartir,
     oublier: function () { oublier(); dept = null; couverts = null; appliquer(); },
     NOMS: NOMS
   };
