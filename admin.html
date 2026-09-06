@@ -166,7 +166,8 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
   /* Caches memoire : les ecrans se croisent beaucoup (un lead renvoie a son
      apporteur, une mission a son prestataire). On charge les profils une fois
      et on s'y refere partout plutot que de multiplier les jointures. */
-  var cache = { leads: null, missions: null, profils: null, couverture: null, cr: null };
+  var cache = { leads: null, missions: null, profils: null, couverture: null, cr: null,
+                comptes: null, comptesErreur: null };
 
   var STATUTS_LEAD = ['nouveau', 'contacte', 'devis_envoye', 'confirme', 'encaisse', 'commission_versee', 'perdu'];
   var STATUTS_MISSION = ['ouverte', 'acceptee', 'en_cours', 'terminee', 'annulee'];
@@ -278,7 +279,8 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     { id: 'missions', lib: 'Missions' },
     { id: 'reseau', lib: 'Reseau' },
     { id: 'couverture', lib: 'Couverture' },
-    { id: 'cr', lib: 'Comptes rendus' }
+    { id: 'cr', lib: 'Comptes rendus' },
+    { id: 'comptes', lib: 'Comptes' }
   ];
 
   function construireRail() {
@@ -314,7 +316,8 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     });
     ({
       bord: vueBord, leads: vueLeads, missions: vueMissions,
-      reseau: vueReseau, couverture: vueCouverture, cr: vueCR
+      reseau: vueReseau, couverture: vueCouverture, cr: vueCR,
+      comptes: vueComptes
     })[id]();
   }
 
@@ -336,6 +339,13 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     cache.profils = r[2].data || [];
     cache.couverture = r[3].data || [];
     cache.cr = r[4].data || [];
+
+    /* Les dates de connexion vivent dans auth.users, que le client ne peut
+       pas lire. La fonction comptes_admin les expose, et refuse elle-meme
+       tout appelant qui n'est pas administrateur. */
+    var c = await sb.rpc('comptes_admin');
+    cache.comptes = c.error ? [] : (c.data || []);
+    cache.comptesErreur = c.error ? c.error.message : null;
 
     if (complet && !pricing) {
       try { pricing = await (await fetch('data/pricing.json', { cache: 'no-store' })).json(); }
@@ -869,6 +879,84 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     zone.innerHTML = r.data.filter(function (u) { return u.signedUrl; }).map(function (u, i) {
       return '<img src="' + esc(u.signedUrl) + '" alt="' + esc((c.photos[i] || {}).type || 'photo') + '" loading="lazy">';
     }).join('');
+  }
+
+  /* =====================================================================
+     Comptes
+     ===================================================================== */
+
+  function heure(d) {
+    if (!d) { return null; }
+    return new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function vueComptes() {
+    var C = cache.comptes || [];
+    var P = cache.profils || [];
+
+    /* Un compte existe dans auth.users ; sa fiche vit dans profiles. On lit les
+       deux et on les rapproche par identifiant, pour montrer sur une seule
+       ligne qui s'est inscrit, quand, et s'il est deja revenu. */
+    var lignes = C.map(function (c) {
+      var p = P.filter(function (x) { return x.id === c.id; })[0] || {};
+      return {
+        id: c.id,
+        email: c.email || p.email || '',
+        cree: c.cree_le,
+        confirme: c.confirme_le,
+        vu: c.derniere_connexion,
+        nom: nomDe(p.id ? p : null),
+        app: !!p.is_apporteur,
+        pre: !!p.is_prestataire,
+        adm: !!p.is_admin,
+        code: p.code_apporteur || ''
+      };
+    });
+
+    var maintenant = Date.now();
+    var jamais = lignes.filter(function (l) { return !l.vu; }).length;
+    var recents = lignes.filter(function (l) {
+      return l.vu && (maintenant - new Date(l.vu).getTime()) < 7 * 864e5;
+    }).length;
+    var attente = lignes.filter(function (l) { return !l.confirme; }).length;
+
+    $('#scene').innerHTML =
+      enteteHTML('Comptes', lignes.length + ' inscription' + (lignes.length > 1 ? 's' : '') + ' sur l\'application') +
+      (cache.comptesErreur
+        ? '<div class="erreur">Les dates de connexion sont indisponibles : ' + esc(cache.comptesErreur) +
+          '<' + '/div>'
+        : '') +
+      '<div class="chiffres" style="margin-bottom:16px">' +
+        chiffre(lignes.length, 'comptes crees') +
+        chiffre(recents, 'revenus sous 7 jours', (recents ? 'accent' : '')) +
+        chiffre(jamais, 'jamais connectes', (jamais ? 'alerte' : '')) +
+        chiffre(attente, 'email non confirme', (attente ? 'alerte' : '')) +
+      '<' + '/div>' +
+      '<div class="tableau"><table><thead><tr>' +
+        '<th>Inscrit le<' + '/th><th>Personne<' + '/th><th>Email<' + '/th><th>Confirme<' + '/th>' +
+        '<th>Derniere connexion<' + '/th><th>Roles<' + '/th><th>Code<' + '/th>' +
+      '<' + '/tr><' + '/thead><tbody>' +
+      (lignes.length ? lignes.map(function (l) {
+        var roles = [];
+        if (l.adm) { roles.push('admin'); }
+        if (l.app) { roles.push('apporteur'); }
+        if (l.pre) { roles.push('prestataire'); }
+        return '<tr>' +
+          '<td>' + esc(heure(l.cree) || '—') + '<' + '/td>' +
+          '<td><strong>' + esc(l.nom) + '<' + '/strong><' + '/td>' +
+          '<td class="note">' + esc(l.email) + '<' + '/td>' +
+          '<td>' + (l.confirme ? '<span class="etiq e-terminee">oui<' + '/span>'
+                               : '<span class="etiq e-devis_envoye">en attente<' + '/span>') + '<' + '/td>' +
+          '<td>' + (l.vu ? esc(heure(l.vu))
+                         : '<span class="etiq e-perdu">jamais<' + '/span>') + '<' + '/td>' +
+          '<td class="note">' + esc(roles.join(', ') || 'client') + '<' + '/td>' +
+          '<td>' + (l.code ? '<code>' + esc(l.code) + '<' + '/code>' : '—') + '<' + '/td>' +
+        '<' + '/tr>';
+      }).join('') : '<tr><td colspan="7" class="vide">Aucun compte.<' + '/td><' + '/tr>') +
+      '<' + '/tbody><' + '/table><' + '/div>' +
+      '<p class="note" style="margin-top:10px">« Jamais connecte » signale un compte cree mais jamais rouvert : c\'est le signal le plus utile pendant la phase de test.<' + '/p>';
+
+    brancherRafraichir();
   }
 
   /* =====================================================================
