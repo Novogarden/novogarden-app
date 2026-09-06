@@ -1313,7 +1313,62 @@ function closeOverlay(id){document.getElementById(id).style.display='none';}
                version fausse dans un rapport de bug est pire que pas de version. */
             let versionTracee = '?';
       
-            async function versionComplete() {
+            /* FormSubmit, en mode AJAX, ne transporte que du texte : la capture choisie
+               par le testeur n'arrivait jamais, seul son nom de fichier partait. On la
+               reposte donc en multipart dans une iframe cachee, ce qui evite de quitter
+               l'application. L'envoi texte reste la source de verite : si celui-ci
+               echoue, le signalement est deja parti. */
+            function envoyerCapture(champFichier, description) {
+              if (!champFichier || !champFichier.files || !champFichier.files[0]) { return; }
+              try {
+                const parent = champFichier.parentNode;
+                const suivant = champFichier.nextSibling;
+                const nomInitial = champFichier.getAttribute('name');
+            
+                const cadre = document.createElement('iframe');
+                cadre.name = 'ng-capture-' + Date.now();
+                cadre.style.display = 'none';
+                document.body.appendChild(cadre);
+            
+                const f = document.createElement('form');
+                f.action = 'https://formsubmit.co/contact@novogardenhub.com';
+                f.method = 'POST';
+                f.enctype = 'multipart/form-data';
+                f.target = cadre.name;
+                f.style.display = 'none';
+            
+                const champ = function (n, val) {
+                  const c = document.createElement('input');
+                  c.type = 'hidden';
+                  c.name = n;
+                  c.value = val;
+                  f.appendChild(c);
+                };
+                champ('_subject', '[Bug Novogarden] Capture jointe');
+                champ('_captcha', 'false');
+                champ('_template', 'table');
+                champ('version', versionTracee);
+                champ('description', description);
+            
+                champFichier.setAttribute('name', 'capture');
+                f.appendChild(champFichier);
+                document.body.appendChild(f);
+                f.submit();
+            
+                /* Le corps de la requete est constitue pendant submit() : on peut rendre
+                   le champ a son emplacement d'origine tout de suite, pour que la fenetre
+                   de signalement reste utilisable si elle est rouverte. */
+                if (nomInitial) { champFichier.setAttribute('name', nomInitial); }
+                else { champFichier.removeAttribute('name'); }
+                champFichier.value = '';
+                if (suivant) { parent.insertBefore(champFichier, suivant); }
+                else { parent.appendChild(champFichier); }
+                f.remove();
+                setTimeout(function () { cadre.remove(); }, 15000);
+              } catch (e) { /* le signalement texte est deja parti, inutile d'alerter */ }
+            }
+            
+                        async function versionComplete() {
               let publiee = null;
               let installee = null;
               try {
@@ -1359,6 +1414,9 @@ async function doReportBug(){
   err.textContent='';
   const btn=document.getElementById('btn-bug');btn.disabled=true;btn.textContent='⏳ Envoi…';
   const userInfo=currentUser?'Utilisateur : '+currentUser.prenom+' '+currentUser.nom+'\nEmail : '+currentUser.email:'Utilisateur non connecté';
+  /* La capture part separement : voir envoyerCapture. */
+  envoyerCapture(screenshotFile, desc);
+
   try{
     const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
       method:'POST',
