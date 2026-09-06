@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1100">
+<meta name="robots" content="noindex,nofollow">
+<title>Novogarden — poste de gestion</title>
+<link rel="icon" href="icons/icon-192.png">
+<style>
+/* ---------------------------------------------------------------------------
+   Poste de gestion Novogarden — interface bureau.
+
+   Pensee pour un grand ecran : l'onglet Admin de l'application mobile reste en
+   place et n'est pas modifie. Ici on assume la largeur, donc des tableaux
+   plutot que des cartes empilees, et l'edition directe dans la ligne plutot
+   que des fenetres successives.
+
+   Aucun prix n'est ecrit en dur : la grille vient de data/pricing.json, comme
+   dans le reste du projet.
+--------------------------------------------------------------------------- */
+:root{
+  --vert:#7DB532; --vert-fonce:#5f8c25; --vert-pale:#f2f8ea;
+  --encre:#1f2a17; --gris:#6b7280; --trait:#e3e6e0; --fond:#f6f7f4;
+  --rouge:#c0392b; --ambre:#b7791f; --bleu:#2f6f9f;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--encre);background:var(--fond)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--bleu)}
+
+/* ----- ossature ----- */
+#appli{display:none;height:100%}
+#appli.pret{display:grid;grid-template-columns:224px 1fr}
+.rail{background:#233018;color:#e8efe0;display:flex;flex-direction:column;padding:18px 0}
+.rail .marque{font-size:19px;font-weight:600;padding:0 20px 18px;letter-spacing:.2px}
+.rail .marque span{color:var(--vert)}
+.rail nav{flex:1;display:flex;flex-direction:column;gap:2px;padding:0 10px}
+.rail nav button{display:flex;align-items:center;gap:10px;background:none;border:0;color:#c9d6bb;text-align:left;padding:9px 12px;border-radius:7px;cursor:pointer}
+.rail nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+.rail nav button.actif{background:var(--vert);color:#fff;font-weight:600}
+.rail nav .pastille{margin-left:auto;background:rgba(255,255,255,.18);border-radius:9px;padding:1px 7px;font-size:11px}
+.rail nav button.actif .pastille{background:rgba(0,0,0,.22)}
+.rail .pied{padding:14px 20px 0;border-top:1px solid rgba(255,255,255,.12);margin-top:12px;font-size:12px;color:#9fb08c}
+.rail .pied button{margin-top:8px;background:none;border:1px solid rgba(255,255,255,.25);color:#e8efe0;border-radius:6px;padding:5px 10px;cursor:pointer}
+.rail .pied button:hover{background:rgba(255,255,255,.1)}
+
+main{overflow:auto;padding:22px 26px 60px}
+.entete{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.entete h1{font-size:22px;margin:0;font-weight:600}
+.entete .sous{color:var(--gris);font-size:13px;margin:0}
+.entete .droite{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ----- briques ----- */
+.carte{background:#fff;border:1px solid var(--trait);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.carte > h2{font-size:14px;text-transform:uppercase;letter-spacing:.6px;color:var(--gris);margin:0 0 12px;font-weight:600}
+.chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.chiffre{background:#fff;border:1px solid var(--trait);border-radius:10px;padding:14px 16px}
+.chiffre .val{font-size:26px;font-weight:600;line-height:1.1}
+.chiffre .lib{font-size:12px;color:var(--gris);margin-top:3px}
+.chiffre.accent .val{color:var(--vert-fonce)}
+.chiffre.alerte .val{color:var(--ambre)}
+
+table{width:100%;border-collapse:collapse;background:#fff}
+thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gris);padding:9px 10px;border-bottom:1px solid var(--trait);white-space:nowrap;background:#fbfcfa;position:sticky;top:0;z-index:1}
+tbody td{padding:8px 10px;border-bottom:1px solid #f0f2ee;vertical-align:middle}
+tbody tr:hover{background:var(--vert-pale)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tableau{border:1px solid var(--trait);border-radius:10px;overflow:auto;max-height:calc(100vh - 260px)}
+
+.etiq{display:inline-block;padding:2px 8px;border-radius:11px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.e-nouveau{background:#e8f0fb;color:#2f6f9f}
+.e-contacte{background:#eef1ec;color:#5b6b52}
+.e-devis_envoye{background:#fdf3e0;color:var(--ambre)}
+.e-confirme{background:var(--vert-pale);color:var(--vert-fonce)}
+.e-encaisse{background:#dff0d0;color:#3d6b17}
+.e-commission_versee{background:#d5e8f7;color:#1f5c8a}
+.e-perdu{background:#fbe9e7;color:var(--rouge)}
+.e-ouverte{background:#e8f0fb;color:#2f6f9f}
+.e-acceptee{background:#fdf3e0;color:var(--ambre)}
+.e-en_cours{background:#fdf3e0;color:var(--ambre)}
+.e-terminee{background:#dff0d0;color:#3d6b17}
+.e-annulee{background:#fbe9e7;color:var(--rouge)}
+
+select,input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],textarea{
+  border:1px solid var(--trait);border-radius:6px;padding:6px 8px;background:#fff;max-width:100%}
+select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-offset:-1px}
+.bouton{background:var(--vert);color:#fff;border:0;border-radius:7px;padding:8px 14px;cursor:pointer;font-weight:600}
+.bouton:hover{background:var(--vert-fonce)}
+.bouton.creux{background:#fff;color:var(--encre);border:1px solid var(--trait);font-weight:500}
+.bouton.creux:hover{background:#f2f4f0}
+.bouton:disabled{opacity:.5;cursor:default}
+.mini{padding:4px 9px;font-size:12.5px;border-radius:6px}
+
+.filtres{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filtres input[type=text]{min-width:220px}
+.vide{padding:34px;text-align:center;color:var(--gris)}
+.note{font-size:12.5px;color:var(--gris)}
+.erreur{background:#fbe9e7;border:1px solid #f0c6c0;color:var(--rouge);padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:13px}
+.ok{background:var(--vert-pale);border:1px solid #cde3ad;color:var(--vert-fonce);padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:13px}
+
+/* ----- connexion ----- */
+#porte{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+#porte .boite{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:28px;width:360px;box-shadow:0 12px 34px rgba(0,0,0,.07)}
+#porte h1{font-size:19px;margin:0 0 4px}
+#porte p{margin:0 0 18px;color:var(--gris);font-size:13px}
+#porte label{display:block;font-size:12px;color:var(--gris);margin:12px 0 4px}
+#porte input{width:100%}
+#porte .bouton{width:100%;margin-top:18px;padding:10px}
+
+/* ----- grille de couverture ----- */
+.couv{border-collapse:collapse}
+.couv th.dep{text-align:left}
+.couv td.case{text-align:center}
+.couv input[type=checkbox]{width:17px;height:17px;accent-color:var(--vert);cursor:pointer}
+
+.photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photos img{width:104px;height:78px;object-fit:cover;border-radius:6px;border:1px solid var(--trait)}
+.bandeau-essai{background:#fdf3e0;border-bottom:1px solid #efd9a8;color:var(--ambre);padding:6px 26px;font-size:12.5px}
+</style>
+</head>
+<body>
+
+<div id="porte">
+  <form class="boite" id="form-porte">
+    <h1>Poste de gestion</h1>
+    <p>Reserve a l'administration Novogarden.</p>
+    <div id="porte-msg"></div>
+    <label for="p-email">Adresse email</label>
+    <input id="p-email" type="email" autocomplete="username" required>
+    <label for="p-mdp">Mot de passe</label>
+    <input id="p-mdp" type="password" autocomplete="current-password" required>
+    <button class="bouton" type="submit" id="p-envoi">Se connecter</button>
+    <p class="note" style="margin-top:14px">Meme compte que l'application.</p>
+  </form>
+</div>
+
+<div id="appli">
+  <aside class="rail">
+    <div class="marque">Novo<span>garden</span></div>
+    <nav id="rail-nav"></nav>
+    <div class="pied">
+      <div id="rail-qui"></div>
+      <button type="button" id="deconnexion">Se deconnecter</button>
+    </div>
+  </aside>
+  <main id="scene"></main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/ng-config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     Socle
+     ===================================================================== */
+
+  var CFG = window.NG_CONFIG || {};
+  var sb = null;
+  var profil = null;
+  var pricing = null;
+  var ecran = 'bord';
+
+  /* Caches memoire : les ecrans se croisent beaucoup (un lead renvoie a son
+     apporteur, une mission a son prestataire). On charge les profils une fois
+     et on s'y refere partout plutot que de multiplier les jointures. */
+  var cache = { leads: null, missions: null, profils: null, couverture: null, cr: null };
+
+  var STATUTS_LEAD = ['nouveau', 'contacte', 'devis_envoye', 'confirme', 'encaisse', 'commission_versee', 'perdu'];
+  var STATUTS_MISSION = ['ouverte', 'acceptee', 'en_cours', 'terminee', 'annulee'];
+  var SERVICES = {
+    'tonte': 'Tonte robotisee',
+    'topographie': 'Topographie',
+    'modelisation': 'Modelisation 3D',
+    'impression': 'Impression 3D',
+    'drone': 'Drone',
+    'etude-flux': 'Etude de flux'
+  };
+  var LIB_STATUT = {
+    nouveau: 'Nouveau', contacte: 'Contacte', devis_envoye: 'Devis envoye',
+    confirme: 'Confirme', encaisse: 'Encaisse', commission_versee: 'Commission versee',
+    perdu: 'Perdu', ouverte: 'Ouverte', acceptee: 'Acceptee', en_cours: 'En cours',
+    terminee: 'Terminee', annulee: 'Annulee'
+  };
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function eur(n) {
+    if (n == null || n === '') { return '—'; }
+    return Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  }
+  function jour(d) {
+    if (!d) { return '—'; }
+    return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  }
+  function etiq(s) {
+    return '<span class="etiq e-' + esc(s) + '">' + esc(LIB_STATUT[s] || s) + '<' + '/span>';
+  }
+  function nomDe(p) {
+    if (!p) { return '—'; }
+    return ((p.prenom || '') + ' ' + (p.nom || '')).trim() || p.email || '—';
+  }
+
+  /* =====================================================================
+     Porte d'entree
+     ===================================================================== */
+
+  function messagePorte(txt, type) {
+    $('#porte-msg').innerHTML = txt ? '<div class="' + (type || 'erreur') + '">' + esc(txt) + '<' + '/div>' : '';
+  }
+
+  $('#form-porte').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var b = $('#p-envoi');
+    b.disabled = true; b.textContent = 'Connexion...';
+    messagePorte('');
+    var r = await sb.auth.signInWithPassword({
+      email: $('#p-email').value.trim(),
+      password: $('#p-mdp').value
+    });
+    b.disabled = false; b.textContent = 'Se connecter';
+    if (r.error) {
+      messagePorte('Connexion refusee. Verifiez l\'adresse et le mot de passe.');
+      return;
+    }
+    await apresConnexion();
+  });
+
+  $('#deconnexion').addEventListener('click', async function () {
+    await sb.auth.signOut();
+    location.reload();
+  });
+
+  async function apresConnexion() {
+    var s = await sb.auth.getSession();
+    if (!s.data.session) { montrerPorte(); return; }
+
+    var r = await sb.from('profiles').select('*').eq('id', s.data.session.user.id).maybeSingle();
+    profil = r.data || null;
+
+    /* Le refus repose sur les politiques RLS de Supabase, pas sur ce test :
+       masquer l'interface n'empeche personne d'appeler l'API. Ce controle
+       n'est la que pour eviter d'afficher des ecrans vides a quelqu'un qui
+       n'y a pas droit. */
+    if (!profil || !profil.is_admin) {
+      await sb.auth.signOut();
+      montrerPorte();
+      messagePorte('Ce compte n\'a pas les droits d\'administration.');
+      return;
+    }
+
+    $('#porte').style.display = 'none';
+    $('#appli').classList.add('pret');
+    $('#rail-qui').textContent = nomDe(profil);
+    construireRail();
+    await charger(true);
+    aller('bord');
+  }
+
+  function montrerPorte() {
+    $('#appli').classList.remove('pret');
+    $('#porte').style.display = 'flex';
+  }
+
+  /* =====================================================================
+     Navigation
+     ===================================================================== */
+
+  var ECRANS = [
+    { id: 'bord', lib: 'Tableau de bord' },
+    { id: 'leads', lib: 'Leads' },
+    { id: 'missions', lib: 'Missions' },
+    { id: 'reseau', lib: 'Reseau' },
+    { id: 'couverture', lib: 'Couverture' },
+    { id: 'cr', lib: 'Comptes rendus' }
+  ];
+
+  function construireRail() {
+    $('#rail-nav').innerHTML = ECRANS.map(function (e) {
+      return '<button type="button" data-ecran="' + e.id + '">' + esc(e.lib) +
+        '<span class="pastille" data-cpt="' + e.id + '"><' + '/span><' + '/button>';
+    }).join('');
+    $('#rail-nav').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-ecran]');
+      if (b) { aller(b.getAttribute('data-ecran')); }
+    });
+  }
+
+  function majPastilles() {
+    var n = {
+      leads: (cache.leads || []).filter(function (l) { return l.statut === 'nouveau'; }).length,
+      missions: (cache.missions || []).filter(function (m) { return m.statut === 'ouverte'; }).length,
+      reseau: (cache.profils || []).filter(function (p) { return p.is_apporteur && !p.code_apporteur; }).length,
+      cr: (cache.cr || []).length
+    };
+    ECRANS.forEach(function (e) {
+      var p = $('[data-cpt="' + e.id + '"]');
+      if (!p) { return; }
+      p.textContent = n[e.id] ? n[e.id] : '';
+      p.style.display = n[e.id] ? '' : 'none';
+    });
+  }
+
+  function aller(id) {
+    ecran = id;
+    [].forEach.call(document.querySelectorAll('[data-ecran]'), function (b) {
+      b.classList.toggle('actif', b.getAttribute('data-ecran') === id);
+    });
+    ({
+      bord: vueBord, leads: vueLeads, missions: vueMissions,
+      reseau: vueReseau, couverture: vueCouverture, cr: vueCR
+    })[id]();
+  }
+
+  /* =====================================================================
+     Chargement des donnees
+     ===================================================================== */
+
+  async function charger(complet) {
+    var t = [
+      sb.from('leads').select('*').order('created_at', { ascending: false }),
+      sb.from('missions').select('*').order('created_at', { ascending: false }),
+      sb.from('profiles').select('*').order('created_at', { ascending: false }),
+      sb.from('couverture').select('*'),
+      sb.from('comptes_rendus').select('*, mission:missions(titre,type_prestation,commune), photos:cr_photos(*)').order('created_at', { ascending: false })
+    ];
+    var r = await Promise.all(t);
+    cache.leads = r[0].data || [];
+    cache.missions = r[1].data || [];
+    cache.profils = r[2].data || [];
+    cache.couverture = r[3].data || [];
+    cache.cr = r[4].data || [];
+
+    if (complet && !pricing) {
+      try { pricing = await (await fetch('data/pricing.json', { cache: 'no-store' })).json(); }
+      catch (e) { pricing = null; }
+    }
+    majPastilles();
+  }
+
+  function profilPar(id) {
+    if (!id) { return null; }
+    return (cache.profils || []).filter(function (p) { return p.id === id; })[0] || null;
+  }
+
+  function enteteHTML(titre, sous, droite) {
+    return '<div class="entete"><div><h1>' + esc(titre) + '<' + '/h1>' +
+      (sous ? '<p class="sous">' + esc(sous) + '<' + '/p>' : '') + '<' + '/div>' +
+      '<div class="droite">' + (droite || '') +
+      '<button class="bouton creux mini" id="rafraichir">Rafraichir<' + '/button><' + '/div><' + '/div>';
+  }
+
+  function brancherRafraichir() {
+    var b = $('#rafraichir');
+    if (!b) { return; }
+    b.addEventListener('click', async function () {
+      b.disabled = true; b.textContent = '...';
+      await charger(false);
+      aller(ecran);
+    });
+  }
+
+  /* =====================================================================
+     Tableau de bord
+     ===================================================================== */
+
+  function vueBord() {
+    var L = cache.leads || [];
+    var M = cache.missions || [];
+    var P = cache.profils || [];
+
+    var encaisse = L.filter(function (l) { return l.statut === 'encaisse' || l.statut === 'commission_versee'; });
+    var ca = encaisse.reduce(function (s, l) { return s + Number(l.montant_ttc || 0); }, 0);
+    var dues = L.filter(function (l) { return l.statut === 'encaisse' && Number(l.commission_montant || 0) > 0; })
+      .reduce(function (s, l) { return s + Number(l.commission_montant || 0); }, 0);
+    var versees = L.filter(function (l) { return l.statut === 'commission_versee'; })
+      .reduce(function (s, l) { return s + Number(l.commission_montant || 0); }, 0);
+
+    var parStatut = {};
+    L.forEach(function (l) { parStatut[l.statut] = (parStatut[l.statut] || 0) + 1; });
+    var parService = {};
+    L.forEach(function (l) {
+      var s = l.service || 'non precise';
+      parService[s] = (parService[s] || 0) + 1;
+    });
+
+    var aGenerer = P.filter(function (p) { return p.is_apporteur && !p.code_apporteur; }).length;
+
+    $('#scene').innerHTML =
+      enteteHTML('Tableau de bord', 'Etat au ' + new Date().toLocaleDateString('fr-FR')) +
+      '<div class="chiffres" style="margin-bottom:16px">' +
+        chiffre(L.length, 'leads au total') +
+        chiffre(parStatut.nouveau || 0, 'a traiter', (parStatut.nouveau ? 'alerte' : '')) +
+        chiffre(eur(ca), 'encaisse', 'accent') +
+        chiffre(eur(dues), 'commissions a verser', (dues ? 'alerte' : '')) +
+        chiffre(eur(versees), 'commissions versees') +
+        chiffre(M.filter(function (m) { return m.statut === 'ouverte'; }).length, 'missions non pourvues') +
+      '<' + '/div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
+        '<div class="carte"><h2>Leads par statut<' + '/h2>' + barres(parStatut, L.length, STATUTS_LEAD) + '<' + '/div>' +
+        '<div class="carte"><h2>Leads par prestation<' + '/h2>' + barres(parService, L.length, Object.keys(SERVICES)) + '<' + '/div>' +
+      '<' + '/div>' +
+      '<div class="carte"><h2>Reseau<' + '/h2>' +
+        '<div class="chiffres">' +
+          chiffre(P.filter(function (p) { return p.is_apporteur; }).length, 'apporteurs inscrits') +
+          chiffre(aGenerer, 'codes a generer', (aGenerer ? 'alerte' : '')) +
+          chiffre(P.filter(function (p) { return p.is_prestataire && p.prestataire_valide; }).length, 'prestataires valides') +
+          chiffre(P.length, 'comptes au total') +
+        '<' + '/div><' + '/div>';
+    brancherRafraichir();
+  }
+
+  function chiffre(v, lib, cls) {
+    return '<div class="chiffre ' + (cls || '') + '"><div class="val">' + esc(v) +
+      '<' + '/div><div class="lib">' + esc(lib) + '<' + '/div><' + '/div>';
+  }
+
+  function barres(compte, total, ordre) {
+    var cles = ordre.filter(function (k) { return compte[k]; });
+    Object.keys(compte).forEach(function (k) { if (cles.indexOf(k) < 0) { cles.push(k); } });
+    if (!cles.length) { return '<p class="note">Aucune donnee.<' + '/p>'; }
+    return '<table>' + cles.map(function (k) {
+      var n = compte[k];
+      var pct = total ? Math.round(n * 100 / total) : 0;
+      return '<tr><td style="width:170px">' + esc(SERVICES[k] || LIB_STATUT[k] || k) + '<' + '/td>' +
+        '<td><div style="background:#eef1ec;border-radius:4px;height:9px"><div style="background:var(--vert);height:9px;border-radius:4px;width:' + pct + '%"><' + '/div><' + '/div><' + '/td>' +
+        '<td class="num" style="width:64px">' + n + '<' + '/td><' + '/tr>';
+    }).join('') + '<' + '/table>';
+  }
+
+  /* =====================================================================
+     Leads
+     ===================================================================== */
+
+  var filtreLead = { texte: '', statut: '', service: '' };
+
+  function vueLeads() {
+    $('#scene').innerHTML =
+      enteteHTML('Leads', (cache.leads || []).length + ' demandes enregistrees') +
+      '<div class="filtres">' +
+        '<input type="text" id="f-texte" placeholder="Nom, commune, email, code..." value="' + esc(filtreLead.texte) + '">' +
+        selecteur('f-statut', 'Tous les statuts', STATUTS_LEAD, filtreLead.statut) +
+        selecteur('f-service', 'Toutes les prestations', Object.keys(SERVICES), filtreLead.service) +
+        '<span class="note" id="f-compte"><' + '/span>' +
+      '<' + '/div><div class="tableau" id="t-leads"><' + '/div>';
+
+    $('#f-texte').addEventListener('input', function () { filtreLead.texte = this.value; dessinerLeads(); });
+    $('#f-statut').addEventListener('change', function () { filtreLead.statut = this.value; dessinerLeads(); });
+    $('#f-service').addEventListener('change', function () { filtreLead.service = this.value; dessinerLeads(); });
+    brancherRafraichir();
+    dessinerLeads();
+  }
+
+  function selecteur(id, vide, valeurs, choisi) {
+    return '<select id="' + id + '"><option value="">' + esc(vide) + '<' + '/option>' +
+      valeurs.map(function (v) {
+        return '<option value="' + esc(v) + '"' + (v === choisi ? ' selected' : '') + '>' +
+          esc(SERVICES[v] || LIB_STATUT[v] || v) + '<' + '/option>';
+      }).join('') + '<' + '/select>';
+  }
+
+  function leadsFiltres() {
+    var t = filtreLead.texte.trim().toLowerCase();
+    return (cache.leads || []).filter(function (l) {
+      if (filtreLead.statut && l.statut !== filtreLead.statut) { return false; }
+      if (filtreLead.service && (l.service || '') !== filtreLead.service) { return false; }
+      if (!t) { return true; }
+      return [l.client_prenom, l.client_nom, l.client_email, l.commune, l.code_apporteur]
+        .join(' ').toLowerCase().indexOf(t) >= 0;
+    });
+  }
+
+  function dessinerLeads() {
+    var lst = leadsFiltres();
+    $('#f-compte').textContent = lst.length + ' resultat' + (lst.length > 1 ? 's' : '');
+    if (!lst.length) { $('#t-leads').innerHTML = '<div class="vide">Aucun lead ne correspond.<' + '/div>'; return; }
+
+    $('#t-leads').innerHTML =
+      '<table><thead><tr>' +
+        '<th>Recu<' + '/th><th>Client<' + '/th><th>Contact<' + '/th><th>Commune<' + '/th><th>Prestation<' + '/th>' +
+        '<th class="num">Montant TTC<' + '/th><th>Apporteur<' + '/th><th class="num">Commission<' + '/th><th>Statut<' + '/th>' +
+      '<' + '/tr><' + '/thead><tbody>' +
+      lst.map(function (l) {
+        var a = profilPar(l.apporteur_id);
+        return '<tr data-lead="' + esc(l.id) + '">' +
+          '<td>' + jour(l.created_at) + '<' + '/td>' +
+          '<td><strong>' + esc(((l.client_prenom || '') + ' ' + (l.client_nom || '')).trim() || '—') + '<' + '/strong><' + '/td>' +
+          '<td class="note">' + esc(l.client_email || '') + (l.client_telephone ? '<br>' + esc(l.client_telephone) : '') + '<' + '/td>' +
+          '<td>' + esc(l.commune || '—') + (l.surface_m2 ? ' <span class="note">' + l.surface_m2 + ' m²<' + '/span>' : '') + '<' + '/td>' +
+          '<td>' + esc(SERVICES[l.service] || l.service || '—') + '<' + '/td>' +
+          '<td class="num"><input type="number" step="0.01" min="0" class="ttc" style="width:104px" value="' +
+            (l.montant_ttc == null ? '' : esc(l.montant_ttc)) + '"><' + '/td>' +
+          '<td>' + (a ? esc(nomDe(a)) + '<br><span class="note">' + esc(l.code_apporteur || '') + '<' + '/span>'
+                      : (l.code_apporteur ? '<span class="note">' + esc(l.code_apporteur) + '<' + '/span>' : '—')) + '<' + '/td>' +
+          '<td class="num">' + eur(l.commission_montant) + '<' + '/td>' +
+          '<td>' + selecteurStatut(l.statut, STATUTS_LEAD) + '<' + '/td>' +
+        '<' + '/tr>';
+      }).join('') + '<' + '/tbody><' + '/table>';
+
+    $('#t-leads').addEventListener('change', async function (ev) {
+      var tr = ev.target.closest('[data-lead]');
+      if (!tr) { return; }
+      var id = tr.getAttribute('data-lead');
+      var champ = ev.target.classList.contains('ttc') ? 'montant_ttc' : 'statut';
+      var val = champ === 'montant_ttc'
+        ? (ev.target.value === '' ? null : Number(ev.target.value))
+        : ev.target.value;
+      ev.target.disabled = true;
+      var r = await sb.from('leads').update(makeMaj(champ, val)).eq('id', id).select().maybeSingle();
+      ev.target.disabled = false;
+      if (r.error) { alert('Enregistrement refuse : ' + r.error.message); return; }
+      /* La commission est recalculee par un declencheur en base, jamais ici :
+         c'est la seule facon d'etre sur que l'affichage et le montant reel ne
+         divergent pas. On relit donc la ligne renvoyee. */
+      if (r.data) {
+        var i = cache.leads.findIndex(function (x) { return x.id === id; });
+        if (i >= 0) { cache.leads[i] = r.data; }
+        var cel = tr.children[7];
+        if (cel) { cel.textContent = eur(r.data.commission_montant); }
+      }
+      majPastilles();
+    });
+  }
+
+  function makeMaj(champ, val) { var o = {}; o[champ] = val; return o; }
+
+  function selecteurStatut(actuel, liste) {
+    return '<select class="statut">' + liste.map(function (s) {
+      return '<option value="' + esc(s) + '"' + (s === actuel ? ' selected' : '') + '>' + esc(LIB_STATUT[s] || s) + '<' + '/option>';
+    }).join('') + '<' + '/select>';
+  }
+
+  /* =====================================================================
+     Missions
+     ===================================================================== */
+
+  function vueMissions() {
+    var M = cache.missions || [];
+    $('#scene').innerHTML =
+      enteteHTML('Missions', M.length + ' interventions', '<button class="bouton mini" id="nouvelle-mission">Nouvelle mission<' + '/button>') +
+      '<div id="zone-form"><' + '/div>' +
+      '<div class="tableau"><table><thead><tr>' +
+        '<th>Creee<' + '/th><th>Intitule<' + '/th><th>Prestation<' + '/th><th>Lieu<' + '/th><th>Date souhaitee<' + '/th>' +
+        '<th class="num">Remuneration<' + '/th><th>Prestataire<' + '/th><th>Statut<' + '/th>' +
+      '<' + '/tr><' + '/thead><tbody>' +
+      (M.length ? M.map(function (m) {
+        var p = profilPar(m.prestataire_id);
+        return '<tr data-mission="' + esc(m.id) + '">' +
+          '<td>' + jour(m.created_at) + '<' + '/td>' +
+          '<td><strong>' + esc(m.titre || '—') + '<' + '/strong><' + '/td>' +
+          '<td>' + esc(SERVICES[m.type_prestation] || m.type_prestation || '—') + '<' + '/td>' +
+          '<td>' + esc(m.commune || '—') + (m.code_postal ? ' <span class="note">' + esc(m.code_postal) + '<' + '/span>' : '') + '<' + '/td>' +
+          '<td>' + jour(m.date_souhaitee) + '<' + '/td>' +
+          '<td class="num">' + eur(m.remuneration_prestataire) + '<' + '/td>' +
+          '<td>' + esc(p ? nomDe(p) : '—') + '<' + '/td>' +
+          '<td>' + selecteurStatut(m.statut, STATUTS_MISSION) + '<' + '/td>' +
+        '<' + '/tr>';
+      }).join('') : '<tr><td colspan="8" class="vide">Aucune mission.<' + '/td><' + '/tr>') +
+      '<' + '/tbody><' + '/table><' + '/div>';
+
+    brancherRafraichir();
+    $('#nouvelle-mission').addEventListener('click', formulaireMission);
+    $('#scene').addEventListener('change', async function (ev) {
+      var tr = ev.target.closest('[data-mission]');
+      if (!tr || !ev.target.classList.contains('statut')) { return; }
+      ev.target.disabled = true;
+      var r = await sb.from('missions').update({ statut: ev.target.value }).eq('id', tr.getAttribute('data-mission'));
+      ev.target.disabled = false;
+      if (r.error) { alert('Enregistrement refuse : ' + r.error.message); return; }
+      await charger(false);
+    });
+  }
+
+  /* La creation reste bornee a la grille tarifaire : on ne saisit pas un
+     libelle ni une surface libres, on choisit une prestation puis une tranche
+     existante. Un intitule invente ici ne correspondrait a aucun prix. */
+  function formulaireMission() {
+    if (!pricing) {
+      $('#zone-form').innerHTML = '<div class="erreur">La grille tarifaire n\'a pas pu etre lue, la creation est indisponible.<' + '/div>';
+      return;
+    }
+    $('#zone-form').innerHTML =
+      '<div class="carte"><h2>Nouvelle mission<' + '/h2>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end">' +
+        '<div><label class="note">Prestation<' + '/label><br>' +
+          '<select id="m-service" style="width:100%"><option value="">Choisir...<' + '/option>' +
+          Object.keys(SERVICES).map(function (k) { return '<option value="' + k + '">' + esc(SERVICES[k]) + '<' + '/option>'; }).join('') +
+          '<' + '/select><' + '/div>' +
+        '<div><label class="note">Tranche de la grille<' + '/label><br><select id="m-tranche" style="width:100%" disabled><' + '/select><' + '/div>' +
+        '<div><label class="note">Commune<' + '/label><br><input type="text" id="m-commune" style="width:100%"><' + '/div>' +
+        '<div><label class="note">Code postal<' + '/label><br><input type="text" id="m-cp" maxlength="5" style="width:100%"><' + '/div>' +
+        '<div><label class="note">Date souhaitee<' + '/label><br><input type="date" id="m-date" style="width:100%"><' + '/div>' +
+        '<div><label class="note">Remuneration prestataire<' + '/label><br><input type="number" step="0.01" min="0" id="m-remu" style="width:100%"><' + '/div>' +
+        '<div style="grid-column:span 2"><label class="note">Precisions<' + '/label><br><input type="text" id="m-desc" style="width:100%"><' + '/div>' +
+      '<' + '/div>' +
+      '<p class="note" id="m-prix" style="margin:12px 0 0"><' + '/p>' +
+      '<div style="margin-top:12px;display:flex;gap:8px">' +
+        '<button class="bouton mini" id="m-creer" disabled>Creer la mission<' + '/button>' +
+        '<button class="bouton creux mini" id="m-annuler">Annuler<' + '/button>' +
+      '<' + '/div><' + '/div>';
+
+    $('#m-annuler').addEventListener('click', function () { $('#zone-form').innerHTML = ''; });
+    $('#m-service').addEventListener('change', function () {
+      var s = tranchesDe(this.value);
+      var sel = $('#m-tranche');
+      sel.disabled = !s.length;
+      sel.innerHTML = '<option value="">Choisir...<' + '/option>' + s.map(function (t, i) {
+        return '<option value="' + i + '">' + esc(t.label) + '<' + '/option>';
+      }).join('');
+      $('#m-prix').textContent = '';
+      $('#m-creer').disabled = true;
+    });
+    $('#m-tranche').addEventListener('change', function () {
+      var s = tranchesDe($('#m-service').value);
+      var t = s[Number(this.value)];
+      if (!t) { $('#m-creer').disabled = true; return; }
+      $('#m-prix').textContent = t.prix != null ? ('Prix client de reference : ' + eur(t.prix) + '.') : 'Tranche sans prix de reference.';
+      $('#m-creer').disabled = false;
+    });
+    $('#m-creer').addEventListener('click', async function () {
+      var b = this;
+      var srv = $('#m-service').value;
+      var t = tranchesDe(srv)[Number($('#m-tranche').value)];
+      if (!srv || !t) { return; }
+      b.disabled = true; b.textContent = 'Creation...';
+      var r = await sb.from('missions').insert({
+        titre: SERVICES[srv] + ' — ' + t.label,
+        type_prestation: srv,
+        commune: $('#m-commune').value.trim() || null,
+        code_postal: $('#m-cp').value.trim() || null,
+        surface_m2: t.surface || null,
+        description: $('#m-desc').value.trim() || null,
+        date_souhaitee: $('#m-date').value || null,
+        remuneration_prestataire: $('#m-remu').value === '' ? null : Number($('#m-remu').value),
+        statut: 'ouverte'
+      });
+      b.disabled = false; b.textContent = 'Creer la mission';
+      if (r.error) { alert('Creation refusee : ' + r.error.message); return; }
+      $('#zone-form').innerHTML = '';
+      await charger(false);
+      aller('missions');
+    });
+  }
+
+  /* Lecture souple de pricing.json : le fichier a evolue plusieurs fois, on
+     accepte les formes rencontrees plutot que d'imposer une seule structure. */
+  function tranchesDe(id) {
+    if (!pricing || !id) { return []; }
+    var svc = null;
+    if (Array.isArray(pricing.services)) {
+      svc = pricing.services.filter(function (s) { return s.id === id; })[0];
+    } else if (pricing.services) {
+      svc = pricing.services[id];
+    }
+    if (!svc) { return []; }
+    var src = svc.tranches || svc.paliers || svc.grille || svc.prestations || [];
+    if (!Array.isArray(src)) { src = Object.keys(src).map(function (k) { return src[k]; }); }
+    return src.map(function (t, i) {
+      return {
+        label: t.label || t.libelle || t.nom || t.titre || ('Tranche ' + (i + 1)),
+        prix: t.prix_ttc != null ? t.prix_ttc : (t.prix != null ? t.prix : (t.ttc != null ? t.ttc : null)),
+        surface: t.surface_max || t.surface || null
+      };
+    });
+  }
+
+  /* =====================================================================
+     Reseau
+     ===================================================================== */
+
+  function vueReseau() {
+    var P = (cache.profils || []).filter(function (p) { return p.is_apporteur || p.is_prestataire; });
+    var L = cache.leads || [];
+
+    function bilan(id) {
+      var s = L.filter(function (l) { return l.apporteur_id === id; });
+      return {
+        n: s.length,
+        ca: s.filter(function (l) { return l.statut === 'encaisse' || l.statut === 'commission_versee'; })
+             .reduce(function (a, l) { return a + Number(l.montant_ttc || 0); }, 0),
+        du: s.filter(function (l) { return l.statut === 'encaisse'; })
+             .reduce(function (a, l) { return a + Number(l.commission_montant || 0); }, 0),
+        verse: s.filter(function (l) { return l.statut === 'commission_versee'; })
+             .reduce(function (a, l) { return a + Number(l.commission_montant || 0); }, 0)
+      };
+    }
+
+    $('#scene').innerHTML =
+      enteteHTML('Reseau', P.length + ' apporteurs et prestataires') +
+      '<div class="tableau"><table><thead><tr>' +
+        '<th>Inscrit<' + '/th><th>Personne<' + '/th><th>Contact<' + '/th><th>Code<' + '/th>' +
+        '<th class="num">Leads<' + '/th><th class="num">Encaisse<' + '/th><th class="num">A verser<' + '/th><th class="num">Verse<' + '/th>' +
+        '<th>Apporteur<' + '/th><th>Prestataire<' + '/th><th>Valide<' + '/th>' +
+      '<' + '/tr><' + '/thead><tbody>' +
+      (P.length ? P.map(function (p) {
+        var b = bilan(p.id);
+        return '<tr data-profil="' + esc(p.id) + '">' +
+          '<td>' + jour(p.created_at) + '<' + '/td>' +
+          '<td><strong>' + esc(nomDe(p)) + '<' + '/strong><' + '/td>' +
+          '<td class="note">' + esc(p.email || '') + (p.telephone ? '<br>' + esc(p.telephone) : '') + '<' + '/td>' +
+          '<td>' + (p.code_apporteur
+            ? '<code>' + esc(p.code_apporteur) + '<' + '/code>'
+            : (p.is_apporteur ? '<button class="bouton mini gen">Generer<' + '/button>' : '—')) + '<' + '/td>' +
+          '<td class="num">' + b.n + '<' + '/td>' +
+          '<td class="num">' + eur(b.ca) + '<' + '/td>' +
+          '<td class="num"' + (b.du ? ' style="color:var(--ambre);font-weight:600"' : '') + '>' + eur(b.du) + '<' + '/td>' +
+          '<td class="num">' + eur(b.verse) + '<' + '/td>' +
+          '<td><input type="checkbox" class="r-app"' + (p.is_apporteur ? ' checked' : '') + '><' + '/td>' +
+          '<td><input type="checkbox" class="r-pre"' + (p.is_prestataire ? ' checked' : '') + '><' + '/td>' +
+          '<td><input type="checkbox" class="r-val"' + (p.prestataire_valide ? ' checked' : '') +
+            (p.is_prestataire ? '' : ' disabled') + '><' + '/td>' +
+        '<' + '/tr>';
+      }).join('') : '<tr><td colspan="11" class="vide">Personne dans le reseau.<' + '/td><' + '/tr>') +
+      '<' + '/tbody><' + '/table><' + '/div>' +
+      '<p class="note" style="margin-top:10px">« A verser » compte les leads encaisses dont la commission n\'a pas encore ete payee. Passez le lead en « Commission versee » une fois le virement fait.<' + '/p>';
+
+    brancherRafraichir();
+
+    $('#scene').addEventListener('click', async function (ev) {
+      if (!ev.target.classList.contains('gen')) { return; }
+      var tr = ev.target.closest('[data-profil]');
+      var p = profilPar(tr.getAttribute('data-profil'));
+      ev.target.disabled = true;
+      var code = codeLibre(p);
+      var r = await sb.from('profiles').update({ code_apporteur: code }).eq('id', p.id);
+      if (r.error) { ev.target.disabled = false; alert('Refus : ' + r.error.message); return; }
+      await charger(false);
+      aller('reseau');
+    });
+
+    $('#scene').addEventListener('change', async function (ev) {
+      var tr = ev.target.closest('[data-profil]');
+      var role = ev.target.classList.contains('r-app') || ev.target.classList.contains('r-pre') ||
+                 ev.target.classList.contains('r-val');
+      if (!tr || !role) { return; }
+      ev.target.disabled = true;
+      var r = await sb.rpc('definir_roles', {
+        p_profil: tr.getAttribute('data-profil'),
+        p_apporteur: $('.r-app', tr).checked,
+        p_prestataire: $('.r-pre', tr).checked,
+        p_valide: $('.r-val', tr).checked
+      });
+      ev.target.disabled = false;
+      if (r.error) { alert('Refus : ' + r.error.message); return; }
+      await charger(false);
+      aller('reseau');
+    });
+  }
+
+  /* Le code doit rester lisible a l'oral : on le dicte au telephone. Trois
+     lettres du nom et trois chiffres. */
+  function codeLibre(p) {
+    var base = (p.nom || p.prenom || 'NGD').toUpperCase().replace(/[^A-Z]/g, '');
+    base = (base + 'NGD').slice(0, 3);
+    var pris = (cache.profils || []).map(function (x) { return x.code_apporteur; }).filter(Boolean);
+    for (var i = 0; i < 400; i++) {
+      var c = base + String(Math.floor(100 + Math.random() * 900));
+      if (pris.indexOf(c) < 0) { return c; }
+    }
+    return base + Date.now().toString().slice(-4);
+  }
+
+  /* =====================================================================
+     Couverture
+     ===================================================================== */
+
+  function vueCouverture() {
+    var C = cache.couverture || [];
+    var deps = [];
+    C.forEach(function (r) { if (deps.indexOf(r.departement) < 0) { deps.push(r.departement); } });
+    deps.sort(function (a, b) { return a === 'FR' ? -1 : b === 'FR' ? 1 : a.localeCompare(b); });
+
+    function actif(srv, dep) {
+      var r = C.filter(function (x) { return x.service === srv && x.departement === dep; })[0];
+      return r ? r.actif : false;
+    }
+
+    $('#scene').innerHTML =
+      enteteHTML('Couverture', 'Ce qui est propose, prestation par prestation et departement par departement',
+        '<input type="text" id="c-dep" maxlength="3" placeholder="Ex. 14" style="width:90px">' +
+        '<button class="bouton mini" id="c-ajout">Ajouter un departement<' + '/button>') +
+      '<div class="carte"><table class="couv"><thead><tr><th class="dep">Departement<' + '/th>' +
+      Object.keys(SERVICES).map(function (k) { return '<th style="text-align:center">' + esc(SERVICES[k]) + '<' + '/th>'; }).join('') +
+      '<' + '/tr><' + '/thead><tbody>' +
+      (deps.length ? deps.map(function (d) {
+        return '<tr data-dep="' + esc(d) + '"><td class="dep"><strong>' + esc(d) + '<' + '/strong>' +
+          (d === 'FR' ? ' <span class="note">toute la France<' + '/span>' : '') + '<' + '/td>' +
+          Object.keys(SERVICES).map(function (k) {
+            return '<td class="case"><input type="checkbox" data-srv="' + k + '"' + (actif(k, d) ? ' checked' : '') + '><' + '/td>';
+          }).join('') + '<' + '/tr>';
+      }).join('') : '<tr><td colspan="7" class="vide">Aucun departement enregistre.<' + '/td><' + '/tr>') +
+      '<' + '/tbody><' + '/table><' + '/div>' +
+      '<p class="note">Une case decochee retire la tuile chez les visiteurs de ce departement. Tant que la position d\'un visiteur est inconnue, tout reste visible.<' + '/p>';
+
+    brancherRafraichir();
+
+    $('#c-ajout').addEventListener('click', async function () {
+      var d = $('#c-dep').value.trim().toUpperCase();
+      if (!/^(FR|[0-9]{2,3}|2A|2B)$/.test(d)) { alert('Departement attendu : deux chiffres, 2A, 2B, ou FR.'); return; }
+      this.disabled = true;
+      var r = await sb.from('couverture').upsert(
+        Object.keys(SERVICES).map(function (k) { return { service: k, departement: d, actif: false }; }),
+        { onConflict: 'service,departement' }
+      );
+      this.disabled = false;
+      if (r.error) { alert('Refus : ' + r.error.message); return; }
+      await charger(false);
+      aller('couverture');
+    });
+
+    $('#scene').addEventListener('change', async function (ev) {
+      var tr = ev.target.closest('[data-dep]');
+      if (!tr || ev.target.type !== 'checkbox') { return; }
+      ev.target.disabled = true;
+      var r = await sb.from('couverture').upsert({
+        service: ev.target.getAttribute('data-srv'),
+        departement: tr.getAttribute('data-dep'),
+        actif: ev.target.checked,
+        maj: new Date().toISOString()
+      }, { onConflict: 'service,departement' });
+      ev.target.disabled = false;
+      if (r.error) { ev.target.checked = !ev.target.checked; alert('Refus : ' + r.error.message); return; }
+      await charger(false);
+    });
+  }
+
+  /* =====================================================================
+     Comptes rendus
+     ===================================================================== */
+
+  function vueCR() {
+    var R = cache.cr || [];
+    $('#scene').innerHTML =
+      enteteHTML('Comptes rendus', R.length + ' rapports d\'intervention') +
+      (R.length ? R.map(function (c) {
+        var p = profilPar(c.prestataire_id);
+        var ph = (c.photos || []);
+        return '<div class="carte">' +
+          '<div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap">' +
+            '<strong>' + esc(c.mission && c.mission.titre ? c.mission.titre : 'Mission supprimee') + '<' + '/strong>' +
+            '<span class="note">' + esc(c.mission && c.mission.commune ? c.mission.commune : '') + '<' + '/span>' +
+            '<span class="note">' + esc(nomDe(p)) + '<' + '/span>' +
+            '<span class="note" style="margin-left:auto">' + jour(c.created_at) +
+              (c.duree_minutes ? ' · ' + c.duree_minutes + ' min' : '') + '<' + '/span>' +
+          '<' + '/div>' +
+          (c.commentaire ? '<p style="margin:10px 0 0">' + esc(c.commentaire) + '<' + '/p>' : '') +
+          (ph.length ? '<div class="photos" data-photos="' + esc(c.id) + '"><' + '/div>' : '') +
+        '<' + '/div>';
+      }).join('') : '<div class="carte vide">Aucun compte rendu.<' + '/div>');
+    brancherRafraichir();
+    R.forEach(afficherPhotos);
+  }
+
+  /* Les photos vivent dans un seau prive : une URL directe ne donnerait rien.
+     On demande des liens signes, valables une heure, au moment de l'affichage. */
+  async function afficherPhotos(c) {
+    var zone = $('[data-photos="' + c.id + '"]');
+    if (!zone || !c.photos || !c.photos.length) { return; }
+    var chemins = c.photos.map(function (p) { return p.storage_path; }).filter(Boolean);
+    if (!chemins.length) { return; }
+    var r = await sb.storage.from('comptes-rendus').createSignedUrls(chemins, 3600);
+    if (r.error || !r.data) { zone.innerHTML = '<span class="note">Photos illisibles.<' + '/span>'; return; }
+    zone.innerHTML = r.data.filter(function (u) { return u.signedUrl; }).map(function (u, i) {
+      return '<img src="' + esc(u.signedUrl) + '" alt="' + esc((c.photos[i] || {}).type || 'photo') + '" loading="lazy">';
+    }).join('');
+  }
+
+  /* =====================================================================
+     Demarrage
+     ===================================================================== */
+
+  (async function () {
+    if (!window.supabase || !CFG.SUPABASE_URL) {
+      document.body.innerHTML = '<div style="padding:40px">Configuration Supabase introuvable.<' + '/div>';
+      return;
+    }
+    sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+    var s = await sb.auth.getSession();
+    if (s.data.session) { await apresConnexion(); }
+    else { montrerPorte(); }
+  })();
+
+})();
+</script>
+</body>
+</html>
