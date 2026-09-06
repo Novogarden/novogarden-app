@@ -114,6 +114,12 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
 .couv td.case{text-align:center}
 .couv input[type=checkbox]{width:17px;height:17px;accent-color:var(--vert);cursor:pointer}
 
+.carte-fr{width:100%;max-width:620px;display:block;margin:0 auto}
+.carte-fr path{stroke:#fff;stroke-width:.6;cursor:pointer}
+.carte-fr path:hover{stroke:#233018;stroke-width:1.4}
+.legende{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.legende span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--gris)}
+.legende i{width:13px;height:13px;border-radius:3px;display:inline-block}
 .photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .photos img{width:104px;height:78px;object-fit:cover;border-radius:6px;border:1px solid var(--trait)}
 .bandeau-essai{background:#fdf3e0;border-bottom:1px solid #efd9a8;color:var(--ambre);padding:6px 26px;font-size:12.5px}
@@ -179,6 +185,18 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     'drone': 'Drone',
     'etude-flux': 'Etude de flux'
   };
+  /* Memes teintes que les tuiles de l'application : la carte doit se lire
+     sans effort par quelqu'un qui connait deja l'accueil. */
+  var TEINTES = {
+    'tonte': '#7DB532',
+    'topographie': '#4A7C2F',
+    'modelisation': '#26648E',
+    'impression': '#C25E1B',
+    'drone': '#37474F',
+    'etude-flux': '#6A4C93'
+  };
+  var geoDeps = null;
+
   var LIB_STATUT = {
     nouveau: 'Nouveau', contacte: 'Contacte', devis_envoye: 'Devis envoye',
     confirme: 'Confirme', encaisse: 'Encaisse', commission_versee: 'Commission versee',
@@ -795,6 +813,9 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       enteteHTML('Couverture', 'Ce qui est propose, prestation par prestation et departement par departement',
         '<input type="text" id="c-dep" maxlength="3" placeholder="Ex. 14" style="width:90px">' +
         '<button class="bouton mini" id="c-ajout">Ajouter un departement<' + '/button>') +
+      '<div class="carte"><h2>Carte de couverture<' + '/h2>' +
+        '<div id="carte-zone"><p class="note" style="text-align:center">Chargement du fond de carte...<' + '/p><' + '/div>' +
+      '<' + '/div>' +
       '<div class="carte"><table class="couv"><thead><tr><th class="dep">Departement<' + '/th>' +
       Object.keys(SERVICES).map(function (k) { return '<th style="text-align:center">' + esc(SERVICES[k]) + '<' + '/th>'; }).join('') +
       '<' + '/tr><' + '/thead><tbody>' +
@@ -809,6 +830,7 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       '<p class="note">Une case decochee retire la tuile chez les visiteurs de ce departement. Tant que la position d\'un visiteur est inconnue, tout reste visible.<' + '/p>';
 
     brancherRafraichir();
+    dessinerCarte();
 
     $('#c-ajout').addEventListener('click', async function () {
       var d = $('#c-dep').value.trim().toUpperCase();
@@ -879,6 +901,125 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     zone.innerHTML = r.data.filter(function (u) { return u.signedUrl; }).map(function (u, i) {
       return '<img src="' + esc(u.signedUrl) + '" alt="' + esc((c.photos[i] || {}).type || 'photo') + '" loading="lazy">';
     }).join('');
+  }
+
+  /* =====================================================================
+     Carte de couverture
+     ===================================================================== */
+
+  /* Le fond de carte est telecharge une seule fois par session. On garde la
+     version simplifiee : la precision au metre n'apporte rien ici et le
+     fichier complet ferait plusieurs megaoctets. */
+  var FOND = 'https://cdn.jsdelivr.net/gh/gregoiredavid/france-geojson@master/departements-version-simplifiee.geojson';
+
+  async function dessinerCarte() {
+    var zone = $('#carte-zone');
+    if (!zone) { return; }
+    if (!geoDeps) {
+      try { geoDeps = await (await fetch(FOND)).json(); }
+      catch (e) {
+        zone.innerHTML = '<p class="note" style="text-align:center">Fond de carte indisponible (hors ligne ?).<' + '/p>';
+        return;
+      }
+    }
+    if (!$('#carte-zone')) { return; }
+    zone.innerHTML = svgCarte(geoDeps) + legende();
+  }
+
+  /* Services actifs pour un departement, en tenant compte des lignes 'FR'
+     qui valent pour tout le pays. */
+  function servicesDe(dep) {
+    var C = cache.couverture || [];
+    var out = [];
+    Object.keys(SERVICES).forEach(function (s) {
+      var national = C.filter(function (x) { return x.service === s && x.departement === 'FR'; })[0];
+      var local = C.filter(function (x) { return x.service === s && x.departement === dep; })[0];
+      var ouvert = local ? local.actif : (national ? national.actif : false);
+      if (ouvert) { out.push(s); }
+    });
+    return out;
+  }
+
+  function svgCarte(geo) {
+    /* Projection volontairement rudimentaire : longitude corrigee par le
+       cosinus de la latitude moyenne. Sur l'emprise de la France metropolitaine
+       la deformation reste invisible a l'oeil, et cela evite d'embarquer une
+       bibliotheque cartographique pour un seul ecran. */
+    var latMoy = 46.6 * Math.PI / 180;
+    var kx = Math.cos(latMoy);
+    var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+
+    function anneaux(g) {
+      if (g.type === 'Polygon') { return g.coordinates; }
+      if (g.type === 'MultiPolygon') {
+        return g.coordinates.reduce(function (a, p) { return a.concat(p); }, []);
+      }
+      return [];
+    }
+
+    geo.features.forEach(function (f) {
+      anneaux(f.geometry).forEach(function (an) {
+        an.forEach(function (c) {
+          var x = c[0] * kx, y = -c[1];
+          if (x < minX) { minX = x; }
+          if (x > maxX) { maxX = x; }
+          if (y < minY) { minY = y; }
+          if (y > maxY) { maxY = y; }
+        });
+      });
+    });
+
+    var marge = 0.15;
+    var vb = [minX - marge, minY - marge, (maxX - minX) + 2 * marge, (maxY - minY) + 2 * marge];
+    var degrades = [];
+    var formes = geo.features.map(function (f, n) {
+      var dep = f.properties.code;
+      var actifs = servicesDe(dep);
+      var remplissage;
+
+      if (!actifs.length) {
+        remplissage = '#e9ece7';
+      } else if (actifs.length === 1) {
+        remplissage = TEINTES[actifs[0]];
+      } else {
+        /* Plusieurs prestations : on decoupe le departement en bandes egales.
+           Les arrets sont doubles pour obtenir des franges nettes plutot qu'un
+           fondu, qui rendrait les couleurs impossibles a distinguer. */
+        var id = 'grad' + n;
+        var pas = 100 / actifs.length;
+        var arrets = actifs.map(function (s, k) {
+          return '<stop offset="' + (k * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>' +
+                 '<stop offset="' + ((k + 1) * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>';
+        }).join('');
+        degrades.push('<linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' + arrets + '<' + '/linearGradient>');
+        remplissage = 'url(#' + id + ')';
+      }
+
+      var trace = anneaux(f.geometry).map(function (an) {
+        return 'M' + an.map(function (c) {
+          return (c[0] * kx).toFixed(3) + ' ' + (-c[1]).toFixed(3);
+        }).join('L') + 'Z';
+      }).join('');
+
+      var libelles = actifs.map(function (s) { return SERVICES[s]; }).join(', ');
+      return '<path d="' + trace + '" fill="' + remplissage + '" data-dep="' + esc(dep) + '">' +
+        '<title>' + esc(f.properties.nom) + ' (' + esc(dep) + ') — ' +
+        esc(libelles || 'aucune prestation') + '<' + '/title><' + '/path>';
+    }).join('');
+
+    return '<svg class="carte-fr" viewBox="' + vb.map(function (x) { return x.toFixed(3); }).join(' ') +
+      '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Couverture par departement">' +
+      '<defs>' + degrades.join('') + '<' + '/defs>' + formes + '<' + '/svg>';
+  }
+
+  function legende() {
+    return '<div class="legende">' +
+      Object.keys(SERVICES).map(function (s) {
+        return '<span><i style="background:' + TEINTES[s] + '"><' + '/i>' + esc(SERVICES[s]) + '<' + '/span>';
+      }).join('') +
+      '<span><i style="background:#e9ece7"><' + '/i>non couvert<' + '/span>' +
+      '<' + '/div>' +
+      '<p class="note" style="text-align:center;margin-top:8px">Un departement ouvert a plusieurs prestations est partage en bandes. Survolez pour le detail. France metropolitaine uniquement.<' + '/p>';
   }
 
   /* =====================================================================
