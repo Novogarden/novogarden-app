@@ -1738,6 +1738,7 @@ document.addEventListener('click',function(e){
 /* Nombre impair : la premiere occupe la largeur, pour ne pas laisser de trou. */
 .ngv-grid[data-n="5"]>.ngv-tile:first-child,
 .ngv-grid[data-n="7"]>.ngv-tile:first-child{grid-column:span 2}
+.ngv-tile .ico{filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 .ngv-tile{position:relative;border:none;cursor:pointer;text-align:left;padding:12px;color:#fff;overflow:hidden;min-height:0;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;transition:transform .12s ease}
 /* .large vient de data/services.json ; la repartition prime desormais. */
 .ngv-tile.large{grid-column:auto}
@@ -1877,7 +1878,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
       var s = l[i];
       var col = s.couleur || '#7DB532';
       var fond = s.photo
-        ? "background-image:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,0) 40%," + col + "e0 100%),url('" + s.photo + "');background-size:" + (s.photoZoom || 'cover') + ";background-position:" + (s.photoPos || 'center')
+        ? "background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%," + col + "e0 100%),url('" + s.photo + "');background-size:" + (s.photoZoom || 'cover') + ";background-position:" + (s.photoPos || 'center')
         : 'background:' + col;
       /* Le badge vient de la grille tarifaire ; data/services.json ne sert
          plus que de repli si la grille n'est pas encore chargee. */
