@@ -1046,7 +1046,10 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       var p = ev.target.closest('[data-dep]');
       if (!p) { return; }
       enPeinture = true;
-      svg.setPointerCapture(ev.pointerId);
+      /* La capture garde le trace vivant meme si le curseur sort d'un
+         departement. Certains navigateurs la refusent selon le type de
+         pointeur : ce n'est pas bloquant, on continue sans. */
+      try { svg.setPointerCapture(ev.pointerId); } catch (e) { /* sans capture */ }
       appliquer(p.getAttribute('data-dep'));
       ev.preventDefault();
     });
