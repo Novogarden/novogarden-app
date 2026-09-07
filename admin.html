@@ -107,6 +107,7 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
 #porte label{display:block;font-size:12px;color:var(--gris);margin:12px 0 4px}
 #porte input{width:100%}
 #porte .bouton{width:100%;margin-top:18px;padding:10px}
+.lien-porte{display:block;width:100%;margin-top:12px;background:none;border:0;color:var(--bleu);font-size:13px;cursor:pointer;text-decoration:underline;padding:4px}
 
 /* ----- grille de couverture ----- */
 .couv{border-collapse:collapse}
@@ -149,7 +150,20 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     <label for="p-mdp">Mot de passe</label>
     <input id="p-mdp" type="password" autocomplete="current-password" required>
     <button class="bouton" type="submit" id="p-envoi">Se connecter</button>
+    <button type="button" class="lien-porte" id="p-oubli">Mot de passe oublie ?</button>
     <p class="note" style="margin-top:14px">Meme compte que l'application.</p>
+  </form>
+
+  <form class="boite" id="form-neuf" hidden>
+    <h1>Nouveau mot de passe</h1>
+    <p>Choisissez un mot de passe, puis reconnectez-vous.</p>
+    <div id="neuf-msg"></div>
+    <label for="n-mdp">Nouveau mot de passe</label>
+    <input id="n-mdp" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="n-mdp2">Confirmation</label>
+    <input id="n-mdp2" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="bouton" type="submit" id="n-envoi">Enregistrer le mot de passe</button>
+    <p class="note" style="margin-top:14px">Huit caracteres au minimum.</p>
   </form>
 </div>
 
@@ -261,6 +275,51 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       return;
     }
     await apresConnexion();
+  });
+
+  /* On ne dit jamais si l'adresse existe : repondre « compte inconnu »
+     transformerait ce formulaire en moyen de savoir qui est inscrit. */
+  $('#p-oubli').addEventListener('click', async function () {
+    var email = $('#p-email').value.trim();
+    if (!email) {
+      messagePorte('Saisissez d\'abord votre adresse email, puis recliquez.');
+      $('#p-email').focus();
+      return;
+    }
+    var b = this;
+    b.disabled = true; b.textContent = 'Envoi...';
+    await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname
+    });
+    b.disabled = false; b.textContent = 'Mot de passe oublie ?';
+    messagePorte('Si un compte existe pour cette adresse, un lien vient d\'y etre envoye. Pensez aux indesirables.', 'ok');
+  });
+
+  function messageNeuf(txt, type) {
+    $('#neuf-msg').innerHTML = txt ? '<div class="' + (type || 'erreur') + '">' + esc(txt) + '<' + '/div>' : '';
+  }
+
+  function montrerNouveauMdp() {
+    $('#appli').classList.remove('pret');
+    $('#porte').style.display = 'flex';
+    $('#form-porte').hidden = true;
+    $('#form-neuf').hidden = false;
+  }
+
+  $('#form-neuf').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var a = $('#n-mdp').value, b2 = $('#n-mdp2').value;
+    if (a.length < 8) { messageNeuf('Huit caracteres au minimum.'); return; }
+    if (a !== b2) { messageNeuf('Les deux saisies different.'); return; }
+    var bt = $('#n-envoi');
+    bt.disabled = true; bt.textContent = 'Enregistrement...';
+    var r = await sb.auth.updateUser({ password: a });
+    bt.disabled = false; bt.textContent = 'Enregistrer le mot de passe';
+    if (r.error) { messageNeuf('Refus : ' + r.error.message); return; }
+    /* On repart d'une page propre : le jeton de recuperation est dans l'URL,
+       le laisser trainer dans l'historique n'a aucun interet. */
+    await sb.auth.signOut();
+    location.replace(location.origin + location.pathname);
   });
 
   $('#deconnexion').addEventListener('click', async function () {
@@ -1264,6 +1323,16 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       return;
     }
     sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+
+    /* Retour depuis le lien recu par email : le jeton arrive dans le fragment
+       d'URL. La session ouverte a ce moment ne sert qu'a changer le mot de
+       passe, elle ne doit pas donner acces au poste de gestion. */
+    var recuperation = /type=recovery/.test(location.hash || '');
+    sb.auth.onAuthStateChange(function (ev) {
+      if (ev === 'PASSWORD_RECOVERY') { recuperation = true; montrerNouveauMdp(); }
+    });
+    if (recuperation) { montrerNouveauMdp(); return; }
+
     var s = await sb.auth.getSession();
     if (s.data.session) { await apresConnexion(); }
     else { montrerPorte(); }
