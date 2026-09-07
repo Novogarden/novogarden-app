@@ -100,7 +100,7 @@ html, body {
 .promo-icon svg { width:24px; height:24px; fill:white; }
 .promo p:first-child { font-size:10px; opacity:0.75; text-transform:uppercase; letter-spacing:0.8px; }
 .promo p:last-child { font-size:13px; font-weight:700; margin-top:2px; line-height:1.4; }
-.sect { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:12px; }
+.sect { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:12px; letter-spacing:0.05em; }
 .cards { display:flex; flex-direction:column; gap:28px; padding-top:48px; margin-bottom:20px; }
 .card { background:white; border-radius:var(--radius); padding:16px; padding-top:52px; box-shadow:0 4px 20px rgba(20,20,15,0.08); cursor:pointer; position:relative; overflow:visible; transition:transform 0.15s; border:2px solid transparent; }
 .card:active { transform:scale(0.98); }
@@ -122,6 +122,9 @@ html, body {
 .price-table td { padding:7px 6px; text-align:center; border-bottom:1px solid var(--grey-light); font-weight:600; }
 .price-table tr:nth-child(even) td { background:#f2fce5; }
 .price-table td:first-child { text-align:left; }
+/* Signalement du 02/09/2026 : les € ne s alignaient pas d une ligne a l autre,
+   les colonnes de prix etant centrees. Alignement a droite + chiffres a chasse fixe. */
+.price-table th:not(:first-child), .price-table td:not(:first-child) { text-align:right; padding-right:10px; font-variant-numeric:tabular-nums; }
 
 /* ===== PAGE HEADER ===== */
 .page-header { background:var(--green); padding:52px 20px 18px; color:white; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
@@ -150,7 +153,7 @@ html, body {
 .opt-icon svg { width:22px; height:22px; }
 .opt-icon img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
 .g1{background:#e0f0c0;} .g2{background:#c8e0ff;} .g3{background:#ffe0c0;}
-.opt-name { font-size:13px; font-weight:700; color:var(--dark); }
+.opt-name { font-size:13px; font-weight:700; color:var(--dark); letter-spacing:0.05em; }
 .opt-price { display:inline-flex; align-items:center; justify-content:center; background:white; color:var(--green); border:2px solid var(--green); border-radius:50px; padding:4px 10px; font-size:11px; font-weight:700; white-space:nowrap; }
 .opt-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--grey-light); margin-left:auto; flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
 .opt.sel .opt-check { background:var(--green); border-color:var(--green); }
@@ -409,32 +412,32 @@ html, body {
             <div class="card-img-wrap"><img src="assets/solo.png" alt="Pack Solo"></div>
             <div class="card-name">Pack Solo — 1 tonte</div>
             <div class="card-desc">Tonte ponctuelle, sans engagement</div>
-            <div class="card-price" data-ngb-prix="solo">À partir de 29,90€</div>
-            <div class="card-tag" data-ngb-tag="solo">Sans abonnement · Jusqu'à 67€/7000m²</div>
+            <div class="card-price" data-ngb-prix="solo">À partir de 29,90&nbsp;€</div>
+            <div class="card-tag" data-ngb-tag="solo">Sans abonnement · Jusqu'à 67&nbsp;€/7000m²</div>
           </div>
           <div class="card c2" onclick="startBooking(2)">
             <div class="card-img-wrap"><img src="assets/essentiel.png" alt="Pack Essentiel"></div>
             <div class="card-name">Pack Essentiel — 5 tontes</div>
             <div class="card-desc">5 passages planifiés · 1 tonte / 6 semaines</div>
-            <div class="card-price" data-ngb-prix="essentiel">À partir de 26€ / tonte</div>
-            <div class="card-tag" data-ngb-tag="essentiel">Paiement au prorata · Jusqu'à 53€/tonte</div>
+            <div class="card-price" data-ngb-prix="essentiel">À partir de 26&nbsp;€ / tonte</div>
+            <div class="card-tag" data-ngb-tag="essentiel">Paiement au prorata · Jusqu'à 53&nbsp;€/tonte</div>
           </div>
           <div class="card c3" onclick="startBooking(3)">
             <div class="card-img-wrap"><img src="assets/serenite.png" alt="Pack Sérénité"></div>
             <div class="card-name">Pack Sérénité — 10 tontes</div>
             <div class="card-desc">La formule complète · Meilleur tarif garanti</div>
-            <div class="card-price" data-ngb-prix="serenite">À partir de 23,20€ / tonte</div>
-            <div class="card-tag" data-ngb-tag="serenite">⭐ Paiement au prorata · Jusqu'à 47€/tonte</div>
+            <div class="card-price" data-ngb-prix="serenite">À partir de 23,20&nbsp;€ / tonte</div>
+            <div class="card-tag" data-ngb-tag="serenite">⭐ Paiement au prorata · Jusqu'à 47&nbsp;€/tonte</div>
           </div>
         </div>
         <p class="sect">Tarifs TTC par surface</p>
         <table class="price-table" id="tbl-tonte">
           <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
           <tbody>
-            <tr><td>0–500 m²</td><td>29,90€</td><td>130€</td><td>232€</td></tr>
-            <tr><td>500–1500 m²</td><td>39€</td><td>175€</td><td>312€</td></tr>
-            <tr><td>1500–3000 m²</td><td>49€</td><td>220€</td><td>392€</td></tr>
-            <tr><td>3000–7000 m²</td><td>67€</td><td>265€</td><td>472€</td></tr>
+            <tr><td>0–500 m²</td><td>29,90&nbsp;€</td><td>130&nbsp;€</td><td>232&nbsp;€</td></tr>
+            <tr><td>500–1500 m²</td><td>39&nbsp;€</td><td>175&nbsp;€</td><td>312&nbsp;€</td></tr>
+            <tr><td>1500–3000 m²</td><td>49&nbsp;€</td><td>220&nbsp;€</td><td>392&nbsp;€</td></tr>
+            <tr><td>3000–7000 m²</td><td>67&nbsp;€</td><td>265&nbsp;€</td><td>472&nbsp;€</td></tr>
             <tr><td>+7000 m²</td><td>Devis</td><td>Devis</td><td>Devis</td></tr>
           </tbody>
         </table>
@@ -461,17 +464,17 @@ html, body {
           <div class="opts">
             <div class="opt sel" id="o1" onclick="selSvc(1)">
               <div class="opt-icon g1"><img src="assets/solo.png" alt="Solo"></div>
-              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price" data-ngb-opt-prix="solo">À partir de 29,90€</div></div>
+              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price" data-ngb-opt-prix="solo">À partir de 29,90&nbsp;€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o2" onclick="selSvc(2)">
               <div class="opt-icon g2"><img src="assets/essentiel.png" alt="Essentiel"></div>
-              <div><div class="opt-name">Pack Essentiel — 5 tontes</div><div class="opt-price" data-ngb-opt-prix="essentiel">À partir de 130€</div></div>
+              <div><div class="opt-name">Pack Essentiel — 5 tontes</div><div class="opt-price" data-ngb-opt-prix="essentiel">À partir de 130&nbsp;€</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o3" onclick="selSvc(3)">
               <div class="opt-icon g3"><img src="assets/serenite.png" alt="Sérénité"></div>
-              <div><div class="opt-name">Pack Sérénité — 10 tontes</div><div class="opt-price" data-ngb-opt-prix="serenite">À partir de 232€</div></div>
+              <div><div class="opt-name">Pack Sérénité — 10 tontes</div><div class="opt-price" data-ngb-opt-prix="serenite">À partir de 232&nbsp;€</div></div>
               <div class="opt-check"></div>
             </div>
           </div>
@@ -551,7 +554,7 @@ html, body {
             <p style="font-size:11px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Calendrier des tontes</p>
             <div id="recap-dates-list"></div>
           </div>
-          <div class="price-hl"><span class="lbl">Prix estimé TTC</span><span class="amt" id="sum-price">29,90€</span></div>
+          <div class="price-hl"><span class="lbl">Prix estimé TTC</span><span class="amt" id="sum-price">29,90&nbsp;€</span></div>
           <p style="font-size:11px;color:var(--grey);margin-bottom:16px;font-weight:500;">Prix estimatif, confirmé après visite. TVA non applicable.</p>
           <p style="font-size:13px;font-weight:800;margin-bottom:12px;">Vos coordonnées</p>
           <div class="autofill-banner" id="autofill-banner">✅ Coordonnées pré-remplies depuis votre compte.</div>
@@ -590,7 +593,7 @@ html, body {
       <div class="stats-row">
         <div class="stat-card"><div class="stat-val" id="stat-total">0</div><div class="stat-lbl">Total</div></div>
         <div class="stat-card"><div class="stat-val" id="stat-avenir">0</div><div class="stat-lbl">À venir</div></div>
-        <div class="stat-card"><div class="stat-val" id="stat-depenses">0€</div><div class="stat-lbl">Dépenses</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-depenses">0&nbsp;€</div><div class="stat-lbl">Dépenses</div></div>
       </div>
       <div class="tonte-list" id="tonte-list">
       </div>
@@ -681,12 +684,12 @@ html, body {
     <div id="solde" class="screen">
       <div class="solde-hero">
         <div class="solde-label">Solde du compte</div>
-        <div class="solde-amount" id="solde-amount">0,00 €</div>
+        <div class="solde-amount" id="solde-amount">0,00&nbsp;€</div>
         <div class="solde-sub">Aucun avoir en cours</div>
       </div>
       <div class="solde-body">
         <div class="solde-stats">
-          <div class="solde-stat"><div class="val" id="sd-depense">0€</div><div class="lbl">Dépensé</div></div>
+          <div class="solde-stat"><div class="val" id="sd-depense">0&nbsp;€</div><div class="lbl">Dépensé</div></div>
           <div class="solde-stat"><div class="val" id="sd-tontes">0</div><div class="lbl">Tontes</div></div>
           <div class="solde-stat"><div class="val" id="sd-attente">0</div><div class="lbl">En attente</div></div>
         </div>
@@ -919,7 +922,7 @@ function refreshSolde(){
     document.getElementById('sd-depense').textContent=depStr;
     document.getElementById('sd-tontes').textContent=tontes;
     document.getElementById('sd-attente').textContent=attente;
-    document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'€':'0,00 €';
+    document.getElementById('solde-amount').textContent=depTotal>0?depTotal.toFixed(2).replace('.',',')+'\u00A0€':'0,00\u00A0€';
     initSwipeDelete();
   }catch(e){}
 }
@@ -1520,7 +1523,7 @@ document.addEventListener('click',function(e){
   }
   function money(n) {
     if (n == null || isNaN(n)) return '—';
-    return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + ' €';
+    return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + '\u00A0€';
   }
   function frDate(iso) {
     if (!iso) return '—';
