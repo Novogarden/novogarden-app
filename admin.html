@@ -122,6 +122,16 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
 .legende{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .legende span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--gris)}
 .legende i{width:13px;height:13px;border-radius:3px;display:inline-block}
+/* ----- pinceau de couverture ----- */
+.palette{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.palette .sep{width:1px;height:24px;background:var(--trait);margin:0 6px}
+.teinte{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--trait);background:#fff;border-radius:20px;padding:5px 12px 5px 8px;cursor:pointer;font-size:13px}
+.teinte i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.teinte.actif{border-color:var(--encre);box-shadow:0 0 0 2px rgba(35,48,24,.12);font-weight:600}
+.outil{border:1px solid var(--trait);background:#fff;border-radius:7px;padding:6px 12px;cursor:pointer;font-size:13px}
+.outil.actif{background:var(--encre);color:#fff;border-color:var(--encre);font-weight:600}
+.compteur{font-size:12.5px;color:var(--ambre);font-weight:600}
+.carte-fr{touch-action:none;user-select:none}
 .photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .photos img{width:104px;height:78px;object-fit:cover;border-radius:6px;border:1px solid var(--trait)}
 .bandeau-essai{background:#fdf3e0;border-bottom:1px solid #efd9a8;color:var(--ambre);padding:6px 26px;font-size:12.5px}
@@ -906,17 +916,24 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
   }
 
   /* =====================================================================
-     Carte de couverture
+     Carte de couverture, et pinceau
      ===================================================================== */
 
-  /* Le fond de carte est telecharge une seule fois par session. On garde la
-     version simplifiee : la precision au metre n'apporte rien ici et le
-     fichier complet ferait plusieurs megaoctets. */
   /* Le fond de carte est un fichier du depot, deja projete et allege : les
      contours sont des chaines SVG pretes a l'emploi. Le telecharger tout fait
      evite d'embarquer une bibliotheque cartographique et de dependre d'un CDN
      externe a chaque ouverture de l'ecran. */
   var FOND = 'data/departements.json';
+  var ORDRE = ['tonte', 'topographie', 'modelisation', 'impression', 'drone', 'etude-flux'];
+
+  /* On peint dans un brouillon, jamais directement en base. Un glissement de
+     souris survole vite trente departements : ecrire a chaque passage
+     enverrait des dizaines de requetes et laisserait la base a moitie
+     modifiee si le reseau lache en cours de route. */
+  var pinceau = { service: 'tonte', mode: 'colorier' };
+  var brouillon = null;
+  var reference = null;
+  var enPeinture = false;
 
   async function dessinerCarte() {
     var zone = $('#carte-zone');
@@ -929,27 +946,32 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       }
     }
     if (!$('#carte-zone')) { return; }
-    zone.innerHTML = svgCarte(geoDeps) + legende();
-    zone.addEventListener('click', function (ev) {
-      var p = ev.target.closest('[data-dep]');
-      if (!p) { return; }
-      var ligne = document.querySelector('tr[data-dep="' + p.getAttribute('data-dep') + '"]');
-      if (ligne) {
-        ligne.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        ligne.style.outline = '2px solid var(--vert)';
-        setTimeout(function () { ligne.style.outline = ''; }, 1600);
-      }
+
+    reference = etatDepuisBase();
+    brouillon = etatDepuisBase();
+    zone.innerHTML = palette() + svgCarte(geoDeps) + legende();
+    brancherPalette();
+    brancherPinceau();
+  }
+
+  function etatDepuisBase() {
+    var e = {};
+    Object.keys(geoDeps.departements).forEach(function (code) {
+      var o = {};
+      servicesDe(code).forEach(function (s) { o[s] = true; });
+      e[code] = o;
     });
+    return e;
   }
 
   /* Services actifs pour un departement, en tenant compte des lignes 'FR' qui
-     valent pour tout le pays. Une ligne locale l'emporte toujours sur la
-     ligne nationale : c'est ce qui permet de fermer une prestation dans un
-     seul departement sans toucher au reste. */
+     valent pour tout le pays. Une ligne locale l'emporte toujours sur la ligne
+     nationale : c'est ce qui permet de fermer une prestation dans un seul
+     departement sans toucher au reste. */
   function servicesDe(dep) {
     var C = cache.couverture || [];
     var out = [];
-    Object.keys(SERVICES).forEach(function (s) {
+    ORDRE.forEach(function (s) {
       var national = C.filter(function (x) { return x.service === s && x.departement === 'FR'; })[0];
       var local = C.filter(function (x) { return x.service === s && x.departement === dep; })[0];
       var ouvert = local ? local.actif : (national ? national.actif : false);
@@ -958,51 +980,197 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
     return out;
   }
 
+  function actifsDe(code) {
+    var o = (brouillon && brouillon[code]) || {};
+    return ORDRE.filter(function (s) { return o[s]; });
+  }
+
+  /* ---------- barre d'outils ---------- */
+
+  function palette() {
+    return '<div class="palette">' +
+      ORDRE.map(function (s) {
+        return '<button type="button" class="teinte' + (pinceau.service === s ? ' actif' : '') +
+          '" data-teinte="' + s + '"><i style="background:' + TEINTES[s] + '"><' + '/i>' +
+          esc(SERVICES[s]) + '<' + '/button>';
+      }).join('') +
+      '<span class="sep"><' + '/span>' +
+      '<button type="button" class="outil actif" data-mode="colorier">Colorier<' + '/button>' +
+      '<button type="button" class="outil" data-mode="effacer">Effacer<' + '/button>' +
+      '<button type="button" class="outil" data-mode="vider">Tout retirer<' + '/button>' +
+      '<span class="sep"><' + '/span>' +
+      '<button type="button" class="bouton mini" id="p-enr" disabled>Enregistrer<' + '/button>' +
+      '<button type="button" class="bouton creux mini" id="p-ann" disabled>Annuler<' + '/button>' +
+      '<span class="compteur" id="p-cpt"><' + '/span>' +
+      '<' + '/div>';
+  }
+
+  function brancherPalette() {
+    var barre = $('.palette');
+    barre.addEventListener('click', function (ev) {
+      var t = ev.target.closest('[data-teinte]');
+      if (t) {
+        pinceau.service = t.getAttribute('data-teinte');
+        [].forEach.call(barre.querySelectorAll('[data-teinte]'), function (b) {
+          b.classList.toggle('actif', b === t);
+        });
+        /* Choisir une couleur veut dire qu'on va peindre : rester en mode
+           gomme apres un clic sur la palette serait deroutant. */
+        if (pinceau.mode === 'vider') { choisirMode('colorier'); }
+        return;
+      }
+      var m = ev.target.closest('[data-mode]');
+      if (m) { choisirMode(m.getAttribute('data-mode')); }
+    });
+    $('#p-enr').addEventListener('click', enregistrerPeinture);
+    $('#p-ann').addEventListener('click', function () {
+      brouillon = etatDepuisBase();
+      Object.keys(brouillon).forEach(majTeinte);
+      majCompteur();
+    });
+  }
+
+  function choisirMode(m) {
+    pinceau.mode = m;
+    [].forEach.call(document.querySelectorAll('[data-mode]'), function (b) {
+      b.classList.toggle('actif', b.getAttribute('data-mode') === m);
+    });
+  }
+
+  /* ---------- peinture ---------- */
+
+  function brancherPinceau() {
+    var svg = $('.carte-fr');
+    if (!svg) { return; }
+    svg.addEventListener('pointerdown', function (ev) {
+      var p = ev.target.closest('[data-dep]');
+      if (!p) { return; }
+      enPeinture = true;
+      svg.setPointerCapture(ev.pointerId);
+      appliquer(p.getAttribute('data-dep'));
+      ev.preventDefault();
+    });
+    /* Avec la capture du pointeur, les evenements ne visent plus le
+       departement survole : on retrouve donc l'element sous le curseur par ses
+       coordonnees. */
+    svg.addEventListener('pointermove', function (ev) {
+      if (!enPeinture) { return; }
+      var el = document.elementFromPoint(ev.clientX, ev.clientY);
+      var p = el && el.closest ? el.closest('[data-dep]') : null;
+      if (p) { appliquer(p.getAttribute('data-dep')); }
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) {
+      svg.addEventListener(t, function () { enPeinture = false; });
+    });
+  }
+
+  function appliquer(code) {
+    var o = brouillon[code] || (brouillon[code] = {});
+    if (pinceau.mode === 'vider') { brouillon[code] = {}; }
+    else if (pinceau.mode === 'effacer') { delete o[pinceau.service]; }
+    else { o[pinceau.service] = true; }
+    majTeinte(code);
+    majCompteur();
+  }
+
+  function majCompteur() {
+    var n = differences().length;
+    $('#p-cpt').textContent = n ? (n + ' changement' + (n > 1 ? 's' : '') + ' en attente') : '';
+    $('#p-enr').disabled = !n;
+    $('#p-ann').disabled = !n;
+  }
+
+  function differences() {
+    var out = [];
+    Object.keys(brouillon).forEach(function (code) {
+      ORDRE.forEach(function (s) {
+        var avant = !!(reference[code] && reference[code][s]);
+        var apres = !!brouillon[code][s];
+        if (avant !== apres) {
+          out.push({ service: s, departement: code, actif: apres });
+        }
+      });
+    });
+    return out;
+  }
+
+  async function enregistrerPeinture() {
+    var diff = differences();
+    if (!diff.length) { return; }
+    var b = $('#p-enr');
+    b.disabled = true; b.textContent = 'Enregistrement...';
+    var maintenant = new Date().toISOString();
+    var r = await sb.from('couverture').upsert(
+      diff.map(function (x) {
+        return { service: x.service, departement: x.departement, actif: x.actif, maj: maintenant };
+      }),
+      { onConflict: 'service,departement' }
+    );
+    b.textContent = 'Enregistrer';
+    if (r.error) { b.disabled = false; alert('Refus : ' + r.error.message); return; }
+    await charger(false);
+    aller('couverture');
+  }
+
+  /* ---------- rendu ---------- */
+
   function svgCarte(fond) {
     var degrades = [];
-    var codes = Object.keys(fond.departements);
-    var formes = codes.map(function (code, n) {
+    var formes = Object.keys(fond.departements).map(function (code) {
       var dp = fond.departements[code];
-      var actifs = servicesDe(code);
-      var remplissage;
-
-      if (!actifs.length) {
-        remplissage = '#e9ece7';
-      } else if (actifs.length === 1) {
-        remplissage = TEINTES[actifs[0]];
-      } else {
-        /* Plusieurs prestations : le departement est partage en bandes egales.
-           Chaque arret est double pour obtenir une frange nette ; un degrade
-           continu rendrait les couleurs impossibles a distinguer. */
-        var id = 'bande' + n;
-        var pas = 100 / actifs.length;
-        var arrets = actifs.map(function (s, k) {
-          return '<stop offset="' + (k * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>' +
-                 '<stop offset="' + ((k + 1) * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>';
-        }).join('');
-        degrades.push('<linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' + arrets + '<' + '/linearGradient>');
-        remplissage = 'url(#' + id + ')';
-      }
-
-      var libelles = actifs.map(function (s) { return SERVICES[s]; }).join(', ');
-      return '<path d="' + dp.d + '" fill="' + remplissage + '" data-dep="' + esc(code) + '">' +
-        '<title>' + esc(dp.n) + ' (' + esc(code) + ') — ' + esc(libelles || 'aucune prestation') +
-        '<' + '/title><' + '/path>';
+      degrades.push('<linearGradient id="bande-' + code + '" x1="0" y1="0" x2="0" y2="1"><' + '/linearGradient>');
+      return '<path id="dep-' + code + '" d="' + dp.d + '" data-dep="' + esc(code) + '">' +
+        '<title id="t-' + code + '">' + esc(dp.n) + ' (' + esc(code) + ')<' + '/title><' + '/path>';
     }).join('');
 
-    return '<svg class="carte-fr" viewBox="0 0 ' + fond.largeur + ' ' + fond.hauteur +
+    var svg = '<svg class="carte-fr" viewBox="0 0 ' + fond.largeur + ' ' + fond.hauteur +
       '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Couverture par departement">' +
-      '<defs>' + degrades.join('') + '<' + '/defs>' + formes + '<' + '/svg>';
+      '<defs id="bandes">' + degrades.join('') + '<' + '/defs>' + formes + '<' + '/svg>';
+
+    /* Les teintes sont posees apres coup, une fois les elements dans le
+       document : la meme fonction sert ensuite a chaque coup de pinceau. */
+    setTimeout(function () { Object.keys(fond.departements).forEach(majTeinte); }, 0);
+    return svg;
+  }
+
+  function majTeinte(code) {
+    var p = document.getElementById('dep-' + code);
+    if (!p) { return; }
+    var actifs = actifsDe(code);
+    var g = document.getElementById('bande-' + code);
+
+    if (!actifs.length) {
+      p.setAttribute('fill', '#e9ece7');
+    } else if (actifs.length === 1) {
+      p.setAttribute('fill', TEINTES[actifs[0]]);
+    } else if (g) {
+      /* Plusieurs prestations : le departement est partage en bandes egales.
+         Chaque arret est double pour obtenir une frange nette ; un degrade
+         continu rendrait les couleurs impossibles a distinguer. */
+      var pas = 100 / actifs.length;
+      g.innerHTML = actifs.map(function (s, k) {
+        return '<stop offset="' + (k * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>' +
+               '<stop offset="' + ((k + 1) * pas).toFixed(2) + '%" stop-color="' + TEINTES[s] + '"/>';
+      }).join('');
+      p.setAttribute('fill', 'url(#bande-' + code + ')');
+    }
+
+    var t = document.getElementById('t-' + code);
+    if (t && geoDeps) {
+      var nom = geoDeps.departements[code] ? geoDeps.departements[code].n : code;
+      t.textContent = nom + ' (' + code + ') — ' +
+        (actifs.map(function (s) { return SERVICES[s]; }).join(', ') || 'aucune prestation');
+    }
   }
 
   function legende() {
     return '<div class="legende">' +
-      Object.keys(SERVICES).map(function (s) {
+      ORDRE.map(function (s) {
         return '<span><i style="background:' + TEINTES[s] + '"><' + '/i>' + esc(SERVICES[s]) + '<' + '/span>';
       }).join('') +
       '<span><i style="background:#e9ece7"><' + '/i>non couvert<' + '/span>' +
       '<' + '/div>' +
-      '<p class="note" style="text-align:center;margin-top:8px">Un departement ouvert a plusieurs prestations est partage en bandes. Survolez pour le detail. France metropolitaine uniquement.<' + '/p>';
+      '<p class="note" style="text-align:center;margin-top:8px">Choisissez une prestation, puis peignez en maintenant le clic sur la carte. Rien n\'est enregistre avant d\'avoir appuye sur Enregistrer. France metropolitaine uniquement.<' + '/p>';
   }
 
   /* =====================================================================
