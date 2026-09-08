@@ -1058,6 +1058,9 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       '<button type="button" class="outil" data-mode="effacer">Effacer<' + '/button>' +
       '<button type="button" class="outil" data-mode="vider">Tout retirer<' + '/button>' +
       '<span class="sep"><' + '/span>' +
+      '<button type="button" class="outil" id="p-france">Toute la France<' + '/button>' +
+      '<button type="button" class="outil" id="p-nulle">Nulle part<' + '/button>' +
+      '<span class="sep"><' + '/span>' +
       '<button type="button" class="bouton mini" id="p-enr" disabled>Enregistrer<' + '/button>' +
       '<button type="button" class="bouton creux mini" id="p-ann" disabled>Annuler<' + '/button>' +
       '<span class="compteur" id="p-cpt"><' + '/span>' +
@@ -1081,12 +1084,26 @@ select:focus,input:focus,textarea:focus{outline:2px solid var(--vert);outline-of
       var m = ev.target.closest('[data-mode]');
       if (m) { choisirMode(m.getAttribute('data-mode')); }
     });
+    /* Une prestation nationale ne se peint pas departement par departement.
+       Ces deux raccourcis remplissent le brouillon d'un coup, l'enregistrement
+       restant volontaire comme pour le pinceau. */
+    $('#p-france').addEventListener('click', function () { partout(true); });
+    $('#p-nulle').addEventListener('click', function () { partout(false); });
     $('#p-enr').addEventListener('click', enregistrerPeinture);
     $('#p-ann').addEventListener('click', function () {
       brouillon = etatDepuisBase();
       Object.keys(brouillon).forEach(majTeinte);
       majCompteur();
     });
+  }
+
+  function partout(ouvert) {
+    Object.keys(brouillon).forEach(function (code) {
+      if (ouvert) { brouillon[code][pinceau.service] = true; }
+      else { delete brouillon[code][pinceau.service]; }
+      majTeinte(code);
+    });
+    majCompteur();
   }
 
   function choisirMode(m) {
