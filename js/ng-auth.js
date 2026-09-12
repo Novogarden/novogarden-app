@@ -83,7 +83,7 @@
         if (/already registered|User already/i.test(String(r.error.message))) {
           afficher(err, 'Vous avez deja un compte avec cette adresse. Connectez-vous ci-dessous.');
           if (typeof global.switchTab === 'function') { global.switchTab('cx'); }
-          var champ = $('#log-email') || $('#cx-email');
+          var champ = $('login-email');
           if (champ) { champ.value = email; }
           return;
         }
