@@ -258,7 +258,48 @@
 
   /* ---------- branchement sur l'existant ---------- */
 
+  /* Mot de passe oublie. On ne revele jamais si l'adresse est connue :
+     repondre « compte inconnu » ferait de ce formulaire un moyen de savoir
+     qui est inscrit. */
+  function motDePasseOublie() {
+    if (!pret()) { return alerteConfig('login-err'); }
+    var err = $('login-err');
+    var champ = $('login-email');
+    var email = ((champ && champ.value) || '').trim();
+    cacher(err);
+    if (!email) {
+      return afficher(err, 'Saisissez votre adresse email ci-dessus, puis recliquez.');
+    }
+    P.client.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname
+    }).then(function () {
+      afficher(err, 'Si un compte existe pour cette adresse, un lien vient d\'y etre envoye. Pensez aux indesirables.');
+    });
+  }
+
+  /* L'oeil bascule le champ entre masque et lisible. Sur telephone, saisir un
+     mot de passe a l'aveugle est une cause frequente d'echec de connexion. */
+  function brancherYeux() {
+    var yeux = document.querySelectorAll('[data-oeil]');
+    [].forEach.call(yeux, function (b) {
+      if (b.getAttribute('data-branche')) { return; }
+      b.setAttribute('data-branche', '1');
+      b.addEventListener('click', function () {
+        var champ = document.getElementById(b.getAttribute('data-oeil'));
+        if (!champ) { return; }
+        var lisible = champ.type === 'text';
+        champ.type = lisible ? 'password' : 'text';
+        b.setAttribute('aria-label', lisible ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
+        b.classList.toggle('oeil-ouvert', !lisible);
+      });
+    });
+  }
+
   function installer() {
+    /* L'oeil ne depend pas de Supabase : on le branche avant tout controle
+       de configuration, sinon il resterait inerte si la base n'est pas prete. */
+    brancherYeux();
+
     P = global.NGP;
     if (!P) return;
 
@@ -271,6 +312,7 @@
     global.doLogin = connexion;
     global.doRegister = inscription;
     global.doLogout = deconnexion;
+    global.ngpMotDePasseOublie = motDePasseOublie;
 
     /* Le faux systeme conservait mots de passe et sessions en clair
        dans le navigateur. On efface ces traces des l'activation. */
