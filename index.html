@@ -615,8 +615,9 @@ html, body {
             <label class="flabel">Email</label>
             <input type="email" id="login-email" class="finput" placeholder="vous@email.com">
             <label class="flabel">Mot de passe</label>
-            <input type="password" id="login-pwd" class="finput" placeholder="••••••••">
+            <div class="ng-mdp"><input type="password" id="login-pwd" class="finput" placeholder="••••••••"><button type="button" class="ng-oeil" data-oeil="login-pwd" aria-label="Afficher le mot de passe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <button class="btn-p" onclick="doLogin()">Se connecter</button>
+            <button type="button" class="ng-oubli" onclick="ngpMotDePasseOublie && ngpMotDePasseOublie()">Mot de passe oublie ?</button>
             <p style="text-align:center;font-size:12px;color:var(--grey);margin-top:14px;font-weight:500;">Pas encore de compte ? <a href="#" style="color:var(--green);font-weight:800" onclick="switchTab('in');return false">S'inscrire</a></p>
           </div>
           <div class="auth-form-panel" id="panel-in">
@@ -632,9 +633,9 @@ html, body {
             <label class="flabel">Téléphone</label>
             <input type="tel" id="reg-tel" class="finput" placeholder="06 12 34 56 78">
             <label class="flabel">Mot de passe</label>
-            <input type="password" id="reg-pwd" class="finput" placeholder="Min. 8 caractères">
+            <div class="ng-mdp"><input type="password" id="reg-pwd" class="finput" placeholder="Min. 8 caractères"><button type="button" class="ng-oeil" data-oeil="reg-pwd" aria-label="Afficher le mot de passe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <label class="flabel">Confirmer le mot de passe</label>
-            <input type="password" id="reg-pwd2" class="finput" placeholder="Retapez le même mot de passe">
+            <div class="ng-mdp"><input type="password" id="reg-pwd2" class="finput" placeholder="Retapez le même mot de passe"><button type="button" class="ng-oeil" data-oeil="reg-pwd2" aria-label="Afficher le mot de passe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <!-- Roles partenaires : masques tant que Supabase n'est pas configure -->
             <div id="ngp-roles-insc" style="display:none">
               <label class="flabel" style="margin-top:14px">Votre département</label>
@@ -1777,7 +1778,14 @@ document.addEventListener('click',function(e){
 
 <!-- ================= NOVOGARDEN — VOLETS / SERVICES v2 ================= -->
 <style>
-#volets{background:#f2f2f2;flex-direction:column;overflow:hidden}.bug-version{margin-top:10px;text-align:center;font-size:11px;color:#9a9a9a;letter-spacing:.3px}#volets.active{display:flex}
+#volets{background:#f2f2f2;flex-direction:column;overflow:hidden}.ng-mdp{position:relative;display:block}
+.ng-mdp input{width:100%;padding-right:42px}
+/* L'oeil se superpose au champ : sur telephone, saisir un mot de passe a
+   l'aveugle est la premiere cause d'echec de connexion. */
+.ng-oeil{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:0;background:none;color:#6b7280;cursor:pointer;opacity:.6;padding:0}
+.ng-oeil:hover,.ng-oeil.oeil-ouvert{opacity:1;color:#7DB532}
+.ng-oubli{display:block;width:100%;margin-top:10px;background:none;border:0;color:#2f6f9f;font-size:13px;text-decoration:underline;cursor:pointer;padding:4px}
+.bug-version{margin-top:10px;text-align:center;font-size:11px;color:#9a9a9a;letter-spacing:.3px}#volets.active{display:flex}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
 .topbar .logo-row .logo-name{display:none}
 .ngv-hero{background:var(--green);padding:8px 16px 10px;text-align:center;flex-shrink:0}
