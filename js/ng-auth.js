@@ -67,15 +67,28 @@
       return afficher(err, 'Les deux mots de passe ne sont pas identiques.');
     }
     if (rgpd && !rgpd.checked) return afficher(err, 'Merci d’accepter la politique de données personnelles.');
-    if (apporteur && prestataire && !apporteur.checked && !prestataire.checked) {
-      return afficher(err, 'Choisissez au moins un rôle.');
-    }
-
+    /* Les deux roles sont facultatifs. Sans case cochee on cree un compte
+       client, qui est le cas normal : exiger « apporteur » ou « prestataire »
+       renvoyait la plupart des visiteurs sur un message d'erreur au moment de
+       valider, et beaucoup en concluaient que l'inscription etait cassee. */
     P.client().auth.signUp({
       email: email, password: mdp,
       options: { data: { prenom: prenom, nom: nom, telephone: tel } }
     }).then(function (r) {
-      if (r.error) return afficher(err, traduire(r.error.message));
+      if (r.error) {
+        /* Une adresse deja inscrite n'est pas une erreur de saisie : c'est
+           quelqu'un qui a deja un compte et qui l'ignore. On le bascule sur
+           l'onglet Connexion avec son adresse deja remplie, plutot que de le
+           laisser se demander s'il doit recommencer. */
+        if (/already registered|User already/i.test(String(r.error.message))) {
+          afficher(err, 'Vous avez deja un compte avec cette adresse. Connectez-vous ci-dessous.');
+          if (typeof global.switchTab === 'function') { global.switchTab('cx'); }
+          var champ = $('#log-email') || $('#cx-email');
+          if (champ) { champ.value = email; }
+          return;
+        }
+        return afficher(err, traduire(r.error.message));
+      }
       /* Si la confirmation par email est active, il n'y a pas encore de
          session : on le dit clairement plutot que de laisser l'ecran muet. */
       if (!r.data.session) {
