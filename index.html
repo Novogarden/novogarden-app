@@ -432,7 +432,7 @@ html, body {
         </div>
         <p class="sect">Tarifs TTC par surface</p>
         <table class="price-table" id="tbl-tonte">
-          <thead><tr><th>Surface</th><th>Solo</th><th>Essentiel</th><th>Sérénité</th></tr></thead>
+          <thead><tr><th>Surface</th><th>Solo<br><small>1 tonte</small></th><th>Essentiel<br><small>5 tontes</small></th><th>Sérénité<br><small>10 tontes</small></th></tr></thead>
           <tbody>
             <tr><td>0–500 m²</td><td>29,90&nbsp;€</td><td>130&nbsp;€</td><td>232&nbsp;€</td></tr>
             <tr><td>500–1500 m²</td><td>39&nbsp;€</td><td>175&nbsp;€</td><td>312&nbsp;€</td></tr>
@@ -704,7 +704,7 @@ html, body {
     <div id="notifs" class="screen">
       <div class="page-header">
         <div class="ph-title">Notifications</div>
-        <button class="mark-all-btn" onclick="markAllRead()">Tout marquer lu</button>
+        $1<button class="notif-restore" id="notif-restore" onclick="window.NGNotifs&&NGNotifs.retablir()" style="display:none">Rétablir</button>
       </div>
       <div class="notif-list" id="notif-list">
       </div>
@@ -1784,6 +1784,12 @@ document.addEventListener('click',function(e){
    l'aveugle est la premiere cause d'echec de connexion. */
 .ng-oeil{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:0;background:none;color:#6b7280;cursor:pointer;opacity:.6;padding:0}
 .ng-oeil:hover,.ng-oeil.oeil-ouvert{opacity:1;color:#7DB532}
+#topbar-auth-btn.ngp-connecte{position:relative}
+#topbar-auth-btn.ngp-connecte::after{content:'';position:absolute;right:-3px;top:-3px;width:9px;height:9px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 2px #fff}
+.price-table th small{display:block;font-weight:400;font-size:11px;opacity:.75;margin-top:2px}
+.notif-item{position:relative;touch-action:pan-y;will-change:transform}
+.notif-item.ngn-masque{display:none}
+.notif-restore{margin-left:8px;background:none;border:1px solid #ccc;border-radius:14px;padding:4px 10px;font-size:12px;color:#555;cursor:pointer}
 .ng-oubli{display:block;width:100%;margin-top:10px;background:none;border:0;color:#2f6f9f;font-size:13px;text-decoration:underline;cursor:pointer;padding:4px}
 .bug-version{margin-top:10px;text-align:center;font-size:11px;color:#9a9a9a;letter-spacing:.3px}#volets.active{display:flex}
 .topbar .logo-row .logo-officiel{height:26px;width:auto;display:block}
@@ -2304,7 +2310,8 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
 <script src="js/ng-apporteur.js"></script>
 <script src="js/ng-prestataire.js"></script>
 <script src="js/ng-admin.js"></script>
-<script src="js/ng-zone.js"></script>
+$1
+  <script src="js/ng-notifs.js"></script>
 <script>
 /* Un lien venu de partenaire.html demande directement l'ecran d'inscription.
    Sans cela le visiteur atterrit sur l'accueil et doit trouver seul Connexion,
