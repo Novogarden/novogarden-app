@@ -370,9 +370,36 @@
     observer();
     intercepter();
   }
+  /* Le reglage complet attend 600 ms, le temps que le reste de l'application
+     s'installe. C'est pendant ce delai qu'on voyait toutes les prestations
+     avant reduction. On applique donc la liste memorisee des que la grille
+     existe, sans rien attendre ; a defaut de liste, on masque la grille. */
+  function prefiltre(essais) {
+    var memo = lire();
+    if (!memo) { return; }
+    if (!document.querySelector('[data-ngv]')) {
+      if (essais > 0) { setTimeout(function () { prefiltre(essais - 1); }, 25); }
+      return;
+    }
+    dept = memo.dept;
+    if (memo.services && memo.services.length) {
+      couverts = memo.services;
+      appliquer();
+    } else {
+      masquer();
+    }
+  }
+
+  function demarrerTout() {
+    prefiltre(40);
+    setTimeout(init, 600);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 600); });
-  } else { setTimeout(init, 600); }
+    document.addEventListener('DOMContentLoaded', demarrerTout);
+  } else {
+    demarrerTout();
+  }
 
   global.NGZone = {
     departement: function () { return dept; },
