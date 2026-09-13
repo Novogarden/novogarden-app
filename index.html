@@ -1823,6 +1823,14 @@ document.addEventListener('click',function(e){
 /* Pendant la premiere interrogation de la couverture, on ne montre pas des
    tuiles qui vont disparaitre : le clignotement passait pour un bug. */
 body.ngv-attente .ngv-grid{visibility:hidden}
+/* Quand la grille tient sur une colonne, la tuile de contact n'a pas besoin
+   d'autant de place que les prestations : elle ne vend rien, elle oriente.
+   Elle prend donc un tiers de la hauteur, les prestations les deux tiers. */
+.ngv-grid[data-n="1"]>.ngv-tile,
+.ngv-grid[data-n="2"]>.ngv-tile,
+.ngv-grid[data-n="3"]>.ngv-tile{grid-row:span 2}
+.ngv-grid[data-n="2"]>[data-ngv="contact"],
+.ngv-grid[data-n="3"]>[data-ngv="contact"]{grid-row:span 1}
 .ngv-tile.ngv-hors-zone{display:none}
 .ngv-zone-note{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:4px 6px}
 .ngv-zone{margin-top:5px;font-size:10.5px;color:rgba(255,255,255,.9);font-weight:600}
