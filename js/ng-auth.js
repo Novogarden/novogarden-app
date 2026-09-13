@@ -248,12 +248,37 @@
   }
 
   /* Reecrit l'entete de l'ecran Compte selon l'etat de connexion. */
+  /* Le bandeau est le seul element present sur tous les ecrans : c'est donc
+     lui qui doit dire si on est connecte. Un testeur a signale qu'on ne le
+     savait nulle part. Une fois la session ouverte, les onglets Connexion et
+     Inscription n'ont plus de raison d'occuper l'ecran Compte. */
+  function refletSession() {
+    var P2 = global.NGP;
+    var ouverte = !!(P2 && typeof P2.connecte === 'function' && P2.connecte());
+    var prof = (P2 && P2.profil) || null;
+
+    var bouton = $('topbar-auth-btn');
+    if (bouton) {
+      bouton.textContent = ouverte
+        ? ((prof && prof.prenom) || 'Mon compte')
+        : 'Connexion';
+      bouton.classList.toggle('ngp-connecte', ouverte);
+      bouton.setAttribute('aria-label', ouverte
+        ? 'Connecte : ouvrir mon compte'
+        : 'Se connecter');
+    }
+
+    var onglets = document.querySelector('.auth-tabs');
+    if (onglets) { onglets.style.display = ouverte ? 'none' : ''; }
+  }
+
   function majAffichage() {
     if (!P) P = global.NGP;
     var zone = document.getElementById('ngp-profil');
     if (!zone) return;
     zone.innerHTML = blocProfil();
     brancherProfil(zone);
+    refletSession();
   }
 
   /* ---------- branchement sur l'existant ---------- */
@@ -333,6 +358,8 @@
     global.doRegister = inscription;
     global.doLogout = deconnexion;
     global.ngpMotDePasseOublie = motDePasseOublie;
+    refletSession();
+    if (P && typeof P.surChangement === 'function') { P.surChangement(refletSession); }
 
     /* Le faux systeme conservait mots de passe et sessions en clair
        dans le navigateur. On efface ces traces des l'activation. */
