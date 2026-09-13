@@ -1826,19 +1826,6 @@ body.ngv-attente .ngv-grid{visibility:hidden}
 /* Quand la grille tient sur une colonne, la tuile de contact n'a pas besoin
    d'autant de place que les prestations : elle ne vend rien, elle oriente.
    Elle prend donc un tiers de la hauteur, les prestations les deux tiers. */
-/* Mosaique de la tuile de contact. Le decoupage suit la forme de la tuile :
-   trois colonnes sur deux rangees quand elle est haute, une seule rangee de
-   six quand elle est large et basse. Sinon les vignettes s'ecrasent. */
-.ngv-mosaique{
-  background-repeat:no-repeat;
-  background-size:cover,33.34% 50%,33.34% 50%,33.34% 50%,33.34% 50%,33.34% 50%,33.34% 50%;
-  background-position:center,0% 0%,50% 0%,100% 0%,0% 100%,50% 100%,100% 100%;
-}
-.ngv-grid[data-n="2"]>.ngv-mosaique,
-.ngv-grid[data-n="3"]>.ngv-mosaique{
-  background-size:cover,16.67% 100%,16.67% 100%,16.67% 100%,16.67% 100%,16.67% 100%,16.67% 100%;
-  background-position:center,0% 50%,20% 50%,40% 50%,60% 50%,80% 50%,100% 50%;
-}
 .ngv-grid[data-n="1"]>.ngv-tile,
 .ngv-grid[data-n="2"]>.ngv-tile,
 .ngv-grid[data-n="3"]>.ngv-tile{grid-row:span 2}
@@ -1967,17 +1954,10 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     var w = ecran('volets');
     if (!w) return;
     var l = liste();
-    /* Mosaique de la tuile de contact : on reunit les photos des prestations
-       une fois pour toutes, et on calcule leur decoupage en grille. */
-    var mosaique = (l || []).map(function (x) { return x.photo; }).filter(Boolean).slice(0, 6);
-    var colonnes = mosaique.length > 4 ? 3 : 2;
-    var rangees = Math.max(1, Math.ceil(mosaique.length / colonnes));
-    var taille = (100 / colonnes).toFixed(2) + '% ' + (100 / rangees).toFixed(2) + '%';
-    var places = mosaique.map(function (u, k) {
-      var cx = colonnes > 1 ? ((k % colonnes) * 100 / (colonnes - 1)).toFixed(2) : 50;
-      var cy = rangees > 1 ? (Math.floor(k / colonnes) * 100 / (rangees - 1)).toFixed(2) : 50;
-      return cx + '% ' + cy + '%';
-    });
+    /* La tuile de contact n'a pas de photo a elle : on reprend celle d'une
+       prestation plutot qu'un aplat de couleur. Pour en choisir une autre,
+       renseigner « photo » sur le service « contact » dans services.json. */
+    var photoContact = (l || []).map(function (x) { return x.photo; }).filter(Boolean)[0] || '';
 
     var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div><h2>Votre prix tout de suite, sans attendre de devis</h2></div><div class="ngv-grid">';
     for (var i = 0; i < l.length; i++) {
@@ -1988,12 +1968,9 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
             fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%,' + col + 'e0 100%),url(' + s.photo + ')'
                  + ';background-size:' + (s.photoZoom || 'cover')
                  + ';background-position:' + (s.photoPos || 'center');
-          } else if (mosaique.length) {
-            /* La tuile de contact n'a pas de photo propre : on y montre
-               celles des prestations, en mosaique, pour qu'elle resume
-               l'offre au lieu d'etre un aplat de couleur. */
-            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.25) 40%,' + col + 'e6 100%),'
-                 + mosaique.map(function (u) { return "url('" + u + "')"; }).join(',');
+          } else if (photoContact) {
+            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%,' + col + "e0 100%),url('" + photoContact + "')"
+                 + ';background-size:cover;background-position:center';
           } else {
             fond = 'background:' + col;
           }
@@ -2001,7 +1978,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
          plus que de repli si la grille n'est pas encore chargee. */
       var badge = (window.NGBooking && NGBooking.badgeFor) ? NGBooking.badgeFor(s.id) : null;
       var tag = badge ? esc(badge) : (s.prix ? esc(s.prix) : (s.devis ? 'Sur devis' : ''));
-      h += '<button type="button" class="ngv-tile' + (!s.photo && mosaique.length ? ' ngv-mosaique' : '') + (s.large ? ' large' : '') + '" data-ngv="' + esc(s.id) + '" style="' + fond + '">'
+      h += '<button type="button" class="ngv-tile' + (s.large ? ' large' : '') + '" data-ngv="' + esc(s.id) + '" style="' + fond + '">'
         + (tag ? '<div class="tag">' + tag + '</div>' : '')
         + ico(s.id)
         + '<div><div class="lab">' + esc(s.titre) + '</div>'
