@@ -260,7 +260,7 @@
       devoiler();
     }
     ecrire(dept, servicesConnus || null);
-    return charger().then(function (liste) {
+    return charger(dept).then(function (liste) {
       /* Une reponse vide veut dire que la base n'a pas repondu, pas que le
          departement est vide. Ecraser la liste connue afficherait alors tout,
          ce qui ressemble a « le changement de departement ne prend pas ». */
