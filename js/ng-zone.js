@@ -96,11 +96,26 @@
 
   /* ---------- ce qui est desservi ici ---------- */
 
+  /* Le client Supabase n'est pas forcement pret quand ce module demarre :
+     les scripts se chargent dans l'ordre, mais la connexion s'etablit apres.
+     Renoncer des le premier essai laissait la grille non filtree, ce qui
+     ressemblait a « le changement de departement ne prend pas ». */
+  function attendreClient(essais) {
+    var c = (P && P.estConfigure && P.estConfigure() && P.client) ? P.client() : null;
+    if (c) { return Promise.resolve(c); }
+    if (essais <= 0) { return Promise.resolve(null); }
+    return new Promise(function (r) { setTimeout(r, 250); })
+      .then(function () { return attendreClient(essais - 1); });
+  }
+
   function charger(d) {
-    if (!P || !P.estConfigure() || !P.client()) return Promise.resolve(null);
-    return P.client().rpc('services_couverts', { p_departement: d })
-      .then(function (r) { return r.error ? null : (r.data || []); })
-      .catch(function () { return null; });
+    if (!P || !d) { return Promise.resolve(null); }
+    return attendreClient(12).then(function (c) {
+      if (!c) { return null; }
+      return c.rpc('services_couverts', { p_departement: d })
+        .then(function (r) { return r.error ? null : (r.data || []); })
+        .catch(function () { return null; });
+    });
   }
 
   /* ---------- application a l'ecran ---------- */
