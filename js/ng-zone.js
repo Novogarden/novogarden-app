@@ -37,13 +37,22 @@
   function lire() {
     try {
       var b = JSON.parse(localStorage.getItem(CLE) || 'null');
-      if (!b || !b.dept) return null;
-      if (Date.now() - b.t > JOURS * 86400000) { localStorage.removeItem(CLE); return null; }
-      return b.dept;
+      if (!b || !b.dept) { return null; }
+      if (Date.now() - b.t > JOURS * 86400000) {
+        localStorage.removeItem(CLE);
+        return null;
+      }
+      return b;
     } catch (e) { return null; }
   }
-  function ecrire(d) {
-    try { localStorage.setItem(CLE, JSON.stringify({ dept: d, t: Date.now() })); } catch (e) {}
+  function ecrire(dept, services) {
+    try {
+      localStorage.setItem(CLE, JSON.stringify({
+        dept: dept,
+        services: services || null,
+        t: Date.now()
+      }));
+    } catch (e) { /* stockage refuse */ }
   }
   function oublier() { try { localStorage.removeItem(CLE); } catch (e) {} }
 
@@ -241,9 +250,39 @@
     ov.addEventListener('click', function (e) { if (e.target === ov) fermer(); });
   }
 
-  function poser(d) {
-    dept = d; ecrire(d);
-    charger(d).then(function (liste) { couverts = liste; appliquer(); });
+  function poser(dept, servicesConnus) {
+    /* La liste memorisee est appliquee tout de suite, avant meme d'interroger
+       la base : sans elle, la grille s'affiche complete puis se reduit une
+       seconde plus tard, ce qui donne l'impression d'un bug. */
+    if (servicesConnus && servicesConnus.length) {
+      couverts = servicesConnus;
+      appliquer();
+      devoiler();
+    }
+    ecrire(dept, servicesConnus || null);
+    return charger().then(function (liste) {
+      /* Une reponse vide veut dire que la base n'a pas repondu, pas que le
+         departement est vide. Ecraser la liste connue afficherait alors tout,
+         ce qui ressemble a « le changement de departement ne prend pas ». */
+      if (liste) {
+        couverts = liste;
+        ecrire(dept, liste);
+      }
+      appliquer();
+      devoiler();
+    });
+  }
+
+  /* Tant qu'on ne sait pas ce qui est couvert, on garde la grille invisible
+     plutot que d'afficher des tuiles qui vont disparaitre. Le delai de garde
+     evite un ecran vide si la base ne repond pas. */
+  function masquer() {
+    document.body.classList.add('ngv-attente');
+    setTimeout(devoiler, 1800);
+  }
+
+  function devoiler() {
+    document.body.classList.remove('ngv-attente');
   }
 
   /* volontaire : declenche par le visiteur, donc la permission a du sens */
@@ -258,10 +297,16 @@
   }
 
   function demarrer() {
-    P = global.NGP;
+    if (!global.NGP) { return; }
     var memo = lire();
-    if (memo) { poser(memo); return; }
-    /* Au premier passage on ne force rien : le bouton attend un geste. */
+    if (memo) {
+      /* Departement connu : si on a garde la liste, aucun clignotement.
+         Sinon on masque le temps d'une reponse. */
+      if (!memo.services || !memo.services.length) { masquer(); }
+      poser(memo.dept, memo.services);
+      return;
+    }
+    /* Au premier passage, on ne force rien : le bouton attend un geste. */
     majBandeau();
   }
 
