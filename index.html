@@ -1946,13 +1946,39 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
     var w = ecran('volets');
     if (!w) return;
     var l = liste();
+    /* Mosaique de la tuile de contact : on reunit les photos des prestations
+       une fois pour toutes, et on calcule leur decoupage en grille. */
+    var mosaique = liste.map(function (x) { return x.photo; }).filter(Boolean).slice(0, 6);
+    var colonnes = mosaique.length > 4 ? 3 : 2;
+    var rangees = Math.max(1, Math.ceil(mosaique.length / colonnes));
+    var taille = (100 / colonnes).toFixed(2) + '% ' + (100 / rangees).toFixed(2) + '%';
+    var places = mosaique.map(function (u, k) {
+      var cx = colonnes > 1 ? ((k % colonnes) * 100 / (colonnes - 1)).toFixed(2) : 50;
+      var cy = rangees > 1 ? (Math.floor(k / colonnes) * 100 / (rangees - 1)).toFixed(2) : 50;
+      return cx + '% ' + cy + '%';
+    });
+
     var h = '<div class="ngv-hero"><div class="sub">Nos prestations</div><h2>Votre prix tout de suite, sans attendre de devis</h2></div><div class="ngv-grid">';
     for (var i = 0; i < l.length; i++) {
       var s = l[i];
       var col = s.couleur || '#7DB532';
-      var fond = s.photo
-        ? "background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%," + col + "e0 100%),url('" + s.photo + "');background-size:" + (s.photoZoom || 'cover') + ";background-position:" + (s.photoPos || 'center')
-        : 'background:' + col;
+      var fond;
+          if (s.photo) {
+            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%,' + col + 'e0 100%),url(' + s.photo + ')'
+                 + ';background-size:' + (s.photoZoom || 'cover')
+                 + ';background-position:' + (s.photoPos || 'center');
+          } else if (mosaique.length) {
+            /* La tuile de contact n'a pas de photo propre : on y montre
+               celles des prestations, en mosaique, pour qu'elle resume
+               l'offre au lieu d'etre un aplat de couleur. */
+            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.25) 40%,' + col + 'e6 100%),'
+                 + mosaique.map(function (u) { return 'url(' + u + ')'; }).join(',')
+                 + ';background-size:cover,' + mosaique.map(function () { return taille; }).join(',')
+                 + ';background-position:center,' + places.join(',')
+                 + ';background-repeat:no-repeat';
+          } else {
+            fond = 'background:' + col;
+          }
       /* Le badge vient de la grille tarifaire ; data/services.json ne sert
          plus que de repli si la grille n'est pas encore chargee. */
       var badge = (window.NGBooking && NGBooking.badgeFor) ? NGBooking.badgeFor(s.id) : null;
