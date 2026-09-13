@@ -360,6 +360,11 @@
   }
 
   function init() {
+    /* Le raccourci vers le module de donnees etait declare mais jamais
+       renseigne : toute lecture de couverture abandonnait sur ce seul test,
+       sans erreur visible, et la grille restait non filtree. */
+    P = global.NGP || null;
+
     repartir();
     demarrer();
     observer();
