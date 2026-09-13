@@ -1972,7 +1972,7 @@ body.ngv-teinte .nav-item.active svg{fill:var(--svc)}
                celles des prestations, en mosaique, pour qu'elle resume
                l'offre au lieu d'etre un aplat de couleur. */
             fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.25) 40%,' + col + 'e6 100%),'
-                 + mosaique.map(function (u) { return 'url(' + u + ')'; }).join(',')
+                 + mosaique.map(function (u) { return "url('" + u + "')"; }).join(',')
                  + ';background-size:cover,' + mosaique.map(function () { return taille; }).join(',')
                  + ';background-position:center,' + places.join(',')
                  + ';background-repeat:no-repeat';
