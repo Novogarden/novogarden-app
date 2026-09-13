@@ -70,7 +70,7 @@
       "titre": "Devis & contact",
       "sousTitre": "Parlez-nous de votre projet",
       "couleur": "#5a8e1e",
-      "photo": null,
+      "photo": "assets/devis_plan.jpg",
       "cible": "devis",
       "devis": false
     }
