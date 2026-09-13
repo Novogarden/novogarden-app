@@ -31,7 +31,7 @@
     var b = document.getElementById('notif-restore');
     if (!b) { return; }
     var n = Object.keys(lire(CLE)).length;
-    b.textContent = 'Retablir (' + n + ')';
+    b.textContent = 'R\u00e9tablir (' + n + ')';
     b.style.display = n ? 'inline-block' : 'none';
   }
 
