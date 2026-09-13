@@ -1820,6 +1820,9 @@ document.addEventListener('click',function(e){
 /* Une prestation hors zone reste visible : la masquer ferait croire que
    Novogarden ne l'exerce pas du tout. Elle est seulement rendue inerte. */
 .ngv-grid>.ngv-tile.ngv-large{grid-column:span 2}
+/* Pendant la premiere interrogation de la couverture, on ne montre pas des
+   tuiles qui vont disparaitre : le clignotement passait pour un bug. */
+body.ngv-attente .ngv-grid{visibility:hidden}
 .ngv-tile.ngv-hors-zone{display:none}
 .ngv-zone-note{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:4px 6px}
 .ngv-zone{margin-top:5px;font-size:10.5px;color:rgba(255,255,255,.9);font-weight:600}
