@@ -250,7 +250,12 @@
     ov.addEventListener('click', function (e) { if (e.target === ov) fermer(); });
   }
 
-  function poser(dept, servicesConnus) {
+  function poser(d, servicesConnus) {
+    /* On renseigne la variable du module : le parametre la masquait, si bien
+       que le departement retenu restait inconnu du reste du fichier — et le
+       bandeau comme le filtrage repartaient de zero. */
+    dept = d;
+
     /* La liste memorisee est appliquee tout de suite, avant meme d'interroger
        la base : sans elle, la grille s'affiche complete puis se reduit une
        seconde plus tard, ce qui donne l'impression d'un bug. */
@@ -259,14 +264,15 @@
       appliquer();
       devoiler();
     }
-    ecrire(dept, servicesConnus || null);
-    return charger(dept).then(function (liste) {
+    ecrire(d, servicesConnus || null);
+
+    return charger(d).then(function (liste) {
       /* Une reponse vide veut dire que la base n'a pas repondu, pas que le
          departement est vide. Ecraser la liste connue afficherait alors tout,
          ce qui ressemble a « le changement de departement ne prend pas ». */
       if (liste) {
         couverts = liste;
-        ecrire(dept, liste);
+        ecrire(d, liste);
       }
       appliquer();
       devoiler();
