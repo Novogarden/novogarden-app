@@ -261,19 +261,39 @@
   /* Mot de passe oublie. On ne revele jamais si l'adresse est connue :
      repondre « compte inconnu » ferait de ce formulaire un moyen de savoir
      qui est inscrit. */
+  /* Mot de passe oublie.
+
+     Supabase ne peut rien expedier tant qu'aucun serveur d'envoi n'est
+     branche. On passe donc par le meme canal que les signalements de bug,
+     qui fonctionne : la demande arrive dans la boite de l'administration,
+     qui pose un mot de passe provisoire depuis le poste de gestion.
+
+     On ne revele jamais si l'adresse est connue : repondre « compte inconnu »
+     ferait de ce formulaire un moyen de savoir qui est inscrit. */
   function motDePasseOublie() {
-    if (!pret()) { return alerteConfig('login-err'); }
     var err = $('login-err');
     var champ = $('login-email');
     var email = ((champ && champ.value) || '').trim();
     cacher(err);
-    if (!email) {
+    if (!email || email.indexOf('@') < 0) {
       return afficher(err, 'Saisissez votre adresse email ci-dessus, puis recliquez.');
     }
-    P.client.auth.resetPasswordForEmail(email, {
-      redirectTo: location.origin + location.pathname
+    afficher(err, 'Envoi de la demande...');
+    fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '[Novogarden] Mot de passe oublie',
+        _captcha: 'false',
+        _template: 'table',
+        demande: 'Reinitialisation de mot de passe',
+        email: email,
+        date: new Date().toLocaleString('fr-FR')
+      })
     }).then(function () {
-      afficher(err, 'Si un compte existe pour cette adresse, un lien vient d\'y etre envoye. Pensez aux indesirables.');
+      afficher(err, 'Demande transmise. Vous recevrez un nouveau mot de passe rapidement.');
+    }).catch(function () {
+      afficher(err, 'Envoi impossible. Ecrivez a contact@novogardenhub.com.');
     });
   }
 
