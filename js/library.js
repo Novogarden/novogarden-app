@@ -53,6 +53,76 @@
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
+  /* ------------------------------------------------- désignations
+     Une phrase d'usage déduite du type d'objet : le nom seul ne suffit
+     pas toujours à comprendre à quoi sert la pièce.                   */
+  var DESC = [
+    [/^porte_cles/, "Porte-clés à glisser sur un trousseau ou un sac."],
+    [/^porte_savon/, "Porte-savon avec égouttage, pour évier ou douche."],
+    [/^porte_(forets|pinceaux|outils|stylos|embouts|cartes)/, "Rangement à poser sur l'établi ou le bureau, chaque élément à sa place."],
+    [/^porte_/, "Support de rangement à poser ou à fixer."],
+    [/^dessous_de_verre/, "Dessous de verre : protège la table des traces et de la chaleur."],
+    [/^dessous_de_plat/, "Dessous de plat : pour poser un plat chaud sans marquer la table."],
+    [/^marque_page/, "Marque-page plat, à glisser entre les pages sans les abîmer."],
+    [/^marque_place/, "Marque-place à poser sur la table pour indiquer le couvert de chaque invité."],
+    [/^marque_verre/, "Marqueur de verre : se clipse sur le pied pour que chacun retrouve le sien."],
+    [/^emporte_piece/, "Emporte-pièce : découpe la pâte à biscuits d'un geste net, se démoule sans coller."],
+    [/^pochoir/, "Pochoir à maintenir contre le support pour peindre ou tracer le motif."],
+    [/^gabarit/, "Gabarit de traçage et de perçage, à poser directement sur la pièce à travailler."],
+    [/^(jauge|reglette|regle)/, "Instrument de mesure gradué, à lire directement sur la pièce."],
+    [/^suspension/, "Décoration à suspendre, anneau de fixation intégré."],
+    [/^etiquette/, "Étiquette à accrocher, texte en relief."],
+    [/^plaque_de_porte/, "Plaque de porte à fixer ou à suspendre, lettres en relief."],
+    [/^plaque_murale/, "Plaque décorative à fixer au mur, deux trous de suspension."],
+    [/^(panneau|enseigne)/, "Panneau décoratif à fixer ou à suspendre."],
+    [/^support_mural/, "Support à fixer au mur, perçages prévus."],
+    [/^support/, "Support de maintien à poser."],
+    [/^(rack|range|casier|organiseur)/, "Rangement compartimenté, à poser ou à fixer."],
+    [/^repose/, "Repose-objet à poser : évite de salir le plan de travail."],
+    [/^crochet/, "Crochet à fixer, pour suspendre un objet léger."],
+    [/^rond_de_serviette/, "Rond de serviette pour dresser la table."],
+    [/^photophore/, "Photophore à poser autour d'une bougie LED."],
+    [/^grattoir/, "Grattoir à passer sur la surface pour décoller ce qui adhère."],
+    [/^raclette/, "Raclette à passer à plat pour racler une surface."],
+    [/^planche/, "Planche de travail à poser à plat."],
+    [/^(boite|bloc|bac|coffret)/, "Contenant à poser, compartiments séparés."],
+    [/^plateau/, "Plateau à poser, rebord qui retient le contenu."],
+    [/^guide/, "Guide à poser sur la pièce pour couper ou tracer droit."],
+    [/^cle_/, "Clé de serrage à main."],
+    [/^clips?/, "Clip de fermeture, à pincer sur le bord."],
+    [/^medaille/, "Médaille à graver, anneau de suspension intégré."],
+    [/^peigne/, "Peigne à passer sur la surface."],
+    [/^ouvre/, "Ouvre-bocal à prise renforcée, pour desserrer un couvercle sans forcer."],
+    [/^cadre/, "Cadre à poser ou à fixer."],
+    [/^(tri|bac_de_tri)/, "Bac de tri à poser, une case par catégorie."],
+    [/^equerre/, "Équerre de traçage graduée, pour reporter un angle droit ou biseauté."],
+    [/^rapporteur/, "Rapporteur d'angle à poser sur la pièce pour lire ou reporter une mesure."],
+    [/^lisseur/, "Lisseur de joint : plusieurs profils pour égaliser un cordon de silicone."],
+    [/^(corne|racloir)/, "Racloir à pâte : décolle, divise et racle le plan de travail."],
+    [/^mesure/, "Mesureur de portions : une ouverture par quantité, plus besoin de peser."],
+    [/^enrouleur/, "Enrouleur pour ranger un câble sans nœud."],
+    [/^marqueur/, "Marqueur à planter dans le pot, texte à écrire ou à graver."],
+    [/^passe_cable/, "Passe-câble à visser pour faire passer les fils proprement."]
+  ];
+  var DESC_FAM = {
+    'Emporte-pièce': "Emporte-pièce pour pâte à biscuits.",
+    'Pochoir': "Pochoir à maintenir contre le support pour tracer le motif.",
+    'Suspension': "Décoration à suspendre.",
+    'Marque-page': "Marque-page plat à glisser entre les pages.",
+    'Plaque': "Plaque décorative à fixer ou à poser.",
+    'Gabarit': "Gabarit de mesure et de traçage.",
+    'Dessous de verre': "Dessous de verre pour protéger la table.",
+    'Support': "Support de rangement à poser ou à fixer.",
+    'Rangement': "Rangement compartimenté à poser.",
+    'Petite pièce': "Petite pièce fonctionnelle.",
+    'Ustensile': "Ustensile à main.",
+    'Divers': "Pièce décorative ou utilitaire."
+  };
+  function designation(raw, fam) {
+    for (var i = 0; i < DESC.length; i++) if (DESC[i][0].test(raw)) return DESC[i][1];
+    return DESC_FAM[fam] || "Pièce imprimée en 3D.";
+  }
+
   /* ------------------------------------------------ moteur de coût */
   var P = {
     bobine: 22, echec: 8, machine: 0.25, debit: 9, amorce: 0.08,
@@ -131,6 +201,8 @@
     + '.ngl-bg{position:absolute;right:7px;bottom:7px;min-width:46px;height:46px;border-radius:999px;background:#fff;border:2px solid ' + ORANGE + ';color:' + ORANGE_D + ';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;padding:0 6px}'
     + '.ngl-b{padding:9px 10px 11px}'
     + '.ngl-t{font-size:12.5px;font-weight:600;line-height:1.3;color:#14140F;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:33px}'
+    + '.ngl-d{font-size:11px;line-height:1.35;color:#808080;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}'
+    + '.ngl-s-d{font-size:13.5px;line-height:1.5;color:#14140F;background:' + ORANGE_L + ';border-radius:10px;padding:11px 13px;margin:10px 0 4px}'
     + '.ngl-m{font-size:10.5px;color:#808080;margin-top:4px;display:flex;gap:7px;flex-wrap:wrap}'
     + '.ngl-tag{background:' + ORANGE_L + ';color:' + ORANGE_D + ';padding:2px 6px;border-radius:5px;font-weight:600}'
     + '#ngl-sheet{position:fixed;inset:0;z-index:9100;background:rgba(20,15,10,.55);display:none;overflow-y:auto;padding:18px 12px}'
@@ -210,7 +282,10 @@
     if (etat.cat) l = l.filter(function (m) { return m.f === etat.cat; });
     if (etat.q) {
       var q = etat.q.toLowerCase();
-      l = l.filter(function (m) { return m.nom.toLowerCase().indexOf(q) >= 0 || m.f.toLowerCase().indexOf(q) >= 0; });
+      l = l.filter(function (m) {
+        return m.nom.toLowerCase().indexOf(q) >= 0 || m.f.toLowerCase().indexOf(q) >= 0
+          || m.desc.toLowerCase().indexOf(q) >= 0;
+      });
     }
     l.forEach(function (m) { if (!m._p) { var ph = physique(m, 'pla'); var t = tranche(ph.masse); m._ph = ph; m._p = t ? t.solo : null; } });
     var cmp = {
@@ -231,6 +306,7 @@
         + '<div class="ngl-th"><img loading="lazy" src="' + img(m) + '" alt="">'
         + '<div class="ngl-bg">' + (m._p ? eur0(m._p) : 'Devis') + '</div></div>'
         + '<div class="ngl-b"><div class="ngl-t">' + m.nom + '</div>'
+        + '<div class="ngl-d">' + m.desc + '</div>'
         + '<div class="ngl-m"><span class="ngl-tag">' + m.f + '</span>'
         + '<span>' + Math.round(m._ph.masse) + ' g</span></div></div></div>';
     }).join('');
@@ -253,6 +329,7 @@
       + '<h3>' + m.nom + '</h3><div class="ngl-sub">' + m.f + ' · '
       + m.b.map(function (v) { return Math.round(v * 10) / 10; }).join(' × ') + ' mm · '
       + Math.round(ph.masse) + ' g</div>'
+      + '<div class="ngl-s-d">' + m.desc + '</div>'
       + '<div class="ngl-lab">Matière</div><div class="ngl-chips" id="ngl-mat">';
     Object.keys(MAT).forEach(function (k) {
       h += '<button class="ngl-chip' + (opts.matiere === k ? ' on' : '') + '" data-v="' + k + '">' + MAT[k].nom + '</button>';
@@ -333,7 +410,11 @@
       chargement = fetch('data/catalogue.json')
         .then(function (r) { return r.json(); })
         .then(function (j) {
-          DATA = (j.modeles || j).map(function (m) { m.nom = nomFr(m.r); return m; });
+          DATA = (j.modeles || j).map(function (m) {
+            m.nom = nomFr(m.r);
+            m.desc = designation(m.r, m.f);
+            return m;
+          });
           categories(); grille();
         })
         .catch(function () {
