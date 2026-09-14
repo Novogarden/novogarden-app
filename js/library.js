@@ -124,9 +124,9 @@
     + '.ngl-cat{white-space:nowrap;border:1px solid #E8E6E6;background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:#14140F}'
     + '.ngl-cat.on{background:' + ORANGE + ';border-color:' + ORANGE + ';color:#fff;font-weight:600}'
     + '.ngl-n{padding:2px 14px 8px;font-size:12px;color:#808080;flex:0 0 auto}'
-    + '.ngl-grid{flex:1;overflow-y:auto;padding:0 12px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;align-content:start}'
+    + '.ngl-grid{flex:1;overflow-y:auto;padding:0 12px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;align-content:start;grid-auto-rows:min-content}'
     + '.ngl-c{background:#fff;border:1px solid #E8E6E6;border-radius:12px;overflow:hidden;cursor:pointer}'
-    + '.ngl-th{position:relative;aspect-ratio:1;background:' + ORANGE_L + '}'
+    + '.ngl-th{position:relative;height:150px;background:' + ORANGE_L + '}'
     + '.ngl-th img{width:100%;height:100%;object-fit:cover;display:block}'
     + '.ngl-bg{position:absolute;right:7px;bottom:7px;min-width:46px;height:46px;border-radius:999px;background:#fff;border:2px solid ' + ORANGE + ';color:' + ORANGE_D + ';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;padding:0 6px}'
     + '.ngl-b{padding:9px 10px 11px}'
@@ -136,7 +136,7 @@
     + '#ngl-sheet{position:fixed;inset:0;z-index:9100;background:rgba(20,15,10,.55);display:none;overflow-y:auto;padding:18px 12px}'
     + '#ngl-sheet.on{display:block}'
     + '.ngl-s{background:#fff;border-radius:16px;max-width:620px;margin:0 auto;overflow:hidden}'
-    + '.ngl-s-img{background:' + ORANGE_L + ';aspect-ratio:16/10}'
+    + '.ngl-s-img{background:' + ORANGE_L + ';height:200px}'
     + '.ngl-s-img img{width:100%;height:100%;object-fit:cover;display:block}'
     + '.ngl-s-b{padding:18px}'
     + '.ngl-s-b h3{margin:0 0 3px;font-size:18px;color:#14140F}'
@@ -252,7 +252,8 @@
     var m = courant, r = prix(m, opts), ph = r.ph;
     var h = '<div class="ngl-s-img"><img src="' + img(m) + '" alt=""></div><div class="ngl-s-b">'
       + '<h3>' + m.nom + '</h3><div class="ngl-sub">' + m.f + ' · '
-      + m.b[0] + ' × ' + m.b[1] + ' × ' + m.b[2] + ' mm · ' + Math.round(ph.masse) + ' g · '
+      + m.b.map(function (v) { return Math.round(v * 10) / 10; }).join(' × ') + ' mm · '
+      + Math.round(ph.masse) + ' g · '
       + dur(ph.temps) + " d'impression</div>"
       + '<div class="ngl-lab">Matière</div><div class="ngl-chips" id="ngl-mat">';
     Object.keys(MAT).forEach(function (k) {
