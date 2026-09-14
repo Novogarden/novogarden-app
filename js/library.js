@@ -105,7 +105,7 @@
     if (o.multi) { var s2 = base * 0.2; total += s2; l.push(['Impression multicolore', s2]); }
     FIN.forEach(function (f) { if (o[f.id]) { total += f.prix * qte; l.push([f.nom + ' × ' + qte, f.prix * qte]); } });
     if (o.urgence) { var s3 = total * 0.2; total += s3; l.push(['Urgence sous 48 h', s3]); }
-    if (o.envoi) { total += 6; l.push(['Envoi suivi', 6]); }
+    total += 6; l.push(['Envoi suivi', 6]);
     return { devis: false, total: total, lignes: l, qte: qte, ph: ph };
   }
 
@@ -163,7 +163,6 @@
   var img = function (m) { return CDN + m.ih + FBI + m.u + '/' + m.r + '__apercu_3d.png'; };
   var eur = function (v) { return v.toFixed(2).replace('.', ',') + ' €'; };
   var eur0 = function (v) { return Math.round(v) + ' €'; };
-  var dur = function (h) { return h < 1 ? Math.round(h * 60) + ' min' : h.toFixed(1) + ' h'; };
 
   /* ------------------------------------------------------------ vues */
   function construire() {
@@ -233,7 +232,7 @@
         + '<div class="ngl-bg">' + (m._p ? eur0(m._p) : 'Devis') + '</div></div>'
         + '<div class="ngl-b"><div class="ngl-t">' + m.nom + '</div>'
         + '<div class="ngl-m"><span class="ngl-tag">' + m.f + '</span>'
-        + '<span>' + Math.round(m._ph.masse) + ' g</span><span>' + dur(m._ph.temps) + '</span></div></div></div>';
+        + '<span>' + Math.round(m._ph.masse) + ' g</span></div></div></div>';
     }).join('');
     [].forEach.call(g.children, function (c) {
       c.onclick = function () { ouvrir(DATA.filter(function (m) { return m.s === c.dataset.s; })[0]); };
@@ -242,7 +241,7 @@
 
   function ouvrir(m) {
     courant = m;
-    opts = { matiere: 'pla', pack: 'solo', multi: false, urgence: false, envoi: true,
+    opts = { matiere: 'pla', pack: 'solo', multi: false, urgence: false,
              poncage: false, peinture: false, insert: false };
     fiche();
     document.getElementById('ngl-sheet').classList.add('on');
@@ -253,8 +252,7 @@
     var h = '<div class="ngl-s-img"><img src="' + img(m) + '" alt=""></div><div class="ngl-s-b">'
       + '<h3>' + m.nom + '</h3><div class="ngl-sub">' + m.f + ' · '
       + m.b.map(function (v) { return Math.round(v * 10) / 10; }).join(' × ') + ' mm · '
-      + Math.round(ph.masse) + ' g · '
-      + dur(ph.temps) + " d'impression</div>"
+      + Math.round(ph.masse) + ' g</div>'
       + '<div class="ngl-lab">Matière</div><div class="ngl-chips" id="ngl-mat">';
     Object.keys(MAT).forEach(function (k) {
       h += '<button class="ngl-chip' + (opts.matiere === k ? ' on' : '') + '" data-v="' + k + '">' + MAT[k].nom + '</button>';
@@ -270,7 +268,6 @@
     });
     h += '<label class="ngl-chk"><input type="checkbox" data-o="multi"' + (opts.multi ? ' checked' : '') + '> Impression multicolore — +20 %</label>'
       + '<label class="ngl-chk"><input type="checkbox" data-o="urgence"' + (opts.urgence ? ' checked' : '') + '> Urgence sous 48 h — +20 %</label>'
-      + '<label class="ngl-chk"><input type="checkbox" data-o="envoi"' + (opts.envoi ? ' checked' : '') + '> Envoi suivi — 6 € (sinon retrait sur place)</label>'
       + '<div class="ngl-rec">';
     if (r.devis) {
       h += '<div class="ngl-rl"><b>Pièce hors grille — sur devis</b></div>';
