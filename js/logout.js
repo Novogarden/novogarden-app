@@ -170,6 +170,7 @@
   function carteZone() {
     var ecran = document.getElementById('compte');
     if (!ecran || document.getElementById('ng-zone-carte')) return;
+    if (!ecran.firstChild) return;
     var d = document.createElement('div');
     d.id = 'ng-zone-carte';
     d.innerHTML = '<span class="z-i">' + PIN + '</span>'
@@ -240,8 +241,11 @@
     new MutationObserver(maj).observe(ref, { childList: true, subtree: true, characterData: true });
     setInterval(maj, 2000);
 
+    /* Un intervalle plutôt qu'un MutationObserver sur <body> : l'observateur
+       se redéclenchait sur ses propres insertions et saturait la boucle de
+       micro-tâches, ce qui figeait la page. */
     carteZone();
-    new MutationObserver(carteZone).observe(document.body, { childList: true, subtree: true });
+    setInterval(carteZone, 1500);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
