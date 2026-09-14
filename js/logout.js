@@ -25,7 +25,27 @@
     + '#ng-zone-carte .z-v{font-size:14px;color:#14140F;font-weight:600;margin-top:2px}'
     + '#ng-zone-btn{background:#7DB532;color:#fff;border:0;border-radius:999px;padding:8px 15px;'
     + 'font-size:12.5px;font-weight:700;cursor:pointer;flex:0 0 auto}'
-    + '#ng-zone-btn:active{background:#5a8e1e}';
+    + '#ng-zone-btn:active{background:#5a8e1e}'
+    + '#ng-dept-ov{position:fixed;inset:0;z-index:9500;background:rgba(20,25,15,.55);display:none;'
+    + 'align-items:flex-end;justify-content:center}'
+    + '#ng-dept-ov.on{display:flex}'
+    + '#ng-dept-ov .d-box{background:#fff;width:100%;max-width:520px;max-height:82vh;'
+    + 'border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden}'
+    + '#ng-dept-ov .d-top{background:#7DB532;color:#fff;padding:14px 16px;font-weight:700;'
+    + 'letter-spacing:.04em;font-size:14px;display:flex;align-items:center}'
+    + '#ng-dept-ov .d-x{margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff;'
+    + 'width:28px;height:28px;border-radius:50%;font-size:17px;cursor:pointer;line-height:1}'
+    + '#ng-dept-ov #ng-dept-q{margin:12px;padding:11px 13px;border:1px solid #E8E6E6;border-radius:12px;'
+    + 'font-size:15px;outline:none}'
+    + '#ng-dept-ov #ng-dept-q:focus{border-color:#7DB532}'
+    + '#ng-dept-ov .d-liste{overflow-y:auto;padding:0 12px 16px;-webkit-overflow-scrolling:touch}'
+    + '#ng-dept-ov .d-i{display:flex;align-items:center;gap:11px;width:100%;text-align:left;'
+    + 'background:#fff;border:0;border-bottom:1px solid #F0EFEA;padding:12px 4px;font-size:14.5px;'
+    + 'color:#14140F;cursor:pointer}'
+    + '#ng-dept-ov .d-i:active{background:#eaf5dc}'
+    + '#ng-dept-ov .d-c{display:inline-flex;align-items:center;justify-content:center;min-width:34px;'
+    + 'height:26px;border-radius:7px;background:#eaf5dc;color:#5a8e1e;font-weight:700;font-size:12.5px}'
+    + '#ng-dept-ov .d-vide{padding:26px 8px;text-align:center;color:#808080;font-size:13.5px}';
 
   var ICONE = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff"'
     + ' stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'
@@ -62,10 +82,90 @@
     var n = NOMS && NOMS[z.dept];
     return n ? n + ' (' + z.dept + ')' : 'Département ' + z.dept;
   }
+  /* Sélecteur de département : liste complète + recherche par code postal.
+     Les prestations couvertes sont relues côté serveur pour que l'app
+     filtre correctement les services proposés. */
+  function client() {
+    var n = window.NGP;
+    if (n) { if (n.sb && n.sb.rpc) return n.sb; if (n.client && n.client.rpc) return n.client; }
+    return null;
+  }
+
   function redefinir() {
-    if (!window.confirm('Redéfinir votre zone ? Le choix du département vous sera redemandé.')) return;
-    try { localStorage.removeItem('ng_zone'); } catch (e) {}
-    location.reload();
+    var ov = document.getElementById('ng-dept-ov');
+    if (ov) { ov.classList.add('on'); return; }
+
+    ov = document.createElement('div');
+    ov.id = 'ng-dept-ov';
+    ov.innerHTML =
+      '<div class="d-box">'
+      + '<div class="d-top">Choisissez votre département'
+      + '<button type="button" class="d-x" id="ng-dept-x">&times;</button></div>'
+      + '<input type="search" id="ng-dept-q" placeholder="Code postal ou nom du département…" autocomplete="off">'
+      + '<div class="d-liste" id="ng-dept-l"><div class="d-vide">Chargement…</div></div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    ov.classList.add('on');
+    ov.onclick = function (e) { if (e.target === ov) ov.classList.remove('on'); };
+    document.getElementById('ng-dept-x').onclick = function () { ov.classList.remove('on'); };
+
+    var liste = [];
+    var rendre = function (q) {
+      var l = liste;
+      if (q) {
+        var s = q.trim().toLowerCase();
+        var cp = /^\d{2,5}$/.test(s) ? (s.length >= 3 && s.charAt(0) === '9' && s.charAt(1) === '7'
+          ? s.slice(0, 3) : s.slice(0, 2)) : null;
+        l = liste.filter(function (d) {
+          return (cp && d.code.indexOf(cp) === 0) || d.nom.toLowerCase().indexOf(s) >= 0 || d.code === s;
+        });
+      }
+      var el = document.getElementById('ng-dept-l');
+      if (!l.length) { el.innerHTML = '<div class="d-vide">Aucun département trouvé.</div>'; return; }
+      el.innerHTML = l.slice(0, 120).map(function (d) {
+        return '<button type="button" class="d-i" data-c="' + d.code + '">'
+          + '<span class="d-c">' + d.code + '</span>' + d.nom + '</button>';
+      }).join('');
+      [].forEach.call(el.children, function (b) {
+        b.onclick = function () { choisir(b.dataset.c, ov); };
+      });
+    };
+
+    var remplir = function () {
+      liste = Object.keys(NOMS).map(function (c) { return { code: c, nom: NOMS[c] }; })
+        .sort(function (a, b) { return a.code.localeCompare(b.code); });
+      rendre('');
+      document.getElementById('ng-dept-q').oninput = function (e) { rendre(e.target.value); };
+    };
+
+    if (NOMS) { remplir(); }
+    else {
+      chargerNoms().then(remplir).catch(function () {
+        document.getElementById('ng-dept-l').innerHTML =
+          '<div class="d-vide">Liste indisponible. Réessayez plus tard.</div>';
+      });
+    }
+  }
+
+  function choisir(code, ov) {
+    var el = document.getElementById('ng-dept-l');
+    el.innerHTML = '<div class="d-vide">Vérification des prestations couvertes…</div>';
+    var c = client();
+    var fin = function (services) {
+      try {
+        localStorage.setItem('ng_zone', JSON.stringify({
+          dept: code, services: services || [], t: Date.now()
+        }));
+      } catch (e) {}
+      location.reload();
+    };
+    if (!c) {
+      el.innerHTML = '<div class="d-vide">Connexion au serveur indisponible. Réessayez dans un instant.</div>';
+      return;
+    }
+    c.rpc('services_couverts', { p_departement: code })
+      .then(function (r) { fin(r && !r.error ? (r.data || []) : []); })
+      .catch(function () { fin([]); });
   }
   function carteZone() {
     var ecran = document.getElementById('compte');
@@ -80,19 +180,18 @@
     document.getElementById('ng-zone-btn').onclick = redefinir;
     majZone();
   }
-  function majZone() {
-    var v = document.getElementById('ng-zone-val');
-    if (!v) return;
-    var z = zoneLue();
-    if (NOMS || !z || !z.dept) { v.textContent = libelle(z); return; }
-    fetch('data/departements.json')
+  var promesseNoms = null;
+  function chargerNoms() {
+    if (NOMS) return Promise.resolve(NOMS);
+    if (promesseNoms) return promesseNoms;
+    promesseNoms = fetch('data/departements.json')
       .then(function (r) { return r.json(); })
       .then(function (j) {
         var src = j.departements || j.depts || j;
         NOMS = {};
         if (Array.isArray(src)) {
           src.forEach(function (x) {
-            var c = x.code || x.dept || x.num, n = x.nom || x.name || x.libelle;
+            var c = x.code || x.dept || x.num, n = x.n || x.nom || x.name || x.libelle;
             if (c && n) NOMS[String(c)] = n;
           });
         } else {
@@ -101,9 +200,22 @@
             NOMS[c] = typeof x === 'string' ? x : (x.n || x.nom || x.name || c);
           });
         }
-        v.textContent = libelle(zoneLue());
-      })
-      .catch(function () {});
+        return NOMS;
+      });
+    return promesseNoms;
+  }
+
+  function majZone() {
+    var v = document.getElementById('ng-zone-val');
+    if (!v) return;
+    var z = zoneLue();
+    v.textContent = libelle(z);
+    if (!NOMS && z && z.dept) {
+      chargerNoms().then(function () {
+        var e = document.getElementById('ng-zone-val');
+        if (e) e.textContent = libelle(zoneLue());
+      }).catch(function () {});
+    }
   }
 
   function init() {
