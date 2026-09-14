@@ -318,7 +318,10 @@
     }
   }
 
-  function fermer() { document.getElementById('ngl-ov').classList.remove('on'); }
+  function fermer() {
+    document.getElementById('ngl-ov').classList.remove('on');
+    document.getElementById('ngl-sheet').classList.remove('on');
+  }
 
   /* ---------------------------------------------------------- ouverture */
   var chargement = null;
