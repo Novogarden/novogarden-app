@@ -1971,7 +1971,7 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
       var col = s.couleur || '#7DB532';
       var fond;
           if (s.photo) {
-            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%,' + col + 'e0 100%),url(' + s.photo + ')'
+            fond = 'background-image:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,0) 46%,' + col + "e0 100%),url('" + s.photo + "')"
                  + ';background-size:' + (s.photoZoom || 'cover')
                  + ';background-position:' + (s.photoPos || 'center');
           } else if (photoContact) {
