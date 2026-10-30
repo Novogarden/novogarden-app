@@ -338,11 +338,29 @@
       + '<div class="ngp-titre">Choisissez un nouveau mot de passe</div></div>'
       + '<div class="ngp-carte">'
       + '<label class="flabel" for="ngp-nm-1">Nouveau mot de passe</label>'
-      + '<input type="password" id="ngp-nm-1" class="finput" placeholder="Min. 8 caractères" autocomplete="new-password">'
+      + '<div class="ng-mdp"><input type="password" id="ngp-nm-1" class="finput" placeholder="Min. 8 caractères" autocomplete="new-password">'
+      + '<button type="button" class="ng-oeil" data-oeil="ngp-nm-1" aria-label="Afficher le mot de passe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>'
       + '<label class="flabel" for="ngp-nm-2">Confirmer le mot de passe</label>'
-      + '<input type="password" id="ngp-nm-2" class="finput" placeholder="Retapez le même mot de passe" autocomplete="new-password">'
+      + '<div class="ng-mdp"><input type="password" id="ngp-nm-2" class="finput" placeholder="Retapez le même mot de passe" autocomplete="new-password">'
+      + '<button type="button" class="ng-oeil" data-oeil="ngp-nm-2" aria-label="Afficher le mot de passe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>'
+      + '<div id="ngp-nm-etat" style="font-size:13px;font-weight:700;margin:-4px 0 10px;min-height:18px"></div>'
       + '<div class="err-msg" id="ngp-nm-err"></div>'
       + '<button class="btn-p" id="ngp-nm-ok">Enregistrer le mot de passe</button></div></div>';
+    brancherYeux();
+    /* On dit en direct si les deux saisies concordent : sur telephone,
+       une faute de frappe dans un champ masque est difficile a reperer. */
+    function majEtat() {
+      var a = w.querySelector('#ngp-nm-1').value;
+      var b = w.querySelector('#ngp-nm-2').value;
+      var etat = w.querySelector('#ngp-nm-etat');
+      if (!b) { etat.textContent = ''; return; }
+      var ok = a === b;
+      etat.textContent = ok ? '✓ Les deux mots de passe sont identiques' : '✗ Les deux mots de passe sont différents';
+      etat.style.color = ok ? '#2E7D32' : '#C62828';
+      if (ok) { cacher(w.querySelector('#ngp-nm-err')); }
+    }
+    w.querySelector('#ngp-nm-1').addEventListener('input', majEtat);
+    w.querySelector('#ngp-nm-2').addEventListener('input', majEtat);
     w.querySelector('#ngp-nm-ok').addEventListener('click', function () {
       var a = w.querySelector('#ngp-nm-1').value;
       var b = w.querySelector('#ngp-nm-2').value;
