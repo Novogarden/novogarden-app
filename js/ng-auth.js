@@ -283,15 +283,16 @@
 
   /* ---------- branchement sur l'existant ---------- */
 
-  /* Mot de passe oublie. On ne revele jamais si l'adresse est connue :
-     repondre « compte inconnu » ferait de ce formulaire un moyen de savoir
-     qui est inscrit. */
   /* Mot de passe oublie.
 
-     Supabase ne peut rien expedier tant qu'aucun serveur d'envoi n'est
-     branche. On passe donc par le meme canal que les signalements de bug,
-     qui fonctionne : la demande arrive dans la boite de l'administration,
-     qui pose un mot de passe provisoire depuis le poste de gestion.
+     Supabase envoie lui-meme le lien de reinitialisation (via le serveur
+     d'envoi branche dans Authentication > SMTP). Le lien ramene ici : on
+     detecte alors l'evenement PASSWORD_RECOVERY et on affiche l'ecran
+     « Nouveau mot de passe ».
+
+     En parallele, l'administration recoit toujours un avis par le canal
+     des signalements : si l'envoi Supabase echoue, Romain peut encore
+     depanner a la main.
 
      On ne revele jamais si l'adresse est connue : repondre « compte inconnu »
      ferait de ce formulaire un moyen de savoir qui est inscrit. */
@@ -303,23 +304,76 @@
     if (!email || email.indexOf('@') < 0) {
       return afficher(err, 'Saisissez votre adresse email ci-dessus, puis recliquez.');
     }
-    afficher(err, 'Envoi de la demande...');
-    fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
+    afficher(err, 'Envoi du lien...');
+    var retour = location.origin + location.pathname;
+    var envoi = (pret() ? P.client().auth.resetPasswordForEmail(email, { redirectTo: retour })
+                        : Promise.resolve({ error: 'non configure' }))
+      .catch(function (e) { return { error: e }; });
+    var avis = fetch('https://formsubmit.co/ajax/contact@novogardenhub.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         _subject: '[Novogarden] Mot de passe oublie',
         _captcha: 'false',
         _template: 'table',
-        demande: 'Reinitialisation de mot de passe',
+        demande: 'Reinitialisation de mot de passe (lien Supabase envoye automatiquement)',
         email: email,
         date: new Date().toLocaleString('fr-FR')
       })
-    }).then(function () {
-      afficher(err, 'Demande transmise. Vous recevrez un nouveau mot de passe rapidement.');
-    }).catch(function () {
-      afficher(err, 'Envoi impossible. Ecrivez a contact@novogardenhub.com.');
+    }).catch(function () {});
+    Promise.all([envoi, avis]).then(function (res) {
+      var r = res[0] || {};
+      if (r.error && /rate limit|too many/i.test(String(r.error.message || r.error))) {
+        return afficher(err, 'Trop de demandes. Réessayez dans quelques minutes.');
+      }
+      afficher(err, 'Si un compte existe pour cette adresse, un lien pour choisir un nouveau mot de passe vient de vous être envoyé. Pensez à regarder dans les courriers indésirables.');
     });
+  }
+
+  /* Ecran affiche apres un clic sur le lien recu par mail. */
+  function ecranNouveauMdp() {
+    if (!pret()) return;
+    var w = P.ecran('ngp-nouveau-mdp');
+    w.innerHTML = '<div class="ngp-wrap"><div class="ngp-head">'
+      + '<div class="ngp-titre">Choisissez un nouveau mot de passe</div></div>'
+      + '<div class="ngp-carte">'
+      + '<label class="flabel" for="ngp-nm-1">Nouveau mot de passe</label>'
+      + '<input type="password" id="ngp-nm-1" class="finput" placeholder="Min. 8 caractères" autocomplete="new-password">'
+      + '<label class="flabel" for="ngp-nm-2">Confirmer le mot de passe</label>'
+      + '<input type="password" id="ngp-nm-2" class="finput" placeholder="Retapez le même mot de passe" autocomplete="new-password">'
+      + '<div class="err-msg" id="ngp-nm-err"></div>'
+      + '<button class="btn-p" id="ngp-nm-ok">Enregistrer le mot de passe</button></div></div>';
+    w.querySelector('#ngp-nm-ok').addEventListener('click', function () {
+      var a = w.querySelector('#ngp-nm-1').value;
+      var b = w.querySelector('#ngp-nm-2').value;
+      var e = w.querySelector('#ngp-nm-err');
+      cacher(e);
+      if (a.length < 8) return afficher(e, 'Mot de passe : 8 caractères minimum.');
+      if (a !== b) return afficher(e, 'Les deux mots de passe ne sont pas identiques.');
+      afficher(e, 'Enregistrement...');
+      P.client().auth.updateUser({ password: a }).then(function (r) {
+        if (r.error) return afficher(e, traduire(r.error.message));
+        try { history.replaceState(null, '', location.pathname); } catch (x) {}
+        return P.rafraichir().then(function () {
+          P.toast('Mot de passe modifié. Vous êtes connecté.');
+          if (typeof global.navTo === 'function') global.navTo('compte');
+        });
+      }).catch(function () { afficher(e, 'Enregistrement impossible. Réessayez.'); });
+    });
+    P.aller('ngp-nouveau-mdp');
+  }
+
+  function brancherRecuperation() {
+    var deja = false;
+    function ouvrir() { if (deja) return; deja = true; setTimeout(ecranNouveauMdp, 300); }
+    /* Le lien arrive avec #...type=recovery : l'evenement peut partir avant
+       notre ecoute, d'ou le controle direct de l'adresse. */
+    if (/type=recovery/.test(location.hash) || /type=recovery/.test(location.search)) ouvrir();
+    try {
+      P.client().auth.onAuthStateChange(function (evt) {
+        if (evt === 'PASSWORD_RECOVERY') ouvrir();
+      });
+    } catch (e) {}
   }
 
   /* L'oeil bascule le champ entre masque et lisible. Sur telephone, saisir un
@@ -358,6 +412,7 @@
     global.doRegister = inscription;
     global.doLogout = deconnexion;
     global.ngpMotDePasseOublie = motDePasseOublie;
+    brancherRecuperation();
     refletSession();
     if (P && typeof P.surChangement === 'function') { P.surChangement(refletSession); }
 
