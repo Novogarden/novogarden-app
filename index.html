@@ -1158,25 +1158,12 @@ async function doConfirm(){
     (note?'NOTE CLIENT : '+note+'\n\n':'')+
     '─────────────────────────────\n'+
     'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
-  try{
-    const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        _subject:'[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,
-        _captcha:'false',
-        _template:'table',
-        name:name,
-        email:email,
-        phone:phone,
-        message:message
-      })
-    });
-    const data=await resp.json();
-    if(data.success==='true'||data.success===true){fillSuccess(devisRef,email,null);}
-    else{throw new Error(data.message||'Send failed');}
-  }catch(err){
-    console.error('FormSubmit error:',err);
+  const champs={_subject:'[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,_captcha:'false',_template:'table',name:name,email:email,phone:phone,message:message};
+  /* Double canal : mail (FormSubmit) ET base Supabase. */
+  const mailOk=await NGDemandes.mailAjax(champs);
+  const baseOk=await NGDemandes.sauver('devis','Devis '+devisRef+' – '+name,{reference:devisRef,nom:name,email:email,telephone:phone,adresse:addr,formule:svcLbl,tarif:getPrice(),message:message},null,mailOk);
+  if(mailOk||baseOk){fillSuccess(devisRef,email,null);}
+  else{
     eb.textContent='Erreur d\'envoi. Veuillez réessayer ou contacter contact@novogardenhub.com';
     eb.style.display='block';
     btn.disabled=false;
@@ -1418,30 +1405,19 @@ async function doReportBug(){
   err.textContent='';
   const btn=document.getElementById('btn-bug');btn.disabled=true;btn.textContent='⏳ Envoi…';
   const userInfo=currentUser?'Utilisateur : '+currentUser.prenom+' '+currentUser.nom+'\nEmail : '+currentUser.email:'Utilisateur non connecté';
-  /* La capture part separement : voir envoyerCapture. */
-  envoyerCapture(screenshotFile, desc);
-
-  try{
-    const resp=await fetch('https://formsubmit.co/ajax/contact@novogardenhub.com',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        _subject:'[Bug Novogarden] Signalement client',
-        _captcha:'false',
-        _template:'table',
-version: versionTracee,
-                source:'PWA Bug Report',
-        utilisateur:userInfo,
-        description:desc+screenshotInfo,
-        date:new Date().toLocaleString('fr-FR')
-      })
-    });
-    const data=await resp.json();
-    if(data.success==='true'||data.success===true){
-      closeOverlay('bug-overlay');
-      showToast('Merci ! Votre signalement a été envoyé. 🙏');
-    }else{throw new Error(data.message||'Send failed');}
-  }catch(e){
+  const photo=screenshotFile&&screenshotFile.files&&screenshotFile.files[0]?screenshotFile.files[0]:null;
+  const champs={_subject:'[Bug Novogarden] Signalement client',_captcha:'false',_template:'table',version:versionTracee,source:'PWA Bug Report',utilisateur:userInfo,description:desc+screenshotInfo,date:new Date().toLocaleString('fr-FR')};
+  /* Double canal : mail (FormSubmit) ET base Supabase. Le signalement est
+     recu des que l'un des deux fonctionne (FormSubmit peut etre en panne). */
+  const mailOk=await NGDemandes.mailAjax(champs);
+  /* La capture part separement par mail : voir envoyerCapture. */
+  if(mailOk) envoyerCapture(screenshotFile, desc);
+  const baseOk=await NGDemandes.sauver('bug','Signalement de bug',{description:desc,utilisateur:userInfo,version:versionTracee,date:champs.date},photo,mailOk);
+  if(mailOk||baseOk){
+    closeOverlay('bug-overlay');
+    showToast('Merci ! Votre signalement a été envoyé. 🙏');
+    try{screenshotFile.value='';}catch(e){}
+  }else{
     err.textContent='Erreur d\'envoi. Réessayez ou contactez contact@novogardenhub.com';
     btn.disabled=false;btn.textContent='📤 Envoyer';
   }
@@ -2146,7 +2122,21 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
     champ('Projet', msg);
     if (fichier && chp) { chp.name = 'Piece_jointe'; form.appendChild(chp); }
     document.body.appendChild(form);
-    form.submit();
+    /* Filet de securite : la demande est d'abord gardee dans la base.
+       Si c'est fait, le mail part en arriere-plan (cadre cache) et la
+       confirmation s'affiche tout de suite, meme si FormSubmit est en panne. */
+    NGDemandes.sauver('devis', 'Devis ' + svc + ' – ' + nom,
+      { prestation: svc, nom: nom, email: mail, telephone: tel || '', commune: cp || '', projet: msg }, fichier, null)
+      .then(function (baseOk) {
+        if (!baseOk) { form.submit(); return; }
+        var cadre = document.createElement('iframe');
+        cadre.name = 'ngv-envoi-' + Date.now();
+        cadre.style.display = 'none';
+        document.body.appendChild(cadre);
+        form.target = cadre.name;
+        form.submit();
+        succes(svc);
+      });
   }
   function succes(svc) {
     var w = document.getElementById('devis');
@@ -2307,6 +2297,7 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/ng-config.js"></script>
 <script src="js/ng-core.js"></script>
+<script src="js/ng-demandes.js"></script>
 <script src="js/ng-auth.js"></script>
 <script src="js/ng-parrainage.js"></script>
 <script src="js/ng-apporteur.js"></script>
