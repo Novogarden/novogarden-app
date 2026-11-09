@@ -1766,6 +1766,26 @@ document.addEventListener('click',function(e){
 .price-table th small{display:block;font-weight:400;font-size:11px;opacity:.75;margin-top:2px}
 .notif-item{position:relative;touch-action:pan-y;will-change:transform}
 .notif-item.ngn-masque{display:none}
+.ngc-ecrire{margin:12px 16px 24px;background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.ngc-ecrire-t,.ngc-sous{font-weight:800;font-size:14px;margin:4px 0 8px}
+.ngc-sous{margin-top:14px;font-size:13px;color:#2e7d32}
+#ngc-txt,.ngc-in{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:10px;padding:10px;font-family:inherit;font-size:14px;margin-bottom:8px;resize:vertical}
+.ngc-btn{background:#2e7d32;color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+.ngc-btn.ngc-sec{background:#eef5ea;color:#2e7d32}
+.ngc-btn:disabled{opacity:.5}
+.ngc-acts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ngc-hist-t{font-size:12px;font-weight:800;color:#888;margin:12px 0 6px}
+.ngc-hist{background:#f6f8f4;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px}
+.ngc-hist span,.ngc-bulle span{display:block;font-size:11px;color:#999;margin-top:3px}
+.ngc-pastille{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e53935;color:#fff;font-size:11px;font-weight:800;vertical-align:middle}
+.ngc-cli-h{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.ngc-compte{font-size:22px;font-weight:900;color:#2e7d32;white-space:nowrap}.ngc-compte small{font-size:12px;color:#999}.ngc-compte.vide{color:#bbb}
+.ngc-det{margin-top:12px;border-top:1px solid #eee;padding-top:10px}
+.ngc-pack{background:#f6f8f4;border-radius:12px;padding:10px;margin-bottom:8px;font-size:13px}
+.ngc-pack .ngc-in{margin-top:6px}
+.ngc-fil{max-height:260px;overflow:auto;margin-bottom:8px}
+.ngc-bulle{max-width:85%;padding:8px 10px;border-radius:12px;margin:4px 0;font-size:13px}
+.ngc-bulle.lui{background:#f1f1f1}.ngc-bulle.moi{background:#e3f1dc;margin-left:auto}
 .notif-reste{margin-left:auto;background:rgba(255,255,255,.95);color:#2e7d32;border:none;border-radius:16px;padding:6px 12px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 .notif-restore{margin-left:8px;background:none;border:1px solid #ccc;border-radius:14px;padding:4px 10px;font-size:12px;color:#555;cursor:pointer}
 .ng-oubli{display:block;width:100%;margin-top:10px;background:none;border:0;color:#2f6f9f;font-size:13px;text-decoration:underline;cursor:pointer;padding:4px}
@@ -2305,6 +2325,7 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
 <script src="js/ng-apporteur.js"></script>
 <script src="js/ng-prestataire.js"></script>
 <script src="js/ng-admin.js"></script>
+<script src="js/ng-clients.js"></script>
   <script src="js/ng-notifs.js"></script>
   <script src="js/ng-zone.js"></script>
 <script>
@@ -2349,6 +2370,7 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
    Source 1 : la fiche client du journal (pack + passages saisis par Novogarden).
    Source 2 : les réservations de l'appli (pack choisi + dates planifiées passées). */
 function ngTontesRestantes(){
+  try{ if(window.NGC_RESTE){var c=window.NGC_RESTE(); if(c&&c.pack) return c;} }catch(e){}
   try{ if(window.NGJ_REC){var r=window.NGJ_REC(); if(r&&r.packTotal){return {n:Math.max(0,r.packTotal-(r.passages||[]).length),pack:r.pack||''};}} }catch(e){}
   var res=[];try{res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');}catch(e){}
   var today=new Date();today.setHours(0,0,0,0);var n=0,pack='',vu=false;
