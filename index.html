@@ -704,7 +704,7 @@ html, body {
     <div id="notifs" class="screen">
       <div class="page-header">
         <div class="ph-title">Notifications</div>
-        $1<button class="notif-restore" id="notif-restore" onclick="window.NGNotifs&&NGNotifs.retablir()" style="display:none">Rétablir</button>
+        <button class="notif-reste" id="notif-reste" type="button" onclick="ngResteClic()" style="display:none"></button><button class="notif-restore" id="notif-restore" onclick="window.NGNotifs&&NGNotifs.retablir()" style="display:none">Rétablir</button>
       </div>
       <div class="notif-list" id="notif-list">
       </div>
@@ -1517,6 +1517,7 @@ document.addEventListener('click',function(e){
     if (!u || !J || !J.clients) return null;
     return J.clients[ngCode(u.email)] || null;
   }
+  window.NGJ_REC = myRec;
   function renderSolde() {
     var body = document.querySelector('#solde .solde-body');
     if (!body) return;
@@ -1765,6 +1766,7 @@ document.addEventListener('click',function(e){
 .price-table th small{display:block;font-weight:400;font-size:11px;opacity:.75;margin-top:2px}
 .notif-item{position:relative;touch-action:pan-y;will-change:transform}
 .notif-item.ngn-masque{display:none}
+.notif-reste{margin-left:auto;background:rgba(255,255,255,.95);color:#2e7d32;border:none;border-radius:16px;padding:6px 12px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 .notif-restore{margin-left:8px;background:none;border:1px solid #ccc;border-radius:14px;padding:4px 10px;font-size:12px;color:#555;cursor:pointer}
 .ng-oubli{display:block;width:100%;margin-top:10px;background:none;border:0;color:#2f6f9f;font-size:13px;text-decoration:underline;cursor:pointer;padding:4px}
 .bug-version{margin-top:10px;text-align:center;font-size:11px;color:#9a9a9a;letter-spacing:.3px}#volets.active{display:flex}
@@ -2342,6 +2344,36 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
 })();
 </script>
 <!-- =============== FIN ESPACES PARTENAIRES =============== -->
+<script>
+/* Pastille « tontes restantes » de l'écran Notifications.
+   Source 1 : la fiche client du journal (pack + passages saisis par Novogarden).
+   Source 2 : les réservations de l'appli (pack choisi + dates planifiées passées). */
+function ngTontesRestantes(){
+  try{ if(window.NGJ_REC){var r=window.NGJ_REC(); if(r&&r.packTotal){return {n:Math.max(0,r.packTotal-(r.passages||[]).length),pack:r.pack||''};}} }catch(e){}
+  var res=[];try{res=JSON.parse(localStorage.getItem('ng_reservations')||'[]');}catch(e){}
+  var today=new Date();today.setHours(0,0,0,0);var n=0,pack='',vu=false;
+  res.forEach(function(r){
+    var m=String(r.svc||'').match(/(\d+)\s*tonte/i);if(!m)return;
+    var tot=parseInt(m[1],10),faites=0;
+    var ds=(r.dates&&r.dates.length)?r.dates.map(function(x){return new Date(x);}):(r.date&&typeof parseDate==='function'?[parseDate(r.date)]:[]);
+    ds.forEach(function(d){if(d&&!isNaN(d)&&d<today)faites++;});
+    var reste=Math.max(0,tot-faites);vu=true;
+    if(reste>0){n+=reste;pack=String(r.svc).split('–')[0].trim();}
+  });
+  return vu?{n:n,pack:pack}:null;
+}
+function ngMajReste(){
+  var b=document.getElementById('notif-reste');if(!b)return;
+  var t=ngTontesRestantes();
+  if(!t){b.textContent='Choisir un pack';}
+  else{b.textContent=t.n+' tonte'+(t.n>1?'s':'')+' restante'+(t.n>1?'s':'');}
+  b.title=t&&t.pack?t.pack:'';
+  b.style.display='';
+}
+function ngResteClic(){var t=ngTontesRestantes();if(t&&t.n>0){navTo('solde');}else{startBooking(2);}}
+(function(){var go=function(){ngMajReste();var o=new MutationObserver(function(){var n=document.getElementById('notifs');if(n&&n.classList.contains('active'))ngMajReste();});var n=document.getElementById('notifs');if(n)o.observe(n,{attributes:true,attributeFilter:['class']});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();})();
+</script>
 <!-- Film d'intro au démarrage (1 fois par ouverture de l'appli) -->
 <style>
 #ngIntro{position:fixed;inset:0;z-index:99999;background:#0d3b2a;display:flex;align-items:center;justify-content:center;transition:opacity .5s}
