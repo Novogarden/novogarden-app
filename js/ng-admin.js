@@ -50,6 +50,7 @@
       + '<div class="ngp-tabs">'
       + tab('leads', 'Leads') + tab('missions', 'Missions')
       + tab('partenaires', 'Partenaires') + tab('cr', 'Comptes-rendus')
+      + tab('clients', 'Clients')
       + tab('couverture', 'Couverture')
       + '</div><div id="adm-corps"><div class="ngp-chargement">Chargement…</div></div></div>';
     w.innerHTML = h;
@@ -63,6 +64,7 @@
     else if (onglet === 'missions') sectionMissions();
     else if (onglet === 'partenaires') sectionPartenaires();
     else if (onglet === 'cr') sectionCR();
+    else if (onglet === 'clients') { if (global.NGC) global.NGC.sectionAdmin(corps()); }
     else sectionCouverture();
   }
 
