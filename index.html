@@ -2030,8 +2030,10 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
     if (!s) return;
     if (s.id === 'contact') { courant = null; rendreDevis(null); aller('devis'); return; }
     choisirMetier(s.id);
-    if (s.cible) { aller(s.cible); return; }
-    rendreFiche(s); aller('service');
+    if (s.cible) aller(s.cible); else { rendreFiche(s); aller('service'); }
+    /* Video de presentation du service (champ « video » de services.json) :
+       elle se lance par-dessus l'ecran du service, qui est deja pret derriere. */
+    if (s.video && typeof window.ngVideoService === 'function') window.ngVideoService(s);
   }
   function rendreFiche(s) {
     var w = ecran('service');
@@ -2396,7 +2398,9 @@ function ngResteClic(){var t=ngTontesRestantes();if(t&&t.n>0){navTo('solde');}el
 (function(){var go=function(){ngMajReste();var o=new MutationObserver(function(){var n=document.getElementById('notifs');if(n&&n.classList.contains('active'))ngMajReste();});var n=document.getElementById('notifs');if(n)o.observe(n,{attributes:true,attributeFilter:['class']});};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();})();
 </script>
-<!-- Film d'intro au démarrage (1 fois par ouverture de l'appli) -->
+<!-- Vidéo de présentation d'un service : lancée au clic sur sa tuile
+     (champ « video » dans data/services.json, « videoPoster » en option).
+     Une seule fois par service et par ouverture de l'appli. -->
 <style>
 #ngIntro{position:fixed;inset:0;z-index:99999;background:#0d3b2a;display:flex;align-items:center;justify-content:center;transition:opacity .5s}
 #ngIntro.out{opacity:0;pointer-events:none}
@@ -2405,24 +2409,28 @@ function ngResteClic(){var t=ngTontesRestantes();if(t&&t.n>0){navTo('solde');}el
 #ngIntro .ngi-skip{top:calc(env(safe-area-inset-top,0px) + 16px);right:16px}
 </style>
 <script>
-(function(){
-  try{ if(sessionStorage.getItem('ngIntroVu')) return; sessionStorage.setItem('ngIntroVu','1'); }catch(e){}
-  if(/[?&]nointro\b/.test(location.search)) return;
+window.ngVideoService=function(s){
+  if(!s||!s.video||document.getElementById('ngIntro')) return;
+  var cle='ngVideoVu_'+s.id;
+  try{ if(sessionStorage.getItem(cle)) return; sessionStorage.setItem(cle,'1'); }catch(e){}
   var o=document.createElement('div'); o.id='ngIntro';
-  o.innerHTML='<video playsinline muted autoplay preload="auto" poster="assets/intro_poster.jpg" src="assets/intro.mp4"></video>'+
-    '<button class="ngi-btn ngi-skip" type="button">Passer ›</button>';
-  function fermer(){ if(o.classList.contains('out')) return; o.classList.add('out'); var v=o.querySelector('video'); try{v.pause();}catch(e){} setTimeout(function(){o.remove();},550); }
-  function monter(){
-    document.body.appendChild(o);
-    var v=o.querySelector('video');
-    v.addEventListener('ended',fermer);
-    v.addEventListener('error',fermer);
-    o.querySelector('.ngi-skip').onclick=fermer;
-    var p=v.play(); if(p&&p.catch) p.catch(function(){});
-    setTimeout(fermer,48000); /* filet de sécurité */
-  }
-  if(document.body) monter(); else document.addEventListener('DOMContentLoaded',monter);
-})();
+  var v=document.createElement('video');
+  v.setAttribute('playsinline',''); v.preload='auto';
+  if(s.videoPoster) v.poster=s.videoPoster;
+  v.src=s.video;
+  var b=document.createElement('button'); b.type='button'; b.className='ngi-btn ngi-skip'; b.textContent='Passer ›';
+  o.appendChild(v); o.appendChild(b);
+  var minuteur;
+  function fermer(){ if(o.classList.contains('out')) return; o.classList.add('out'); clearTimeout(minuteur); try{v.pause();}catch(e){} setTimeout(function(){o.remove();},550); }
+  v.addEventListener('ended',fermer);
+  v.addEventListener('error',fermer);
+  b.onclick=fermer;
+  document.body.appendChild(o);
+  /* Lancée par un clic : on tente avec le son, sinon en muet. */
+  var p=v.play();
+  if(p&&p.catch) p.catch(function(){ v.muted=true; var q=v.play(); if(q&&q.catch) q.catch(fermer); });
+  minuteur=setTimeout(fermer,120000); /* filet de sécurité */
+};
 </script>
 </body>
 </html>
