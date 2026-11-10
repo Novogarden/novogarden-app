@@ -12,7 +12,9 @@
       "large": true,
       "cible": "home",
       "prix": "Dès 29,90 €",
-      "devis": false
+      "devis": false,
+      "video": "assets/intro.mp4",
+      "videoPoster": "assets/intro_poster.jpg"
     },
     {
       "id": "topographie",
