@@ -271,6 +271,59 @@
 
     var onglets = document.querySelector('.auth-tabs');
     if (onglets) { onglets.style.display = ouverte ? 'none' : ''; }
+
+    /* L'ecran Compte d'origine (formulaires / fiche profil) se pilote avec
+       la variable globale currentUser de index.html. Depuis le passage a
+       Supabase, plus personne ne la remplissait : le bandeau affichait le
+       prenom, mais l'ecran Compte redemandait de se connecter. On la
+       remplit ici a partir de la session, en memoire seulement (jamais
+       dans le navigateur), puis on redessine l'ecran. */
+    pontEcranCompte(ouverte, prof, P2);
+    if (bouton) {
+      bouton.textContent = ouverte ? ((prof && prof.prenom) || 'Mon compte') : 'Connexion';
+    }
+  }
+
+  function enregistrerProfilCompte(u) {
+    if (!u || !P || !P.connecte() || !P.profil) return;
+    var prenom = P.profil.prenom || '';
+    var nom = String(u.nom || '').trim();
+    /* La fiche affiche « Prenom Nom » : on retire le prenom s'il a ete laisse. */
+    if (prenom && nom.toLowerCase().indexOf(prenom.toLowerCase() + ' ') === 0) nom = nom.slice(prenom.length + 1).trim();
+    var maj = { nom: nom || P.profil.nom, telephone: String(u.tel || '').trim() || null };
+    P.client().from('profiles').update(maj).eq('id', P.profil.id)
+      .then(function (r) {
+        if (r && r.error) { P.toast('Modification non enregistrée. Réessayez.'); return; }
+        return P.rafraichir().then(function () { P.toast('Modification enregistrée'); });
+      })
+      .catch(function () { P.toast('Modification non enregistrée. Réessayez.'); });
+  }
+
+  function pontEcranCompte(ouverte, prof, P2) {
+    var u = null;
+    if (ouverte) {
+      var s = (P2 && P2.session && P2.session.user) || {};
+      prof = prof || {};
+      u = {
+        prenom: prof.prenom || '',
+        nom: prof.nom || '',
+        email: prof.email || s.email || '',
+        tel: prof.telephone || ''
+      };
+    }
+    try { currentUser = u; } catch (e) { return; }
+    if (typeof global.updateAuthUI === 'function') {
+      try { global.updateAuthUI(); } catch (e) {}
+    }
+    /* Le sous-titre de la fiche etait ecrit en dur (« Beta-testeur depuis
+       mars 2026 ») : on l'ecrit a partir de la date de creation du compte. */
+    var badge = document.querySelector('#profile-panel .profile-badge-txt');
+    if (badge) {
+      var d = prof && prof.created_at ? new Date(prof.created_at) : null;
+      badge.textContent = (d && !isNaN(d))
+        ? 'Membre depuis ' + d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+        : 'Membre Novogarden';
+    }
   }
 
   function majAffichage() {
@@ -431,6 +484,10 @@
     global.doRegister = inscription;
     global.doLogout = deconnexion;
     global.ngpMotDePasseOublie = motDePasseOublie;
+    /* Les crayons Nom / Telephone de l'ecran Compte appelaient saveSession,
+       qui ecrivait dans le navigateur : la modification etait perdue. On
+       l'enregistre desormais dans le profil Supabase. */
+    global.saveSession = enregistrerProfilCompte;
     brancherRecuperation();
     refletSession();
     if (P && typeof P.surChangement === 'function') { P.surChangement(refletSession); }
