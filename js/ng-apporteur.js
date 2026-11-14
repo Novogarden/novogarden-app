@@ -68,6 +68,7 @@
         + '<p class="ngp-note">Votre code est en cours d’activation. '
         + 'Il apparaîtra ici dès que Novogarden l’aura généré.</p>';
     }
+    h += '<p style="text-align:center;margin:12px 0 0">' + '<button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'apporteur\',video:\'assets/apporteur.mp4\',videoPoster:\'assets/apporteur_poster.jpg\'},true)">▶ Voir la vidéo</button>' + '</p>';
     h += '</div>';
 
     /* ---- 2. Mon reseau ---- */

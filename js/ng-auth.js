@@ -147,6 +147,7 @@
     h += '<div class="ngp-carte"><p class="ngp-h3">Mes rôles</p>';
     h += ligneRole('Apporteur d’affaires', p.is_apporteur,
       p.is_apporteur && p.code_apporteur ? 'Code : ' + P.esc(p.code_apporteur) : 'Actif immédiatement');
+    h += '<p style="margin:0 0 10px">' + '<button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'apporteur\',video:\'assets/apporteur.mp4\',videoPoster:\'assets/apporteur_poster.jpg\'},true)">▶ Voir la vidéo</button>' + '</p>';
     h += ligneRole('Prestataire', p.is_prestataire,
       !p.is_prestataire ? '' :
       (p.prestataire_valide ? 'Validé — accès aux missions ouvert'
@@ -192,7 +193,7 @@
       + '<span class="ngp-note" style="display:block;margin:4px 0 12px">Il détermine les prestations que vous pouvez proposer autour de vous.</span>'
       + '<label class="ngp-check"><input type="checkbox" id="ngp-r-app"'
       + (p.is_apporteur ? ' checked' : '') + '> <span><strong>Rejoindre le réseau</strong><br>'
-      + '<span class="ngp-note">Vous partagez votre code et touchez une commission sur les clients que vous apportez.</span></span></label>'
+      + '<span class="ngp-note">Vous partagez votre code et touchez une commission sur les clients que vous apportez.</span><br>' + '<button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'apporteur\',video:\'assets/apporteur.mp4\',videoPoster:\'assets/apporteur_poster.jpg\'},true)">▶ Voir la vidéo</button>' + '</span></label>'
       + '<label class="ngp-check"><input type="checkbox" id="ngp-r-pre"'
       + (p.is_prestataire ? ' checked' : '') + '> <span><strong>Réaliser des prestations</strong><br>'
       + '<span class="ngp-note">Vous acceptez des missions et les réalisez. Ce rôle est soumis à validation.</span></span></label>'
