@@ -152,6 +152,7 @@
       !p.is_prestataire ? '' :
       (p.prestataire_valide ? 'Validé — accès aux missions ouvert'
                             : 'En attente de validation par Novogarden'));
+    h += '<p style="margin:0 0 10px"><button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'prestataire\',video:\'assets/prestataire.mp4\',videoPoster:\'assets/prestataire_poster.jpg\'},true)">▶ Voir la vidéo</button></p>';
     h += '<button type="button" class="ngp-lien" id="ngp-maj-roles">Modifier mes rôles</button>';
     h += '</div>';
 
@@ -196,7 +197,7 @@
       + '<span class="ngp-note">Vous partagez votre code et touchez une commission sur les clients que vous apportez.</span><br>' + '<button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'apporteur\',video:\'assets/apporteur.mp4\',videoPoster:\'assets/apporteur_poster.jpg\'},true)">▶ Voir la vidéo</button>' + '</span></label>'
       + '<label class="ngp-check"><input type="checkbox" id="ngp-r-pre"'
       + (p.is_prestataire ? ' checked' : '') + '> <span><strong>Réaliser des prestations</strong><br>'
-      + '<span class="ngp-note">Vous acceptez des missions et les réalisez. Ce rôle est soumis à validation.</span></span></label>'
+      + '<span class="ngp-note">Vous acceptez des missions et les réalisez. Ce rôle est soumis à validation.</span><br><button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'prestataire\',video:\'assets/prestataire.mp4\',videoPoster:\'assets/prestataire_poster.jpg\'},true)">▶ Voir la vidéo</button></span></label>'
       + '</div>'
       + '<div class="err-msg" id="ngp-r-err"></div>'
       + '<button class="btn-p" id="ngp-r-ok">Enregistrer</button></div>';

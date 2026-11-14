@@ -42,7 +42,8 @@
         + '<div class="ngp-carte"><p class="ngp-h3">Compte en attente de validation</p>'
         + '<p class="ngp-note" style="margin:0">Votre inscription comme prestataire a bien été '
         + 'enregistrée. Novogarden la valide sous 48 h ouvrées. Vous verrez les missions '
-        + 'disponibles dès que ce sera fait.</p></div></div>';
+        + 'disponibles dès que ce sera fait.</p>'
+        + '<p style="text-align:center;margin:12px 0 0"><button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'prestataire\',video:\'assets/prestataire.mp4\',videoPoster:\'assets/prestataire_poster.jpg\'},true)">▶ Voir la vidéo</button></p></div></div>';
       return;
     }
     charger().then(function (d) { rendre(w, d); });
@@ -64,6 +65,7 @@
     var h = '<div class="ngp-wrap"><div class="ngp-head"><div class="ngp-titre">Missions</div></div>';
 
     /* ---- 8.1 Missions disponibles ---- */
+    h += '<p style="text-align:center;margin:0 0 6px"><button type="button" class="ng-voir-video" onclick="event.preventDefault();event.stopPropagation();ngVideoService({id:\'prestataire\',video:\'assets/prestataire.mp4\',videoPoster:\'assets/prestataire_poster.jpg\'},true)">▶ Voir la vidéo</button></p>';
     h += '<p class="sect">Missions disponibles</p>';
     if (!d.ouvertes.length) {
       h += '<div class="ngp-carte"><p class="ngp-note" style="margin:0">'
