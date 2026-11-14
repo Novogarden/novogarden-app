@@ -130,11 +130,12 @@
     /* ---- 4. Comment ca marche ---- */
     h += '<details class="ngp-details"><summary>Comment ça marche</summary>'
       + '<div class="ngp-carte" style="margin-top:10px">';
-    h += '<div class="ngp-ligne"><span class="ngp-k">Toutes prestations</span>'
+    h += '<div class="ngp-ligne"><span class="ngp-k">Prestations réalisées par Novogarden</span>'
       + '<span class="ngp-v">' + P.esc(tauxTexte(d.taux)) + ' du montant TTC</span></div>';
     h += '<p class="ngp-note" style="margin-top:12px">'
       + '<strong>Versement après encaissement.</strong> La commission est calculée dès que '
       + 'la commande est confirmée, et vous est versée une fois le client réglé.</p>'
+      + '<p class="ngp-note"><strong>Taux garanti à la commande.</strong> Les prestations confiées plus tard à des partenaires du réseau pourront avoir un taux différent, toujours indiqué à l’avance.</p>'
       + '<p class="ngp-note"><strong>Première commande uniquement.</strong> Un renouvellement '
       + 'chez un client déjà connu ne génère pas de nouvelle commission.</p>'
       + '<p class="ngp-note"><strong>Fenêtre de ' + (P.CFG.FENETRE_ATTRIBUTION_JOURS || 30)
