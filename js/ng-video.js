@@ -68,17 +68,51 @@
 
   function placer() {
     var g = document.querySelector('.ngv-grid');
-    if (!g || g.querySelector('.ngvid-tile')) { return; }
+    if (!g) { return; }
+    if (g.querySelector('.ngvid-tile')) { if (!g.style.gridAutoRows) { repartir(g); } return; }
     var tonte = g.querySelector('[data-ngv="tonte"]');
     var t = tuile();
     if (tonte && tonte.nextSibling) { g.insertBefore(t, tonte.nextSibling); } else { g.appendChild(t); }
-    /* Même répartition que js/ng-zone.js : nombre pair, toutes les cases à la même taille. */
-    var vis = [].slice.call(g.querySelectorAll('[data-ngv]')).filter(function (e) { return !e.classList.contains('ngv-hors-zone'); });
-    var n = vis.length;
-    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 8))));
-    vis.forEach(function (e) { e.classList.remove('ngv-large'); });
-    if (n >= 5 && n % 2 === 1 && vis[0]) { vis[0].classList.add('ngv-large'); }
+    repartir(g);
   }
+
+  /* La tonte garde toute la largeur en haut, comme avant. Les cases gardent
+     leur taille d'origine : la case vidéo en ajoute une, donc on fait défiler
+     la grille pour voir les dernières (étude de flux, contact). */
+  function repartir(g, vis) {
+    if (!g) { return false; }
+    var v = g.querySelector('.ngvid-tile');
+    if (!v) { return false; }
+    var serv = [].slice.call(g.querySelectorAll('[data-ngv]')).filter(function (e) {
+      return e !== v && !e.classList.contains('ngv-hors-zone');
+    });
+    var s = serv.length;                          /* prestations, sans la vidéo */
+    if (s < 4) {                                  /* peu de prestations : pas de case vidéo */
+      v.classList.add('ngv-hors-zone');
+      g.style.gridAutoRows = ''; g.style.overflowY = '';
+      return false;
+    }
+    v.classList.remove('ngv-hors-zone');
+    g.setAttribute('data-n', '8');
+    v.classList.remove('ngv-large');
+    serv.forEach(function (e) { e.classList.remove('ngv-large'); });
+    serv[0].classList.add('ngv-large');           /* tonte : les deux premières cases */
+    if (s % 2 === 1) { serv[s - 1].classList.add('ngv-large'); }   /* après la tonte : vidéo + (s-1) cases ; si nombre impair, la dernière prend la largeur */
+    /* Hauteur d'une rangée = celle qu'elle avait sans la vidéo. */
+    var rangs = Math.ceil((s + (s % 2)) / 2);
+    var cs = getComputedStyle(g);
+    var h = g.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var gap = parseFloat(cs.rowGap) || 6;
+    if (h > 100) {
+      g.style.gridAutoRows = Math.round((h - gap * (rangs - 1)) / rangs) + 'px';
+      g.style.overflowY = 'auto';
+      g.style.webkitOverflowScrolling = 'touch';
+    }
+    return true;
+  }
+  window.ngvRepartir = repartir;
+  window.addEventListener('resize', function () { repartir(document.querySelector('.ngv-grid')); });
+
   new MutationObserver(placer).observe(document.body, { childList: true, subtree: true });
   placer();
 })();

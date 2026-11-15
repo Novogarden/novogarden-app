@@ -153,7 +153,9 @@
       return !e.classList.contains('ngv-hors-zone');
     });
     if (!n) { n = vis.length; }
-    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 8))));
+    /* Case vidéo présente : js/ng-video.js gère la répartition (tonte en grand, défilement). */
+    if (window.ngvRepartir && window.ngvRepartir(g, vis)) { return; }
+    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 7))));
     vis.forEach(function (e) { e.classList.remove('ngv-large'); });
     if (n >= 5 && n % 2 === 1 && vis[0]) { vis[0].classList.add('ngv-large'); }
   }
