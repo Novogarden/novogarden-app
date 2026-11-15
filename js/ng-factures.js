@@ -187,7 +187,7 @@
       else if (paye) h += '<div class="ngf-etat">✅ Acquittée le ' + dateFr(f.paye_le) + (f.mode_paiement ? ' par ' + MODE[f.mode_paiement] : '') + '</div>';
       else {
         h += '<div class="ngf-modal"><strong>Règlement à la commande, au choix :</strong>'
-          + '<a class="ngc-btn ngf-ok ngf-noprint" href="' + lienPayer(f.id) + '">💳 Payer ' + euros(f.montant_cents) + ' par carte</a>'
+          + '<a class="ngc-btn ngf-ok ngf-noprint" id="ngf-payer-fac" href="' + lienPayer(f.id) + '">💳 Payer ' + euros(f.montant_cents) + ' par carte</a>'
           + '<div>• <strong>Carte bancaire</strong> : paiement sécurisé en ligne (bouton ci-dessus).</div>'
           + '<div>• <strong>Virement</strong> : ' + (d.iban ? 'IBAN ' + esc(d.iban) + (d.bic ? ' — BIC ' + esc(d.bic) : '') + (d.titulaire ? ' — ' + esc(d.titulaire) : '') : 'coordonnées bancaires sur demande')
           + ' — référence <strong>' + esc(f.facture_num) + '</strong>.</div>'
@@ -197,6 +197,47 @@
         + '</div><button type="button" class="ngc-btn ngc-sec ngf-ok ngf-noprint" onclick="window.print()">🖨️ Imprimer / enregistrer en PDF</button>';
       fenetre(h);
       document.body.classList.add('ngf-impression');
+      var bp = document.getElementById('ngf-payer-fac');
+      if (bp) bp.onclick = function (e) { e.preventDefault(); payerIntegre(f.id, f.facture_num + ' — ' + euros(f.montant_cents)); };
+    });
+  }
+
+  /* ================== Paiement par carte DANS l'appli ================== */
+  var stripeJs = null, checkout = null;
+  function chargerStripe() {
+    if (stripeJs) return stripeJs;
+    stripeJs = new Promise(function (ok, ko) {
+      if (global.Stripe) return ok();
+      var s = document.createElement('script'); s.src = 'https://js.stripe.com/v3/';
+      s.onload = ok; s.onerror = function () { stripeJs = null; ko(new Error('Stripe indisponible')); };
+      document.head.appendChild(s);
+    });
+    return stripeJs;
+  }
+  function detruireCheckout() { if (checkout) { try { checkout.destroy(); } catch (e) {} checkout = null; } }
+
+  function payerIntegre(id, titre) {
+    var pk = global.NG_CONFIG && NG_CONFIG.STRIPE_PK;
+    if (!pk) { location.href = lienPayer(id); return; }
+    detruireCheckout();
+    var o = fenetre('<h2>💳 ' + esc(titre || 'Paiement par carte') + '</h2><p class="ngf-note">Paiement sécurisé par Stripe — vos données bancaires ne transitent pas par Novogarden.</p>'
+      + '<div id="ngf-checkout"><p class="ngf-note">Chargement du formulaire…</p></div>');
+    o.querySelector('.ngf-x').onclick = function () { detruireCheckout(); fermer(); };
+    chargerStripe().then(function () {
+      return global.Stripe(pk).initEmbeddedCheckout({
+        fetchClientSecret: function () {
+          return fetch(FN + 'payer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
+            .then(function (r) { return r.json(); })
+            .then(function (d) { if (!d.client_secret) throw new Error(d.error || 'Paiement indisponible'); return d.client_secret; });
+        }
+      });
+    }).then(function (c) {
+      checkout = c;
+      var z = document.getElementById('ngf-checkout'); if (z) z.innerHTML = '';
+      c.mount('#ngf-checkout');
+    }).catch(function (e) {
+      var z = document.getElementById('ngf-checkout');
+      if (z) z.innerHTML = '<p>' + esc(e.message) + '</p><a class="ngc-btn ngf-ok" href="' + lienPayer(id) + '">Ouvrir la page de paiement</a>';
     });
   }
 
@@ -274,7 +315,7 @@
     }
   }
 
-  global.NGF = { admin: admin, afficherFacture: afficherFacture, lienPayer: lienPayer, valider: ouvrirValidation };
+  global.NGF = { admin: admin, afficherFacture: afficherFacture, lienPayer: lienPayer, valider: ouvrirValidation, payer: payerIntegre };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(demarrer, 0); });
   else setTimeout(demarrer, 0);
 })(window);

@@ -124,7 +124,8 @@
     w.querySelectorAll('[data-ngc-payer]').forEach(function (b) {
       b.onclick = function () {
         var id = this.getAttribute('data-ngc-payer');
-        if (global.NGF) { location.href = NGF.lienPayer(id); return; }
+        var pp = (etat.paiements || []).filter(function (x) { return x.id === id; })[0];
+        if (global.NGF) { NGF.payer(id, pp ? (pp.facture_num || pp.libelle) + ' — ' + euros(pp.montant_cents) : ''); rendrePayer(); return; }
         b.disabled = true; b.textContent = 'Ouverture du paiement…';
         sb().functions.invoke('create-checkout', { body: { paiement_id: id } }).then(function (r) {
           var url = r && r.data && r.data.url;
