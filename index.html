@@ -2355,6 +2355,9 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
 <script src="js/ng-admin.js"></script>
 <script src="js/ng-clients.js"></script>
 <script src="js/ng-factures.js"></script>
+<script>/* Image de pack qui ne charge pas (réseau faible) : on réessaie 2 fois. */
+document.addEventListener('error',function(e){var i=e.target;if(!i||i.tagName!=='IMG'||!i.closest('.card-img-wrap,.opt-icon'))return;
+var n=+(i.dataset.essai||0);if(n>=2)return;i.dataset.essai=n+1;setTimeout(function(){i.src=i.src.split('?')[0]+'?r='+Date.now();},800*(n+1));},true);</script>
   <script src="js/ng-notifs.js"></script>
   <script src="js/ng-zone.js"></script>
 <script>
