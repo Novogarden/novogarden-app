@@ -18,7 +18,7 @@ window.NG_CONFIG = {
   /* Cle PUBLIQUE Stripe (pk_…), faite pour etre dans l'appli : elle sert
      seulement a afficher le formulaire de paiement. La cle secrete (sk_…)
      reste dans les secrets Supabase. Passer en pk_live_… pour encaisser. */
-  STRIPE_PK: 'pk_test_51UTG2kS1JLydBNy6VELoNecRksrarCitqLEjSe4XOm9o3KHQI13ODsrSNTIl8h1cxyZBnnyaVGEc0YTUanvj0p4C00ap37wnVv',
+  STRIPE_PK: 'pk_live_51UTG2kS1JLydBNy65CMuZTD69ghBxVaZeFcM6uJB7pnidAAkiRr0OeEtajzrQh2f05hwXYJSQRiQDdmMttz0HSN100HXKlS4tk',
 
   /* Lien partage par l'apporteur. Le code est ajoute en ?code=XXX */
   LIEN_PARTAGE: 'https://novogarden.github.io/novogarden-app/',
