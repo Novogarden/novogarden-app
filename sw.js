@@ -1,4 +1,4 @@
-const CACHE = 'ng-v53';
+const CACHE = 'ng-v54';
 /* Images et logo gardés en mémoire sur le téléphone : si le réseau flanche,
    l'appli les affiche quand même (avant : rien n'était mis en cache). */
 const ESSENTIELS = ['assets/solo.png', 'assets/essentiel.png', 'assets/serenite.png', 'assets/robot_flotte.jpg', 'icons/icon-192x192.png'];
@@ -13,6 +13,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (/\.mp4$/i.test(req.url.split('?')[0])) return;   /* vidéos : lecture directe, pas de copie de 5 Mo sur le téléphone */
   const url = new URL(req.url);
   const image = url.origin === location.origin && /\.(png|jpe?g|webp|svg|gif)$/i.test(url.pathname);
   if (image) {

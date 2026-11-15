@@ -2360,6 +2360,7 @@ document.addEventListener('error',function(e){var i=e.target;if(!i||i.tagName!==
 var n=+(i.dataset.essai||0);if(n>=2)return;i.dataset.essai=n+1;setTimeout(function(){i.src=i.src.split('?')[0]+'?r='+Date.now();},800*(n+1));},true);</script>
   <script src="js/ng-notifs.js"></script>
   <script src="js/ng-zone.js"></script>
+  <script src="js/ng-video.js"></script>
 <script>
 /* Un lien venu de partenaire.html demande directement l'ecran d'inscription.
    Sans cela le visiteur atterrit sur l'accueil et doit trouver seul Connexion,
