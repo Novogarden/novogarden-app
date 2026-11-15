@@ -80,7 +80,8 @@
           + '<label class="ngf-lab">Montant TTC (€)</label>'
           + '<input id="ngf-mt" class="ngc-in" inputmode="decimal" value="' + (centsDe(x.tarif) ? (centsDe(x.tarif) / 100).toFixed(2).replace('.', ',') : '') + '">'
           + '<p class="ngf-note">TVA non applicable, art. 293 B du CGI. Tarif du devis : ' + esc(x.tarif) + '</p>'
-          + '<button type="button" class="ngc-btn ngf-ok" id="ngf-go">✅ OK pour commande</button>');
+          + '<button type="button" class="ngc-btn ngf-ok" id="ngf-go">✅ OK pour commande</button>'
+          + '<p class="ngf-note">La facture est créée et le mail de confirmation, avec le bouton de paiement, part aussitôt au client.</p>');
         document.getElementById('ngf-go').onclick = function () {
           var cents = centsDe(document.getElementById('ngf-mt').value);
           if (cents < 50) { toast('Montant invalide.'); return; }
@@ -94,7 +95,7 @@
                   corps: f.data.libelle + ' : ' + euros(f.data.montant_cents) + '. Votre facture et les moyens de paiement sont dans l’onglet Solde.'
                 });
               }
-              apresValidation(f.data);
+              apresValidation(f.data, true);
               if (global.NGC && NGC.rechargerAdmin) NGC.rechargerAdmin();
             });
           });
@@ -103,18 +104,35 @@
     });
   }
 
-  function apresValidation(f) {
+  function apresValidation(f, auto) {
     fenetre('<h2>✅ Commande confirmée</h2>'
       + '<div class="ngf-bloc">Facture <strong>' + esc(f.facture_num) + '</strong> · ' + euros(f.montant_cents) + '<br>' + esc(f.client_nom) + ' — ' + esc(f.client_email)
       + (f.client_id ? '<br><small>Le client a un compte : la facture est aussi dans son appli.</small>' : '<br><small>Pas de compte client : envoyez le mail ci-dessous.</small>') + '</div>'
       + '<button type="button" class="ngc-btn ngf-ok" id="ngf-mail">📧 Envoyer facture et lien de paiement au client</button>'
       + '<button type="button" class="ngc-btn ngc-sec ngf-ok" id="ngf-voir">🧾 Voir la facture</button>');
-    document.getElementById('ngf-mail').onclick = function () { envoyerMail(f); };
+    var bm = document.getElementById('ngf-mail');
+    bm.onclick = function () { envoyerMail(f, bm); };
+    if (auto && f.statut === 'a_payer') envoyerMail(f, bm);
     document.getElementById('ngf-voir').onclick = function () { afficherFacture(f.id); };
   }
 
-  /* Mail au client : ouvre la messagerie du téléphone, déjà rempli. */
-  function envoyerMail(f) {
+  /* Mail au client, envoyé par l'appli depuis contact@novogardenhub.com
+     (bouton « Payer ma facture »). Si l'envoi automatique n'est pas encore
+     configuré, on retombe sur la messagerie du téléphone. */
+  function envoyerMail(f, bouton) {
+    if (bouton) { bouton.disabled = true; bouton.textContent = 'Envoi en cours…'; }
+    return sb().functions.invoke('envoyer-facture', { body: { paiement_id: f.id } }).then(function (r) {
+      var ok = r && r.data && r.data.ok;
+      if (bouton) { bouton.disabled = false; bouton.textContent = ok ? '✅ Mail envoyé — renvoyer' : '📧 Envoyer facture et lien de paiement au client'; }
+      if (ok) { toast('📧 Mail envoyé à ' + f.client_email); return true; }
+      var err = (r && r.data && r.data.error) || (r && r.error && r.error.message) || '';
+      if (confirm('Envoi automatique impossible (' + err + ').\nOuvrir votre messagerie avec le mail pré-rempli ?')) envoyerMailManuel(f);
+      return false;
+    });
+  }
+
+  /* Secours : ouvre la messagerie du téléphone, déjà remplie. */
+  function envoyerMailManuel(f) {
     lireRib().then(function (rib) {
       var corps = 'Bonjour ' + (f.client_nom || '') + ',\n\n'
         + 'Merci pour votre commande, elle est confirmée.\n\n'
@@ -214,7 +232,7 @@
       w.innerHTML = h;
       var parId = {}; l.forEach(function (f) { parId[f.id] = f; });
       w.querySelectorAll('[data-ngf-voir]').forEach(function (b) { b.onclick = function () { afficherFacture(b.getAttribute('data-ngf-voir')); }; });
-      w.querySelectorAll('[data-ngf-mail]').forEach(function (b) { b.onclick = function () { envoyerMail(parId[b.getAttribute('data-ngf-mail')]); }; });
+      w.querySelectorAll('[data-ngf-mail]').forEach(function (b) { b.onclick = function () { envoyerMail(parId[b.getAttribute('data-ngf-mail')], b); }; });
       w.querySelectorAll('[data-ngf-paye]').forEach(function (b) {
         b.onclick = function () {
           var f = parId[b.getAttribute('data-ngf-paye')], mode = b.getAttribute('data-mode');
