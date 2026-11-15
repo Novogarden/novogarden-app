@@ -84,7 +84,8 @@
 
   function chargerPaiements() {
     if (!moi()) return;
-    sb().from('paiements').select('*').eq('client_id', moi()).order('created_at', { ascending: false }).limit(50)
+    var em = (P.session.user.email || '').toLowerCase();
+    sb().from('paiements').select('*').or('client_id.eq.' + moi() + (em ? ',client_email.eq."' + em + '"' : '')).order('created_at', { ascending: false }).limit(50)
       .then(function (r) { etat.paiements = r.error ? [] : (r.data || []); rendrePayer(); })
       .catch(function () {});
   }
@@ -104,20 +105,26 @@
         h += '<div class="ngj-card"><div class="ngj-head"><div class="ngj-pack">' + esc(p.libelle) + '</div>'
           + '<div class="ngj-count">' + euros(p.montant_cents) + '</div></div>'
           + '<button type="button" class="ngc-btn ngc-payer-btn" data-ngc-payer="' + p.id + '">💳 Payer ' + euros(p.montant_cents) + '</button>'
-          + '<div class="ngj-sub">Paiement sécurisé par carte via Stripe</div></div>';
+          + '<div class="ngj-sub">Carte (paiement sécurisé), virement ou espèces'
+          + (p.facture_num ? ' · <a href="#" data-ngc-fac="' + p.id + '">Facture ' + esc(p.facture_num) + '</a>' : '') + '</div></div>';
       });
     }
     if (faits.length) {
       h += '<p class="sect">Paiements effectués</p>';
       faits.forEach(function (p) {
         h += '<div class="ngj-item"><div><div class="ngj-date">' + euros(p.montant_cents) + ' · ' + esc(p.libelle) + '</div>'
-          + '<div class="ngj-note">Payé le ' + dateFr(p.paye_le || p.created_at) + ' ✅</div></div></div>';
+          + '<div class="ngj-note">Payé le ' + dateFr(p.paye_le || p.created_at) + ' ✅'
+          + (p.facture_num ? ' · <a href="#" data-ngc-fac="' + p.id + '">Facture ' + esc(p.facture_num) + '</a>' : '') + '</div></div></div>';
       });
     }
     w.innerHTML = h;
+    w.querySelectorAll('[data-ngc-fac]').forEach(function (a) {
+      a.onclick = function (e) { e.preventDefault(); if (global.NGF) NGF.afficherFacture(this.getAttribute('data-ngc-fac')); };
+    });
     w.querySelectorAll('[data-ngc-payer]').forEach(function (b) {
       b.onclick = function () {
         var id = this.getAttribute('data-ngc-payer');
+        if (global.NGF) { location.href = NGF.lienPayer(id); return; }
         b.disabled = true; b.textContent = 'Ouverture du paiement…';
         sb().functions.invoke('create-checkout', { body: { paiement_id: id } }).then(function (r) {
           var url = r && r.data && r.data.url;
@@ -136,7 +143,8 @@
   function retourPaiement() {
     var m = /[?&]paiement=(ok|annule)/.exec(location.search);
     if (!m) return;
-    history.replaceState(null, '', location.pathname + location.hash);
+    var q = new URLSearchParams(location.search); q.delete('paiement');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
     toast(m[1] === 'ok' ? '✅ Paiement reçu, merci !' : 'Paiement annulé : rien n’a été débité.');
     setTimeout(chargerPaiements, 2500);
   }
@@ -375,6 +383,7 @@
     if (!clients.length) h += '<div class="ngp-carte"><p class="ngp-note" style="margin:0">Aucun client inscrit pour le moment.</p></div>';
     z.innerHTML = h + '</div>';
     brancherAdmin(z);
+    if (global.NGF) NGF.admin(z);
   }
 
   function nonLus(id) {
@@ -583,7 +592,8 @@
       .observe(n, { attributes: true, attributeFilter: ['class'] });
   }
 
-  global.NGC = { sectionAdmin: sectionAdmin, recharger: chargerClient };
+  global.NGC = { sectionAdmin: sectionAdmin, recharger: chargerClient,
+    rechargerAdmin: function () { if (document.getElementById('ngc-admin')) chargerAdmin().then(rendreAdmin); } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(demarrer, 0); });
   else setTimeout(demarrer, 0);
 })(window);
