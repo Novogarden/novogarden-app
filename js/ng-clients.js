@@ -16,7 +16,7 @@
   'use strict';
 
   var P = null;
-  var etat = { packs: [], passages: [], messages: [], charge: false };
+  var etat = { packs: [], passages: [], messages: [], paiements: [], charge: false };
   var canal = null, canalAdmin = null;
   var nonLusAdmin = 0;
   var PACKS = [
@@ -75,7 +75,70 @@
       etat.packs = r[0].data || []; etat.passages = r[1].data || []; etat.messages = r[2].data || [];
       etat.charge = true;
       rendreClient();
+      chargerPaiements();
     }).catch(function () { etat.charge = false; });
+  }
+
+  /* ---------- Paiements en ligne (Stripe) ---------- */
+  function euros(c) { return (c / 100).toFixed(2).replace('.', ',') + ' €'; }
+
+  function chargerPaiements() {
+    if (!moi()) return;
+    sb().from('paiements').select('*').eq('client_id', moi()).order('created_at', { ascending: false }).limit(50)
+      .then(function (r) { etat.paiements = r.error ? [] : (r.data || []); rendrePayer(); })
+      .catch(function () {});
+  }
+
+  function rendrePayer() {
+    var body = document.querySelector('#solde .solde-body');
+    if (!body) return;
+    var w = document.getElementById('ngc-payer');
+    var dus = (etat.paiements || []).filter(function (p) { return p.statut === 'a_payer'; });
+    var faits = (etat.paiements || []).filter(function (p) { return p.statut === 'paye'; }).slice(0, 5);
+    if (!dus.length && !faits.length) { if (w) w.remove(); return; }
+    if (!w) { w = document.createElement('div'); w.id = 'ngc-payer'; body.insertBefore(w, body.firstChild.nextSibling); }
+    var h = '';
+    if (dus.length) {
+      h += '<p class="sect">À régler</p>';
+      dus.forEach(function (p) {
+        h += '<div class="ngj-card"><div class="ngj-head"><div class="ngj-pack">' + esc(p.libelle) + '</div>'
+          + '<div class="ngj-count">' + euros(p.montant_cents) + '</div></div>'
+          + '<button type="button" class="ngc-btn ngc-payer-btn" data-ngc-payer="' + p.id + '">💳 Payer ' + euros(p.montant_cents) + '</button>'
+          + '<div class="ngj-sub">Paiement sécurisé par carte via Stripe</div></div>';
+      });
+    }
+    if (faits.length) {
+      h += '<p class="sect">Paiements effectués</p>';
+      faits.forEach(function (p) {
+        h += '<div class="ngj-item"><div><div class="ngj-date">' + euros(p.montant_cents) + ' · ' + esc(p.libelle) + '</div>'
+          + '<div class="ngj-note">Payé le ' + dateFr(p.paye_le || p.created_at) + ' ✅</div></div></div>';
+      });
+    }
+    w.innerHTML = h;
+    w.querySelectorAll('[data-ngc-payer]').forEach(function (b) {
+      b.onclick = function () {
+        var id = this.getAttribute('data-ngc-payer');
+        b.disabled = true; b.textContent = 'Ouverture du paiement…';
+        sb().functions.invoke('create-checkout', { body: { paiement_id: id } }).then(function (r) {
+          var url = r && r.data && r.data.url;
+          if (!url) {
+            b.disabled = false; rendrePayer();
+            toast('Paiement indisponible : ' + ((r && r.data && r.data.error) || (r && r.error && r.error.message) || 'réessayez'));
+            return;
+          }
+          location.href = url;
+        });
+      };
+    });
+  }
+
+  /* Retour de Stripe : ?paiement=ok ou ?paiement=annule */
+  function retourPaiement() {
+    var m = /[?&]paiement=(ok|annule)/.exec(location.search);
+    if (!m) return;
+    history.replaceState(null, '', location.pathname + location.hash);
+    toast(m[1] === 'ok' ? '✅ Paiement reçu, merci !' : 'Paiement annulé : rien n’a été débité.');
+    setTimeout(chargerPaiements, 2500);
   }
 
   function ecouterClient() {
@@ -88,6 +151,7 @@
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'client_passages', filter: f }, chargerClient)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'client_packs', filter: f }, chargerClient)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'paiements', filter: f }, chargerPaiements)
       .subscribe();
   }
   function arreterEcoute() {
@@ -235,7 +299,7 @@
 
   /* ====================== CÔTÉ ADMIN ====================== */
 
-  var adm = { profils: [], packs: [], passages: [], messages: [], ouvert: null };
+  var adm = { profils: [], packs: [], passages: [], messages: [], paiements: [], ouvert: null };
 
   function chargerAdmin() {
     return Promise.all([
@@ -249,6 +313,8 @@
       adm.packs = r[1].data || []; adm.passages = r[2].data || []; adm.messages = r[3].data || [];
       nonLusAdmin = adm.messages.filter(function (m) { return !m.de_admin && !m.lu; }).length;
       majPastilleAdmin();
+      return sb().from('paiements').select('*').order('created_at', { ascending: false }).limit(500)
+        .then(function (q) { adm.paiements = q.error ? [] : (q.data || []); }, function () { adm.paiements = []; });
     });
   }
 
@@ -340,6 +406,16 @@
         + p.lib + ' (' + p.n + ')</button>';
     });
     h += '<button type="button" class="ngc-btn ngc-sec" data-ngc-pack="' + c.id + '" data-lib="" data-n="">Autre…</button></div>';
+
+    h += '<div class="ngc-sous">Demander un paiement</div>'
+      + '<input id="ngc-pl-' + c.id + '" class="ngc-in" maxlength="120" placeholder="Libellé (ex. Pack Essentiel – 5 tontes)">'
+      + '<input id="ngc-pm-' + c.id + '" class="ngc-in" inputmode="decimal" placeholder="Montant TTC en € (ex. 149,50)">'
+      + '<button type="button" class="ngc-btn" data-ngc-dem="' + c.id + '">💳 Envoyer la demande de paiement</button>';
+    (adm.paiements || []).filter(function (p) { return p.client_id === c.id; }).slice(0, 10).forEach(function (p) {
+      var st = p.statut === 'paye' ? '✅ payé le ' + dateFr(p.paye_le) : p.statut === 'annule' ? '✖ annulé' : '⏳ en attente';
+      h += '<div class="ngp-note" style="margin:4px 0">• ' + esc(p.libelle) + ' — <strong>' + euros(p.montant_cents) + '</strong> · ' + st
+        + (p.statut === 'a_payer' ? ' <a href="#" data-ngc-annpay="' + p.id + '">annuler</a>' : '') + '</div>';
+    });
 
     h += '<div class="ngc-sous">Messages</div><div class="ngc-fil">';
     var fil = adm.messages.filter(function (m) { return m.client_id === c.id; }).slice(0, 20).reverse();
@@ -437,6 +513,33 @@
         });
       };
     });
+    z.querySelectorAll('[data-ngc-dem]').forEach(function (b) {
+      b.onclick = function () {
+        var cid = this.getAttribute('data-ngc-dem');
+        var lib = document.getElementById('ngc-pl-' + cid).value.trim();
+        var mt = parseFloat(document.getElementById('ngc-pm-' + cid).value.replace(/\s|€/g, '').replace(',', '.'));
+        var cents = Math.round(mt * 100);
+        if (!lib) { toast('Indiquez un libellé.'); return; }
+        if (!(cents >= 50 && cents <= 1000000)) { toast('Montant invalide (0,50 € à 10 000 €).'); return; }
+        if (!confirm('Demander ' + euros(cents) + ' pour « ' + lib + ' » ?')) return;
+        b.disabled = true;
+        sb().from('paiements').insert({ client_id: cid, libelle: lib, montant_cents: cents }).then(function (r) {
+          if (r.error) { b.disabled = false; toast('Erreur : ' + r.error.message); return; }
+          return sb().from('client_messages').insert({
+            client_id: cid, de_admin: true, titre: 'Paiement à régler 💳',
+            corps: lib + ' : ' + euros(cents) + '. Réglez en un clic par carte dans l’onglet Solde.'
+          }).then(function () { toast('Demande envoyée, client notifié.'); return chargerAdmin(); }).then(rendreAdmin);
+        });
+      };
+    });
+    z.querySelectorAll('[data-ngc-annpay]').forEach(function (a) {
+      a.onclick = function (e) {
+        e.preventDefault();
+        if (!confirm('Annuler cette demande de paiement ?')) return;
+        sb().from('paiements').update({ statut: 'annule' }).eq('id', this.getAttribute('data-ngc-annpay')).eq('statut', 'a_payer')
+          .then(function () { chargerAdmin().then(rendreAdmin); });
+      };
+    });
     var tous = document.getElementById('ngc-tous-go');
     if (tous) tous.onclick = function () {
       var t = document.getElementById('ngc-tous-t').value.trim();
@@ -459,7 +562,7 @@
 
   function surSession() {
     if (!pret()) return;
-    if (!moi()) { arreterEcoute(); etat = { packs: [], passages: [], messages: [], charge: false }; rendreClient(); return; }
+    if (!moi()) { arreterEcoute(); etat = { packs: [], passages: [], messages: [], paiements: [], charge: false }; rendrePayer(); rendreClient(); return; }
     chargerClient(); ecouterClient();
     if (P.role('is_admin')) { chargerAdmin().then(ecouterAdmin).catch(function () {}); }
   }
@@ -468,6 +571,7 @@
     if (!pret()) return;
     P.surChangement(surSession);
     surSession();
+    retourPaiement();
     /* Le journal redessine la liste : on réinsère nos notifications. */
     var l = document.getElementById('notif-list');
     if (l) new MutationObserver(function () {
