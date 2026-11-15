@@ -1157,6 +1157,8 @@ async function doConfirm(){
     'TARIF ESTIMÉ : '+getPrice()+'\n\n'+
     (note?'NOTE CLIENT : '+note+'\n\n':'')+
     '─────────────────────────────\n'+
+    '✅ Valider la commande (facture + lien de paiement) :\n'+
+    'https://novogarden.github.io/novogarden-app/?valider='+devisRef+'\n\n'+
     'Devis généré le '+new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
   const champs={_subject:'[Devis Novogarden] '+name+' – '+svcLbl+' – Réf. '+devisRef,_captcha:'false',_template:'table',name:name,email:email,phone:phone,message:message};
   /* Double canal : mail (FormSubmit) ET base Supabase. */
@@ -1774,6 +1776,29 @@ document.addEventListener('click',function(e){
 .ngc-btn.ngc-sec{background:#eef5ea;color:#2e7d32}
 .ngc-btn:disabled{opacity:.5}
 .ngc-payer-btn{display:block;width:100%;margin:12px 0 6px;padding:13px;font-size:15px}
+#ngf-ov{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,30,10,.55);overflow:auto;padding:18px 12px}
+.ngf-box{position:relative;background:#fff;max-width:640px;margin:0 auto;border-radius:16px;padding:22px 18px 18px;color:#1d2a1d;font-size:14px;line-height:1.45}
+.ngf-box h2{margin:0 0 12px;font-size:19px;color:#2e7d32}
+.ngf-x{position:absolute;right:10px;top:8px;border:none;background:#eef5ea;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer}
+.ngf-bloc{background:#f4f8f1;border-radius:10px;padding:10px 12px;margin:8px 0}
+.ngf-lab{display:block;font-weight:800;font-size:12px;margin-top:10px}
+.ngf-note,.ngf-petit{font-size:12px;color:#5d6b5d}
+.ngf-ok{display:block;width:100%;margin-top:10px;padding:13px;font-size:15px;text-align:center;text-decoration:none;box-sizing:border-box}
+.ngf-entete{margin-top:26px;display:flex;justify-content:space-between;gap:12px;border-bottom:3px solid #7DB532;padding-bottom:12px}
+.ngf-marque{font-size:24px;font-weight:900;color:#2e7d32}
+.ngf-droite{text-align:right}.ngf-titre{font-size:20px;font-weight:900;letter-spacing:2px}
+.ngf-client{margin:14px 0}
+.ngf-t{width:100%;border-collapse:collapse;margin:8px 0}
+.ngf-t th{background:#2e7d32;color:#fff;text-align:left;padding:7px;font-size:12px}
+.ngf-t td{border-bottom:1px solid #e3eadf;padding:8px 7px;vertical-align:top}
+.ngf-t td:nth-child(2),.ngf-t td:nth-child(3),.ngf-t th:nth-child(2),.ngf-t th:nth-child(3){text-align:right;white-space:nowrap}
+.ngf-tot td{font-weight:900;font-size:15px;border-bottom:none}
+.ngf-modal{background:#f4f8f1;border-radius:10px;padding:12px;margin:12px 0}.ngf-modal div{margin-top:6px}
+.ngf-etat{background:#e6f4dd;color:#2e7d32;font-weight:800;border-radius:10px;padding:10px;margin:12px 0;text-align:center}
+.ngf-ann{background:#fde8e8;color:#b3261e}
+.ngf-ligne{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid #e3eadf;padding:8px 0}
+.ngf-rib{margin-top:10px}.ngf-rib summary{cursor:pointer;font-weight:700;font-size:13px}
+@media print{body.ngf-impression>*:not(#ngf-ov){display:none!important}#ngf-ov{position:static;background:none;padding:0}.ngf-box{max-width:none;border-radius:0}.ngf-x,.ngf-noprint{display:none!important}}
 .ngc-acts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .ngc-hist-t{font-size:12px;font-weight:800;color:#888;margin:12px 0 6px}
 .ngc-hist{background:#f6f8f4;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px}
@@ -2329,6 +2354,7 @@ body.ngv-teinte .nav-item.active svg{fill:none;stroke:var(--svc)}
 <script src="js/ng-prestataire.js"></script>
 <script src="js/ng-admin.js"></script>
 <script src="js/ng-clients.js"></script>
+<script src="js/ng-factures.js"></script>
   <script src="js/ng-notifs.js"></script>
   <script src="js/ng-zone.js"></script>
 <script>
