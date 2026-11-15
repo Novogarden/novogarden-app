@@ -1,4 +1,4 @@
-const CACHE = 'ng-v52';
+const CACHE = 'ng-v53';
 /* Images et logo gardés en mémoire sur le téléphone : si le réseau flanche,
    l'appli les affiche quand même (avant : rien n'était mis en cache). */
 const ESSENTIELS = ['assets/solo.png', 'assets/essentiel.png', 'assets/serenite.png', 'assets/robot_flotte.jpg', 'icons/icon-192x192.png'];
@@ -18,13 +18,13 @@ self.addEventListener('fetch', e => {
   if (image) {
     /* Image : copie locale tout de suite, mise à jour en arrière-plan. */
     e.respondWith(caches.open(CACHE).then(c => c.match(req, { ignoreSearch: true }).then(local => {
-      const reseau = fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; });
+      const reseau = fetch(req).then(r => { if (r.status === 200) c.put(req, r.clone()); return r; });
       return local || reseau.catch(() => fetch(req));
     })));
     return;
   }
   e.respondWith(fetch(req).then(r => {
-    if (r.ok && url.origin === location.origin) { const copie = r.clone(); caches.open(CACHE).then(c => c.put(req, copie)); }
+    if (r.status === 200 && url.origin === location.origin) { const copie = r.clone(); caches.open(CACHE).then(c => c.put(req, copie)); }
     return r;
   }).catch(() => caches.match(req)));
 });
