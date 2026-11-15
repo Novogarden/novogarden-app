@@ -129,7 +129,7 @@
     var visibles = 0;
     document.querySelectorAll('[data-ngv]').forEach(function (t) {
       var id = t.getAttribute('data-ngv');
-      var ok = (id === 'contact') || estCouvert(id);
+      var ok = (id === 'contact') || (id === 'video') || estCouvert(id);
       t.classList.toggle('ngv-hors-zone', !ok);
       /* Vestige de la version grisee : on nettoie s'il en reste. */
       var marque = t.querySelector('.ngv-zone-note');
@@ -153,7 +153,7 @@
       return !e.classList.contains('ngv-hors-zone');
     });
     if (!n) { n = vis.length; }
-    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 7))));
+    g.setAttribute('data-n', String(Math.max(1, Math.min(n, 8))));
     vis.forEach(function (e) { e.classList.remove('ngv-large'); });
     if (n >= 5 && n % 2 === 1 && vis[0]) { vis[0].classList.add('ngv-large'); }
   }
@@ -351,7 +351,7 @@
       var t = e.target && e.target.closest ? e.target.closest('[data-ngv]') : null;
       if (!t) return;
       var id = t.getAttribute('data-ngv');
-      if (id === 'contact' || estCouvert(id)) return;
+      if (id === 'contact' || id === 'video' || estCouvert(id)) return;
       e.preventDefault();
       e.stopPropagation();
       var nom = NOMS[normal(id)] || 'Cette prestation';
