@@ -24,7 +24,9 @@
       "photo": "assets/topo_vege.jpg",
       "photoPos": "center",
       "description": "Relevé aérien de votre terrain et restitution en modèle 3D géoréférencé. Utile pour un projet d'aménagement, un calcul de surface ou de volume, ou un état des lieux avant travaux.",
-      "devis": true
+      "devis": true,
+      "video": "assets/video_topographie.mp4",
+      "videoPoster": "assets/video_topographie_poster.jpg"
     },
     {
       "id": "modelisation",
@@ -35,7 +37,9 @@
       "photoZoom": "145%",
       "photoPos": "55% 50%",
       "description": "Conception de pièces et d'ensembles en 3D, à partir d'un croquis, de cotes relevées ou d'une pièce existante. Fichiers exploitables pour la fabrication ou la visualisation.",
-      "devis": true
+      "devis": true,
+      "video": "assets/video_modelisation.mp4",
+      "videoPoster": "assets/video_modelisation_poster.jpg"
     },
     {
       "id": "impression",
@@ -45,7 +49,9 @@
       "photo": "assets/_impr_test.png",
       "photoPos": "center",
       "description": "Impression 3D de prototypes et de pièces unitaires à partir de vos fichiers ou d'une modélisation réalisée par nos soins. Idéal pour valider une forme avant industrialisation.",
-      "devis": true
+      "devis": true,
+      "video": "assets/video_impression.mp4",
+      "videoPoster": "assets/video_impression_poster.jpg"
     },
     {
       "id": "drone",
@@ -55,7 +61,9 @@
       "photo": "assets/drone.jpg",
       "photoPos": "center",
       "description": "Prises de vue aériennes photo et vidéo : valorisation d'un bien, suivi de chantier, communication, inspection visuelle de toiture ou de structure.",
-      "devis": true
+      "devis": true,
+      "video": "assets/video_drone.mp4",
+      "videoPoster": "assets/video_drone_poster.jpg"
     },
     {
       "id": "flux",
@@ -65,7 +73,9 @@
       "photo": "assets/etude_flux.jpg",
       "photoPos": "center",
       "description": "Analyse de vos flux et de votre organisation, identification des points de blocage et propositions d'amélioration chiffrées.",
-      "devis": true
+      "devis": true,
+      "video": "assets/video_flux.mp4",
+      "videoPoster": "assets/video_flux_poster.jpg"
     },
     {
       "id": "contact",
