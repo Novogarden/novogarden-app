@@ -1,4 +1,4 @@
-const CACHE = 'ng-v55';
+const CACHE = 'ng-v56';
 /* Images et logo gardés en mémoire sur le téléphone : si le réseau flanche,
    l'appli les affiche quand même (avant : rien n'était mis en cache). */
 const ESSENTIELS = ['assets/solo.png', 'assets/essentiel.png', 'assets/serenite.png', 'assets/robot_flotte.jpg', 'icons/icon-192x192.png'];
