@@ -113,6 +113,11 @@ html, body {
 .card-icon svg { width:22px; height:22px; }
 .card-img-wrap { width:90px; height:90px; border-radius:50%; overflow:hidden; position:absolute; top:-45px; left:50%; transform:translateX(-50%); border:4px solid white; box-shadow:0 4px 16px rgba(0,0,0,0.18); background:#e8f5d0; }
 .card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.flag-succes { position:absolute; top:132px; right:-8px; z-index:2; background:#d62828; color:#fff; border-radius:8px 0 0 8px; padding:6px 12px 6px 10px; text-align:right; line-height:1.15; box-shadow:0 3px 10px rgba(214,40,40,0.35); pointer-events:none; }
+.flag-succes b { display:block; font-size:12px; font-weight:800; letter-spacing:0.02em; }
+.flag-succes span { display:block; font-size:10.5px; font-weight:600; opacity:0.95; }
+.flag-succes::after { content:""; position:absolute; right:0; bottom:-8px; border-top:8px solid #8f1414; border-right:8px solid transparent; }
+.opt-flag { display:inline-block; margin-top:3px; background:#d62828; color:#fff; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:5px; }
 .card-name { font-size:14px; font-weight:800; margin-bottom:2px; }
 .card-desc { font-size:11px; color:var(--grey); font-weight:500; }
 .card-price { display:inline-flex; align-items:center; justify-content:center; width:90px; height:90px; border-radius:50%; background:white; color:var(--green); border:2.5px solid var(--green); font-size:11px; font-weight:800; text-align:center; line-height:1.25; flex-direction:column; padding:6px; word-break:normal; overflow-wrap:break-word; hyphens:none; overflow:hidden; box-sizing:border-box; }
@@ -409,6 +414,7 @@ html, body {
         <p class="sect">Nos formules</p>
         <div class="cards">
           <div class="card c1" onclick="startBooking(1)">
+            <div class="flag-succes"><b>Victime de son succès</b><span>Places limitées</span></div>
             <div class="card-img-wrap"><img src="assets/solo.png" alt="Pack Solo"></div>
             <div class="card-name">Pack Solo — 1 tonte</div>
             <div class="card-desc">Tonte ponctuelle, sans engagement</div>
@@ -464,7 +470,7 @@ html, body {
           <div class="opts">
             <div class="opt sel" id="o1" onclick="selSvc(1)">
               <div class="opt-icon g1"><img src="assets/solo.png" alt="Solo"></div>
-              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price" data-ngb-opt-prix="solo">À partir de 29,90&nbsp;€</div></div>
+              <div><div class="opt-name">Pack Solo — 1 tonte</div><div class="opt-price" data-ngb-opt-prix="solo">À partir de 29,90&nbsp;€</div><div class="opt-flag">Places limitées · selon disponibilité</div></div>
               <div class="opt-check"></div>
             </div>
             <div class="opt" id="o2" onclick="selSvc(2)">
