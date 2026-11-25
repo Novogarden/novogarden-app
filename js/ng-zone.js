@@ -129,7 +129,7 @@
     var visibles = 0;
     document.querySelectorAll('[data-ngv]').forEach(function (t) {
       var id = t.getAttribute('data-ngv');
-      var ok = (id === 'contact') || (id === 'video') || estCouvert(id);
+      var ok = (id === 'contact') || (id === 'video') || (id === 'cours') || estCouvert(id);
       t.classList.toggle('ngv-hors-zone', !ok);
       /* Vestige de la version grisee : on nettoie s'il en reste. */
       var marque = t.querySelector('.ngv-zone-note');
@@ -353,7 +353,7 @@
       var t = e.target && e.target.closest ? e.target.closest('[data-ngv]') : null;
       if (!t) return;
       var id = t.getAttribute('data-ngv');
-      if (id === 'contact' || id === 'video' || estCouvert(id)) return;
+      if (id === 'contact' || id === 'video' || id === 'cours' || estCouvert(id)) return;
       e.preventDefault();
       e.stopPropagation();
       var nom = NOMS[normal(id)] || 'Cette prestation';
