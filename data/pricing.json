@@ -537,8 +537,15 @@
           "devis": true
         }
       ],
+      "options": [
+        {
+          "label": "Cours à domicile (autour de Flers)",
+          "majoration": 0.2
+        }
+      ],
+      "option_format": 0,
       "inclus": [
-        "Séance d'1 heure en visio ou en présentiel autour de Flers",
+        "Séance d'1 heure en visio, ou à domicile autour de Flers (+20 %)",
         "Exercices et fiches de méthode adaptés au niveau",
         "Accès conseillé aux simulateurs de la collection Atelier"
       ],
