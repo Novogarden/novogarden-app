@@ -25,7 +25,10 @@
   /* Services nécessitant une adresse d'intervention. */
   var AVEC_ADRESSE = { 'tonte': 1, 'topographie': 1 };
   /* Services nécessitant une date et un créneau (prestations sur site). */
-  var AVEC_DATE = { 'tonte': 1, 'topographie': 1, 'drone': 1 };
+  var AVEC_DATE = { 'tonte': 1, 'topographie': 1, 'drone': 1, 'cours': 1 };
+  /* Services commandés comme la tonte : la demande part avec une référence
+     NGV-… et un lien « Valider la commande » (facture + paiement). */
+  function estCommande(s) { return !!(s && s.commande); }
 
   /* État du parcours en cours. */
   var etat = null;
@@ -97,11 +100,53 @@
       h += '</ul></div>';
     }
 
+    if (s.cartes_packs) h += cartesPacks(s);
+    /* Service commandé : le bouton « Demander un devis » de la fiche
+       (index.html) est masqué au profit du tunnel de commande. */
+    if (estCommande(s)) h += '<style>#ngv-devis,#ngv-devis+.ngv-note{display:none!important}</style>';
     h += '<button type="button" class="ngb-lien" data-ngb-grille="' + esc(s.id) + '">'
       + 'Voir la grille tarifaire</button>';
     h += '<button type="button" class="ngv-cta" data-ngb-open="' + esc(s.id) + '" '
-      + 'style="margin-bottom:10px">Réserver cette prestation</button>';
+      + 'style="margin-bottom:10px">' + (estCommande(s) ? 'Choisir mon pack' : 'Réserver cette prestation') + '</button>';
     return h;
+  }
+
+  /* Cartes Solo / Essentiel / Sérénité, comme l'écran de la tonte :
+     prix unitaire dégressif calculé depuis la grille. */
+  function cartesPacks(s) {
+    var paliers = P.getPaliers(), tr = P.getTranches(s.id);
+    var h = '<p class="sect">Nos formules</p><div class="cards">';
+    for (var i = 0; i < paliers.length; i++) {
+      var p = paliers[i], mini = null, maxi = null;
+      for (var k = 0; k < tr.length; k++) {
+        if (tr[k].devis || tr[k][p.id] == null) continue;
+        var u = tr[k][p.id] / p.quantite;
+        if (mini == null || u < mini) mini = u;
+        if (maxi == null || u > maxi) maxi = u;
+      }
+      var unite = p.quantite + ' ' + s.unite + (p.quantite > 1 ? 's' : '');
+      h += '<div class="card c' + (i + 1) + '" data-ngb-open="' + esc(s.id) + '" data-ngb-pack="' + esc(p.id) + '">'
+        + '<div class="card-img-wrap" style="background:' + esc(p.couleur || '#3949AB') + ';display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff">'
+        + '<span style="font-size:30px;font-weight:900;line-height:1">' + p.quantite + '</span>'
+        + '<span style="font-size:10px;font-weight:700;text-transform:uppercase">' + esc(s.unite) + (p.quantite > 1 ? 's' : '') + '</span></div>'
+        + '<div class="card-name">Pack ' + esc(p.nom) + ' — ' + esc(unite) + '</div>'
+        + '<div class="card-desc">' + (p.quantite === 1 ? 'Une séance, sans engagement'
+            : 'Économisez ' + eco(tr, p) + ' % · Séances au fil de l’eau') + '</div>'
+        + '<div class="card-price">' + (mini == null ? 'Sur devis' : 'À partir de ' + eur(mini) + ' / ' + esc(s.unite)) + '</div>'
+        + '<div class="card-tag">' + (p.quantite > 1 ? '⭐ ' : '') + 'Sans abonnement'
+        + (maxi != null && maxi !== mini ? ' · IA ' + eur(maxi) + ' / ' + esc(s.unite) : '') + '</div>'
+        + '</div>';
+    }
+    return h + '</div>';
+  }
+
+  /* Remise réelle par rapport au Solo, sur la première tranche chiffrée. */
+  function eco(tr, p) {
+    for (var k = 0; k < tr.length; k++) {
+      if (tr[k].devis || !tr[k].solo || tr[k][p.id] == null) continue;
+      return Math.round((1 - tr[k][p.id] / (tr[k].solo * p.quantite)) * 100);
+    }
+    return 0;
   }
 
   /* ---------- grille tarifaire consultable ---------- */
@@ -221,7 +266,7 @@
 
   /* ---------- tunnel générique ---------- */
 
-  function open(serviceId) {
+  function open(serviceId, palierInitial) {
     if (!P || !P.isReady()) { alert('Grille tarifaire indisponible, réessayez.'); return; }
 
     /* La tonte garde son tunnel historique (calendrier récurrent,
@@ -232,7 +277,8 @@
 
     etat = {
       serviceId: serviceId ? P.normId(serviceId) : null,
-      palier: 'solo',
+      palier: palierInitial || 'solo',
+      format: 'Visio', niveau: '',
       trancheIndex: null,
       options: [],
       adresse: '', ville: '', cp: '',
@@ -391,6 +437,14 @@
         + '<label class="flabel">Code postal <span class="req">*</span></label>'
         + '<input id="ngb-cp" class="finput" type="text" inputmode="numeric" maxlength="5" placeholder="61000" value="' + esc(etat.cp) + '">';
     }
+    if (s.id === 'cours') {
+      h += '<label class="flabel">Format <span class="req">*</span></label><div class="tslots">';
+      ['Visio', 'Présentiel (autour de Flers)'].forEach(function (f) {
+        h += '<div class="tslot' + (etat.format === f ? ' sel' : '') + '" data-ngb-fmt="' + esc(f) + '">' + esc(f) + '</div>';
+      });
+      h += '</div><label class="flabel">Niveau / classe de l’élève</label>'
+        + '<input id="ngb-niv" class="finput" type="text" placeholder="3e, 2de, Terminale, adulte…" value="' + esc(etat.niveau) + '">';
+    }
     h += '<button type="button" class="ngb-lien" data-ngb-grille="' + esc(s.id) + '">Voir la grille tarifaire</button>';
     return h + boutons(true);
   }
@@ -418,7 +472,7 @@
     var mini = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
     var cr = ['8h–10h', '10h–12h', '12h–14h', '14h–16h', '16h–18h', '18h–20h'];
     var h = '<div class="ss">Délai indicatif : ' + esc(s.delai || '—') + '</div>'
-      + '<label class="flabel">Date souhaitée <span class="req">*</span></label>'
+      + '<label class="flabel">' + (s.id === 'cours' ? 'Date de la première séance' : 'Date souhaitée') + ' <span class="req">*</span></label>'
       + '<input id="ngb-date" class="finput" type="date" min="' + mini + '" value="' + esc(etat.date) + '">'
       + '<label class="flabel">Créneau <span class="req">*</span></label><div class="tslots">';
     for (var i = 0; i < cr.length; i++) {
@@ -442,6 +496,7 @@
     if (AVEC_DATE[s.id]) {
       h += ligne('Date', etat.date || '—') + ligne('Créneau', etat.creneau || '—');
     }
+    if (s.id === 'cours') h += ligne('Format', etat.format) + ligne('Niveau', etat.niveau || '—');
     h += ligne('Délai', s.delai || '—') + '</div>';
 
     if (etat.options.length) {
@@ -469,9 +524,11 @@
       + '<label class="flabel">Code partenaire (optionnel)</label>'
       + '<input id="ngb-code" class="finput" type="text" value="' + esc(codeApporteurInitial()) + '" placeholder="PRENOM-XXX" style="text-transform:uppercase">'
       + '<div class="cgv-row"><input type="checkbox" id="ngb-cgv">'
-      + '<label for="ngb-cgv">J’accepte que ces informations soient transmises à Novogarden pour l’établissement d’un devis</label></div>'
+      + '<label for="ngb-cgv">' + (estCommande(s)
+          ? 'J’accepte les conditions générales de vente et que ces informations soient transmises à Novogarden pour ma commande'
+          : 'J’accepte que ces informations soient transmises à Novogarden pour l’établissement d’un devis') + '</label></div>'
       + '<div class="err-msg" id="ngb-err"></div>'
-      + '<button class="btn-p" id="ngb-send">Envoyer ma demande de devis</button>'
+      + '<button class="btn-p" id="ngb-send">' + (estCommande(s) && !prix().devis ? 'Valider ma commande' : 'Envoyer ma demande de devis') + '</button>'
       + '<button class="btn-s" id="ngb-prev">← Retour</button>';
     return h;
   }
@@ -498,14 +555,16 @@
         + '<p class="ngb-note">Cette configuration est étudiée au cas par cas : '
         + 'votre demande part en devis libre, sans prix estimé.</p>';
     }
-    var h = '<div class="price-hl"><span class="lbl">Prix estimé TTC</span>'
+    var h = '<div class="price-hl"><span class="lbl">' + (estCommande(s) ? 'Total TTC' : 'Prix estimé TTC') + '</span>'
       + '<span class="amt">' + eur(r.total) + '</span></div>';
     if (P.hasPaliers(s.id) && etat.palier !== 'solo') {
       var p = P.getPaliers().filter(function (x) { return x.id === etat.palier; })[0];
       if (p) h += '<p class="ngb-note">Soit ' + eur(r.total / p.quantite) + ' / ' + esc(s.unite)
         + ' pour ' + p.quantite + ' ' + esc(s.unite) + 's.</p>';
     }
-    h += '<p class="ngb-note">' + esc(tvaTexte()) + '. Prix estimatif, confirmé après étude.</p>';
+    h += '<p class="ngb-note">' + esc(tvaTexte()) + (estCommande(s)
+      ? '. Facture et lien de paiement envoyés dès la confirmation de votre commande.'
+      : '. Prix estimatif, confirmé après étude.') + '</p>';
     return h;
   }
 
@@ -552,6 +611,12 @@
       });
     });
 
+    w.querySelectorAll('[data-ngb-fmt]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        etat.format = this.getAttribute('data-ngb-fmt'); rendre();
+      });
+    });
+
     w.querySelectorAll('[data-ngb-cr]').forEach(function (el) {
       el.addEventListener('click', function () {
         etat.creneau = this.getAttribute('data-ngb-cr'); rendre();
@@ -563,7 +628,7 @@
     });
 
     memoriser('ngb-adr', 'adresse'); memoriser('ngb-ville', 'ville'); memoriser('ngb-cp', 'cp');
-    memoriser('ngb-date', 'date');
+    memoriser('ngb-date', 'date'); memoriser('ngb-niv', 'niveau');
     memoriser('ngb-nom', 'nom'); memoriser('ngb-tel', 'tel');
     memoriser('ngb-mail', 'email'); memoriser('ngb-note', 'note');
 
@@ -628,6 +693,7 @@
     var tr = P.getTranches(s.id)[etat.trancheIndex];
     var btn = $('ngb-send');
     btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    if (estCommande(s) && !r.devis && global.NGDemandes) { envoyerCommande(s, r, tr, btn); return; }
 
     var form = document.createElement('form');
     form.method = 'POST'; form.action = MAIL; form.style.display = 'none';
@@ -687,6 +753,74 @@
         service:   s.id
       }).then(partir, partir);
     } else { partir(); }
+  }
+
+  /* ---------- commande (même circuit que la tonte) ----------
+     Mail FormSubmit en AJAX + enregistrement Supabase « devis » avec une
+     référence NGV-… : le lien « Valider la commande » du mail ouvre
+     ng-factures.js, qui crée la facture et envoie le paiement.        */
+  function envoyerCommande(s, r, tr, btn) {
+    var p = P.getPaliers().filter(function (x) { return x.id === etat.palier; })[0] || { nom: 'Solo', quantite: 1 };
+    var ref = 'NGV-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-'
+      + Math.random().toString(36).slice(2, 6).toUpperCase();
+    var formule = s.nom + ' — Pack ' + p.nom + ' (' + p.quantite + ' ' + s.unite + (p.quantite > 1 ? 's' : '') + ') — ' + tr.label;
+    var codeEl = $('ngb-code');
+    var code = ((codeEl && codeEl.value) || '').toUpperCase().trim();
+    var message =
+      'Nouvelle commande Novogarden — Réf. ' + ref + '\n'
+      + '═══════════════════════════════\n\n'
+      + 'CLIENT\n  Nom    : ' + etat.nom + '\n  Tél    : ' + etat.tel + '\n  Email  : ' + etat.email + '\n\n'
+      + 'PRESTATION\n  Formule: ' + formule + '\n'
+      + '  Format : ' + etat.format + '\n  Niveau : ' + (etat.niveau || '—') + '\n'
+      + '  Créneau: ' + etat.creneau + '\nDate souhaitée : ' + etat.date + '\n\n'
+      + 'TARIF : ' + eur(r.total) + (p.quantite > 1 ? ' (soit ' + eur(r.total / p.quantite) + ' / ' + s.unite + ')' : '') + '\n\n'
+      + (etat.note ? 'NOTE CLIENT : ' + etat.note + '\n\n' : '')
+      + (code ? 'CODE PARTENAIRE : ' + code + '\n\n' : '')
+      + '─────────────────────────────\n'
+      + '✅ Valider la commande (facture + lien de paiement) :\n'
+      + 'https://novogarden.github.io/novogarden-app/?valider=' + ref + '\n\n'
+      + 'Commande passée le ' + new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    var champs = { _subject: '[Commande Novogarden] ' + etat.nom + ' – ' + s.nom + ' – Pack ' + p.nom + ' – Réf. ' + ref,
+      _captcha: 'false', _template: 'table', name: etat.nom, email: etat.email, phone: etat.tel, message: message };
+    var mailOk = false;
+    NGDemandes.mailAjax(champs).then(function (m) {
+      mailOk = !!m;
+      return NGDemandes.sauver('devis', 'Commande ' + ref + ' – ' + etat.nom, {
+        reference: ref, nom: etat.nom, email: etat.email, telephone: etat.tel,
+        adresse: etat.format, formule: formule, tarif: eur(r.total), message: message, service: s.id
+      }, null, mailOk);
+    }).then(function (baseOk) {
+      if (!mailOk && !baseOk) throw new Error('envoi');
+      if (window.NGP_PARRAINAGE && NGP_PARRAINAGE.enregistrerLead) {
+        var mots = etat.nom.trim().split(/\s+/);
+        try { NGP_PARRAINAGE.enregistrerLead({ code: code, prenom: mots[0] || '', nom: mots.slice(1).join(' '),
+          email: etat.email, telephone: etat.tel, commune: null, surface: null, pack: etat.palier,
+          montant: r.total, service: s.id }); } catch (e) {}
+      }
+      merci(s, ref, formule, r);
+    }).catch(function () {
+      $('ngb-err').textContent = 'Erreur d’envoi. Réessayez ou écrivez à contact@novogardenhub.com';
+      btn.disabled = false; btn.textContent = 'Valider ma commande';
+    });
+  }
+
+  function merci(s, ref, formule, r) {
+    var w = ecran('ngb-resa');
+    w.innerHTML = '<div class="bheader"><button class="back-btn" id="ngb-quit">←</button>'
+      + '<h2>Commande envoyée</h2><p>Référence ' + esc(ref) + '</p></div>'
+      + '<div class="bcontent"><div class="recap-card">'
+      + ligne('Formule', formule) + ligne('Format', etat.format)
+      + ligne('Première séance', etat.date + ' · ' + etat.creneau) + ligne('Total TTC', eur(r.total)) + '</div>'
+      + '<p class="ngb-note">Vous recevez sous 48 h la confirmation de votre commande, avec la facture et le lien de paiement '
+      + '(carte, virement ou espèces), à l’adresse ' + esc(etat.email) + '.</p>'
+      + '<button class="btn-p" id="ngb-fin">Retour à l’accueil</button></div>';
+    var fin = function () { if (typeof global.navTo === 'function') global.navTo('volets'); };
+    $('ngb-quit').addEventListener('click', fin); $('ngb-fin').addEventListener('click', fin);
+    try {
+      var l = JSON.parse(localStorage.getItem('ng_reservations') || '[]');
+      l.push({ ref: ref, svc: formule, date: etat.date, time: etat.creneau, price: eur(r.total), status: 'pending', created: new Date().toISOString() });
+      localStorage.setItem('ng_reservations', JSON.stringify(l));
+    } catch (e) {}
   }
 
   /* ---------- alimentation des écrans tonte existants ---------- */
@@ -795,7 +929,7 @@
       var g = e.target.closest ? e.target.closest('[data-ngb-grille]') : null;
       if (g && !g.closest('#ngb-resa')) { e.preventDefault(); grille(g.getAttribute('data-ngb-grille')); return; }
       var o = e.target.closest ? e.target.closest('[data-ngb-open]') : null;
-      if (o) { e.preventDefault(); open(o.getAttribute('data-ngb-open')); }
+      if (o) { e.preventDefault(); open(o.getAttribute('data-ngb-open'), o.getAttribute('data-ngb-pack')); }
     });
   }
 
@@ -807,3 +941,10 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer);
   else demarrer();
 })(window);
+
+/* Bibliothèque de simulateurs Atelier (fiche Cours & formation). */
+(function () {
+  if (window.NovogardenAtelier || document.querySelector('script[src*="atelier-lib.js"]')) return;
+  var s = document.createElement('script'); s.src = 'js/atelier-lib.js?v=58'; s.defer = true;
+  document.head.appendChild(s);
+})();

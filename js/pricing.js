@@ -109,6 +109,8 @@
   /* Libellé du sélecteur de tranche, piloté par "critere_tranche". */
   var LIBELLES_CRITERE = {
     'surface':    'Surface du terrain',
+    'matière':    'Matière',
+    'matiere':    'Matière',
     'complexité': 'Niveau de complexité',
     'complexite': 'Niveau de complexité',
     'volume':     'Volume de la pièce',
