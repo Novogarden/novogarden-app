@@ -134,7 +134,8 @@
             : 'Économisez ' + eco(tr, p) + ' % · Séances au fil de l’eau') + '</div>'
         + '<div class="card-price">' + (mini == null ? 'Sur devis' : 'À partir de ' + eur(mini) + ' / ' + esc(s.unite)) + '</div>'
         + '<div class="card-tag">' + (p.quantite > 1 ? '⭐ ' : '') + 'Sans abonnement'
-        + (maxi != null && maxi !== mini ? ' · IA ' + eur(maxi) + ' / ' + esc(s.unite) : '') + '</div>'
+        + (maxi != null && maxi !== mini ? ' · IA ' + eur(maxi) + ' / ' + esc(s.unite) : '')
+        + (s.option_format != null && s.options[s.option_format] ? ' · À domicile +' + Math.round(s.options[s.option_format].majoration * 100) + ' %' : '') + '</div>'
         + '</div>';
     }
     return h + '</div>';
@@ -301,7 +302,8 @@
       var s = P.getService(etat.serviceId);
       if (P.hasPaliers(etat.serviceId)) etapes.push('palier');
       etapes.push('tranche');
-      if (s.options && s.options.length) etapes.push('options');
+      /* option_format : l'option est pilotée par le choix Visio / domicile. */
+      if (s.options && s.options.length && s.option_format == null) etapes.push('options');
       if (AVEC_DATE[etat.serviceId]) etapes.push('date');
       etapes.push('recap');
     }
@@ -439,9 +441,14 @@
     }
     if (s.id === 'cours') {
       h += '<label class="flabel">Format <span class="req">*</span></label><div class="tslots">';
-      ['Visio', 'Présentiel (autour de Flers)'].forEach(function (f) {
-        h += '<div class="tslot' + (etat.format === f ? ' sel' : '') + '" data-ngb-fmt="' + esc(f) + '">' + esc(f) + '</div>';
+      var maj = s.option_format != null && s.options[s.option_format] ? s.options[s.option_format].majoration : 0;
+      ['Visio', 'À domicile'].forEach(function (f) {
+        h += '<div class="tslot' + (etat.format === f ? ' sel' : '') + '" data-ngb-fmt="' + esc(f) + '">' + esc(f)
+          + (f !== 'Visio' && maj ? ' (+' + Math.round(maj * 100) + ' %)' : '') + '</div>';
       });
+      h += '</div><p class="ngb-note">' + (etat.trancheIndex != null && !prix().devis
+        ? 'Prix pour ce choix : ' + eur(prix().total) : 'Visio au tarif de base, cours à domicile autour de Flers'
+          + (maj ? ' : +' + Math.round(maj * 100) + ' %' : '')) + '</p><div>';
       h += '</div><label class="flabel">Niveau / classe de l’élève</label>'
         + '<input id="ngb-niv" class="finput" type="text" placeholder="3e, 2de, Terminale, adulte…" value="' + esc(etat.niveau) + '">';
     }
@@ -613,7 +620,10 @@
 
     w.querySelectorAll('[data-ngb-fmt]').forEach(function (el) {
       el.addEventListener('click', function () {
-        etat.format = this.getAttribute('data-ngb-fmt'); rendre();
+        etat.format = this.getAttribute('data-ngb-fmt');
+        var sv = svc();
+        etat.options = (sv && sv.option_format != null && etat.format !== 'Visio') ? [sv.option_format] : [];
+        rendre();
       });
     });
 
