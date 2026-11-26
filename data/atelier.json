@@ -1,0 +1,62 @@
+{
+  "maj": "2026-11-26",
+  "boutique": "https://novogarden.itch.io/",
+  "applis": [
+    {
+      "nom": "Atelier VSEPR",
+      "theme": "Chimie",
+      "niveau": "2de – Tle",
+      "url": "https://novogarden.itch.io/atelier-vsepr",
+      "img": "https://img.itch.zone/aW1nLzMxMTgzMzI2LnBuZw==/315x250%23c/LEEz37.png",
+      "desc": "Construisez des molécules en 3D et voyez leur géométrie, leur schéma de Lewis et l'intérieur de leurs atomes."
+    },
+    {
+      "nom": "Atelier Réactions",
+      "theme": "Chimie",
+      "niveau": "Collège – 1re",
+      "url": "https://novogarden.itch.io/atelier-reactions",
+      "img": "https://img.itch.zone/aW1nLzMxNDk5NTQ2LnBuZw==/315x250%23c/xbLHRF.png",
+      "desc": "Équilibrez les équations en regardant les atomes se réarranger, puis suivez l'avancement dans un réacteur animé."
+    },
+    {
+      "nom": "Atelier Titrages",
+      "theme": "Chimie",
+      "niveau": "1re – Tle",
+      "url": "https://novogarden.itch.io/atelier-titrages",
+      "img": "https://img.itch.zone/aW1nLzMxNzc4MjY5LnBuZw==/315x250%23c/G3KHA6.png",
+      "desc": "Versez goutte à goutte et trouvez l'équivalence : titrages pH-métriques, conductimétriques et colorimétriques."
+    },
+    {
+      "nom": "Atelier pH",
+      "theme": "Chimie",
+      "niveau": "1re – Tle",
+      "url": "https://novogarden.itch.io/atelier-ph",
+      "img": "https://img.itch.zone/aW1nLzMyNjI1NDcxLnBuZw==/315x250%23c/xUrTZY.png",
+      "desc": "pH, acides forts et faibles, prédominance, indicateurs colorés et solutions tampons, calculés sans approximation."
+    },
+    {
+      "nom": "Atelier Gravitation",
+      "theme": "Physique",
+      "niveau": "2de – Tle",
+      "url": "https://novogarden.itch.io/atelier-gravitation",
+      "img": "https://img.itch.zone/aW1nLzMxNDk2NzQwLnBuZw==/315x250%23c/8%2FNdz5.png",
+      "desc": "Satellites, lois de Newton et système solaire en 3D : lancez des objets et regardez la gravité les mettre en orbite."
+    },
+    {
+      "nom": "Atelier Optique",
+      "theme": "Physique",
+      "niveau": "Collège – Tle",
+      "url": "https://novogarden.itch.io/atelier-optique",
+      "img": "https://img.itch.zone/aW1nLzMyNDQ0Mzk1LnBuZw==/315x250%23c/3EhCez.png",
+      "desc": "Construisez des images, réglez un banc d'optique, l'œil, l'appareil photo et la lunette astronomique."
+    },
+    {
+      "nom": "Atelier Ondes",
+      "theme": "Physique",
+      "niveau": "2de – Tle",
+      "url": "https://novogarden.itch.io/atelier-ondes",
+      "img": "https://img.itch.zone/aW1nLzMxOTI3NjY0LnBuZw==/315x250%23c/aOn%2FoP.png",
+      "desc": "Faites vibrer une corde, diffractez un laser, créez des interférences et entendez l'effet Doppler."
+    }
+  ]
+}

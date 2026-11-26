@@ -502,6 +502,47 @@
         }
       ],
       "delai": "7 à 10 jours ouvrés"
+    },
+    {
+      "id": "cours",
+      "nom": "Cours & formation",
+      "sous_titre": "Physique-chimie, maths, IA",
+      "badge": "DÈS 20 €/H",
+      "unite": "heure",
+      "critere_tranche": "matière",
+      "cartes_packs": true,
+      "commande": true,
+      "note_packs": "Un pack est un crédit d'heures de cours, pas un abonnement : les séances se planifient au fil de l'eau.",
+      "tranches": [
+        {
+          "label": "Physique-chimie (collège, lycée)",
+          "solo": 25,
+          "essentiel": 110,
+          "serenite": 200
+        },
+        {
+          "label": "Maths niveau collège",
+          "solo": 25,
+          "essentiel": 110,
+          "serenite": 200
+        },
+        {
+          "label": "Formation IA (particulier, indépendant)",
+          "solo": 50,
+          "essentiel": 220,
+          "serenite": 390
+        },
+        {
+          "label": "Journée IA en entreprise",
+          "devis": true
+        }
+      ],
+      "inclus": [
+        "Séance d'1 heure en visio ou en présentiel autour de Flers",
+        "Exercices et fiches de méthode adaptés au niveau",
+        "Accès conseillé aux simulateurs de la collection Atelier"
+      ],
+      "delai": "Première séance sous 7 jours"
     }
   ]
 }

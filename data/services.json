@@ -84,17 +84,10 @@
       "couleur": "#3949AB",
       "photo": "assets/cours.jpg",
       "photoPos": "center 30%",
-      "prix": "Dès 25 €",
-      "devis": true,
+      "prix": "Dès 20 €/h",
+      "devis": false,
       "description": "Cours particuliers de physique-chimie (collège et lycée) et de mathématiques niveau collège, assurés par un ingénieur enseignant en lycée. Formation à l'intelligence artificielle pour les particuliers, les indépendants et les petites entreprises : bien utiliser les assistants IA, automatiser des tâches, créer ses propres outils. Ces cours ne sont pas proposés aux élèves des classes dont l'intervenant est l'enseignant.",
-      "zone": "En visio, ou en présentiel autour de Flers",
-      "tarifs": [
-        "Physique-chimie (collège, lycée) : 25 €/h",
-        "Maths niveau collège : 25 €/h",
-        "Formation IA : 50 €/h",
-        "Journée IA en entreprise : sur devis"
-      ],
-      "cta": "Demander un cours"
+      "zone": "En visio, ou en présentiel autour de Flers"
     },
     {
       "id": "contact",
